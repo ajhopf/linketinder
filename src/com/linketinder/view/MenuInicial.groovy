@@ -16,18 +16,18 @@ class MenuInicial {
             switch (opcaoSelecionada) {
                 case 0:
                     println "Até logo!"
-                    break
+                    return
                 case 1:
-                    EmpresaView.listarEmpresas(empresaService)
+                    ListagemView.listarEmpresas(empresaService)
                     break
                 case 2:
-                    EmpresaView.adicionarEmpresa(empresaService, sc)
+                    CadastroView.adicionarEmpresa(empresaService, sc)
                     break
                 case 3:
-                    CandidatoView.listarCandidatos(candidatoService)
+                    ListagemView.listarCandidatos(candidatoService)
                     break
                 case 4:
-                    CandidatoView.listarCandidatos(candidatoService)
+                    CadastroView.adicionarCandidato(candidatoService, sc)
                     break
 
                 default: println "Você escolheu a opção " + opcaoSelecionada
