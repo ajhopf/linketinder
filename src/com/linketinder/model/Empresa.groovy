@@ -1,6 +1,8 @@
 package com.linketinder.model
 
-class Empresa extends Pessoa {
-    String cpf
+import groovy.transform.ToString
 
+@ToString(includePackage = false, includeSuper = true)
+class Empresa extends Pessoa {
+    String cnpj
 }
