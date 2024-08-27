@@ -9,21 +9,13 @@ import com.linketinder.repository.EmpresaRepository
 import com.linketinder.service.CandidatoService
 import com.linketinder.service.EmpresaService
 import com.linketinder.util.IniciarDB
+import com.linketinder.view.MenuInicial
 
 static void main(String[] args) {
     Map services = criarBeans()
-    CandidatoService candidatoService = services.candidatoService
-    EmpresaService empresaService = services.empresaService
+    IniciarDB.iniciar(services.candidatoService, services.empresaService)
 
-    IniciarDB.iniciar(candidatoService, empresaService)
-
-    List<Candidato> candidatos = candidatoService.listarCandidatos()
-    List<Empresa> empresas = empresaService.listarEmpresas()
-    println "Candidatos: "
-    candidatos.each {println it}
-    println "--------------------------"
-    println "Empresas: "
-    empresas.each { println it}
+    MenuInicial.iniciar(services.empresaService, services.candidatoService)
 }
 
 static Map criarBeans() {
