@@ -1,9 +1,5 @@
 package com.linketinder
 
-import com.linketinder.model.Candidato
-import com.linketinder.model.Competencia
-import com.linketinder.model.Empresa
-import com.linketinder.model.Endereco
 import com.linketinder.repository.CandidatoRepository
 import com.linketinder.repository.EmpresaRepository
 import com.linketinder.service.CandidatoService
