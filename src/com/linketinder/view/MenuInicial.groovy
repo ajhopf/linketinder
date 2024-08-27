@@ -1,18 +1,17 @@
 package com.linketinder.view
 
-import com.linketinder.model.Candidato
 import com.linketinder.service.CandidatoService
 import com.linketinder.service.EmpresaService
 import com.linketinder.util.MyUtil
 
 class MenuInicial {
     static void iniciar(EmpresaService empresaService, CandidatoService candidatoService) {
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in)
 
         while (true) {
-            gerarMenuInicial();
+            gerarMenuInicial()
 
-            int opcaoSelecionada = MyUtil.getIntInput(0, 2, "Selecione a opção desejada: ", sc);
+            int opcaoSelecionada = MyUtil.getIntInput(0, 4, "Selecione a opção desejada: ", sc)
 
             switch (opcaoSelecionada) {
                 case 0:
@@ -22,9 +21,16 @@ class MenuInicial {
                     EmpresaView.listarEmpresas(empresaService)
                     break
                 case 2:
+                    EmpresaView.adicionarEmpresa(empresaService, sc)
+                    break
+                case 3:
                     CandidatoView.listarCandidatos(candidatoService)
                     break
-                default: System.out.println("Você escolheu a opção " + opcaoSelecionada);
+                case 4:
+                    CandidatoView.listarCandidatos(candidatoService)
+                    break
+
+                default: println "Você escolheu a opção " + opcaoSelecionada
             }
         }
 
@@ -36,7 +42,9 @@ class MenuInicial {
                
         |Selecione uma das opções abaixo:
         |1. Listar Empresas
-        |2. Listar Candidatos
+        |2. Adicionar Empresa
+        |3. Listar Candidatos
+        |4. Adicionar Candidato
         |0. Sair do Sistema
         |---------------------------------------------
         '''.stripMargin()

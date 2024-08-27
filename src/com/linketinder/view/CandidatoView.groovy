@@ -1,9 +1,7 @@
 package com.linketinder.view
 
 import com.linketinder.model.Candidato
-import com.linketinder.model.Empresa
 import com.linketinder.service.CandidatoService
-import com.linketinder.service.EmpresaService
 
 class CandidatoView {
     static void listarCandidatos(CandidatoService service) {
@@ -11,6 +9,7 @@ class CandidatoView {
         println "Candidatos: "
         candidatos.each {candidato -> println """
             |-----------------------------------------------
+            |ID: $candidato.id
             |Nome: $candidato.nome
             |E-mail: $candidato.email
             |Idade: $candidato.idade
