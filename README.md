@@ -1,5 +1,7 @@
 # Linketinder
 
+### Desenvolvido por André Jaques Hopf
+
 ## Conteúdos:
 
 - [Introdução](#introdução)
