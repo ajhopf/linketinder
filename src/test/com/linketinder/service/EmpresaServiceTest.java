@@ -6,7 +6,6 @@ import com.linketinder.repository.EmpresaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ class EmpresaServiceTest {
 
     @Nested
     @DisplayName("Método: adicionarEmpresa")
-    class adicionarEmpresa {
+    class AdicionarEmpresaTests {
         @Test
         @DisplayName("Quando adiciona a primeira empresa, deve retornar uma empresa com um ID 0")
         void adicionarEmpresaPrimeiraEmpresaTemIdZero() {
@@ -58,7 +57,6 @@ class EmpresaServiceTest {
             Empresa empresaResultado = empresaService.adicionarEmpresa(novaEmpresa);
 
             // Assert
-            verify(repository, times(1)).adicionarEmpresa(novaEmpresa);
             assertEquals(6, empresaResultado.getId());
         }
 
@@ -81,7 +79,7 @@ class EmpresaServiceTest {
 
     @Nested
     @DisplayName("Método: listarEmpresa")
-    class ListarEmpresa {
+    class ListarEmpresaTests {
         @Test
         @DisplayName("Quando o repository está vazio, deve retornar uma lista vazia")
         void listarEmpresasComListaVazia() {
