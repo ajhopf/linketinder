@@ -11,11 +11,13 @@ class EmpresaService {
         this.repository = repository
     }
 
-    void adicionarEmpresa(Empresa empresa) {
+    Empresa adicionarEmpresa(Empresa empresa) {
         Integer id = MyUtil.gerarNovoId(listarEmpresas())
         empresa.id = id
 
         repository.adicionarEmpresa(empresa)
+
+        empresa
     }
 
     List<Empresa> listarEmpresas() {

@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="junit.jupiter.api" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.junit.jupiter:junit-jupiter-api:5.11.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.11.0/junit-jupiter-api-5.11.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
