@@ -11,11 +11,13 @@ class CandidatoService {
         this.repository = repository
     }
 
-    void adicionarCandidato(Candidato candidato) {
+    Candidato adicionarCandidato(Candidato candidato) {
         Integer id = MyUtil.gerarNovoId(listarCandidatos())
         candidato.id = id
 
         repository.adicionarCandidato(candidato)
+
+        candidato
     }
 
     List<Candidato> listarCandidatos() {
