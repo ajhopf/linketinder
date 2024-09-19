@@ -10,6 +10,12 @@
     - [Listando Candidatos e Empresas](#listando-candidatos-e-empresas)
     - [Adicionando Candidtos e Empresas](#adicionando-candidatos-e-empresas)
 ## Introdução
+
+Link para o front-end:
+
+Repositório: https://github.com/ajhopf/linketinder-front
+Site: https://linketinder-front.vercel.app/
+
 Este projeto é a primeira versão do Linketinder, um projeto audacioso que visa facilitar a contratação de talentos por empresas.
 A aplicação consiste em uma mistura de Linkedin com Tinder, onde teremos candidatos em empresas em busca de um match perfeito.
 
