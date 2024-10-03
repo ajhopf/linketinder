@@ -9,6 +9,7 @@
 - [Utilizando o Sistema](#utilizando-o-sistema)
     - [Listando Candidatos e Empresas](#listando-candidatos-e-empresas)
     - [Adicionando Candidtos e Empresas](#adicionando-candidatos-e-empresas)
+- [Database](#database)
 ## Introdução
 
 Link para o front-end:
@@ -81,3 +82,20 @@ Ainda estamos em fase inicial da implementação do aplicativo, portanto o cadas
 No futuro para efetuar um novo cadastro a empresa ou candidato deverão preencher um formulário ou solicitar que seja feito por um administrador do sistema.
 
 O formulário para cadastro é simples, sendo necessário apenas digitar a informação solicitada e apertar enter para prosseguir para a próxima pergunta.
+
+## Database
+
+O Linketinder está em evolução! Agora será possível persistir os dados no banco de dados PostgreSQL.
+
+Abaixo é possível visualizar a relação entre as tabelas e também as colunas existentes em cada tabela.
+
+![database-tables.png](sql/database-tables.png)
+
+Além disso, no arquivo 'queries.sql' existente na pasta 'sql' há um script sql que irá:
+
+* Criar as tabelas e seus relacionamentos.
+* Popular estas tabelas através das seguintes ações:
+  * Adicionar 10 competencias;
+  * Adicionar 5 endereços;
+  * Adicionar 5 empresas cada uma com uma vaga associada e informações de competencias;
+  * Adicionar 5 candidatos cada um com uma formação associada e informações de competencias;
