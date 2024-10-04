@@ -20,21 +20,22 @@ INSERT INTO curtidas_em_vaga (candidato_id, vaga_id) VALUES (11, 2);
 
 CREATE VIEW matches AS
 WITH vagas_por_empresa AS (
-	SELECT 
-		e.usuario_id as empresa_id, 
-		v.id as vaga_id,
-		cv.candidato_id
-	FROM empresas e 
-		INNER JOIN vagas v ON v.empresa_id = e.usuario_id
-		INNER JOIN curtidas_em_vaga cv ON cv.vaga_id = v.id
+    SELECT
+        v.empresa_id as empresa_id,
+        v.id as vaga_id,
+        cv.candidato_id
+    FROM
+        vagas v
+            INNER JOIN curtidas_em_vaga cv
+                ON cv.vaga_id = v.id
 )
 SELECT
     ve.vaga_id,
     ve.candidato_id,
     cc.empresa_id
 FROM curtidas_em_candidato cc
-	INNER JOIN vagas_por_empresa ve
-		ON ve.empresa_id = cc.empresa_id AND ve.candidato_id = cc.candidato_id;
+         INNER JOIN vagas_por_empresa ve
+                    ON ve.empresa_id = cc.empresa_id AND ve.candidato_id = cc.candidato_id;
 
 SELECT * FROM matches;
 
