@@ -10,6 +10,7 @@
     - [Listando Candidatos e Empresas](#listando-candidatos-e-empresas)
     - [Adicionando Candidtos e Empresas](#adicionando-candidatos-e-empresas)
 - [Database](#database)
+  - [Match!!](#match)
 ## Introdução
 
 Link para o front-end:
@@ -83,19 +84,55 @@ No futuro para efetuar um novo cadastro a empresa ou candidato deverão preenche
 
 O formulário para cadastro é simples, sendo necessário apenas digitar a informação solicitada e apertar enter para prosseguir para a próxima pergunta.
 
-## Database
+## PostgreSQL Database
 
-O Linketinder está em evolução! Agora será possível persistir os dados no banco de dados PostgreSQL.
+O Linketinder está em evolução!
+
+Os dados são persistidos utilizando o sistema de gerenciamento de banco de dados relacional PostgreSQL. <img src="img_1.png" alt="drawing" width="25"/>
 
 Abaixo é possível visualizar a relação entre as tabelas e também as colunas existentes em cada tabela.
 
-![database-tables.png](sql/database-tables.png)
+Este diagrama foi realizado utilizando http://dbdiagram.io
 
-Além disso, no arquivo 'queries.sql' existente na pasta 'sql' há um script sql que irá:
+![modelagem.png](sql%2Fmodelagem.png)
+Link para a modelagem: https://dbdiagram.io/d/66fea3fffb079c7ebd3c107c
 
-* Criar as tabelas e seus relacionamentos.
-* Popular estas tabelas através das seguintes ações:
-  * Adicionar 10 competencias;
-  * Adicionar 5 endereços;
-  * Adicionar 5 empresas cada uma com uma vaga associada e informações de competencias;
-  * Adicionar 5 candidatos cada um com uma formação associada e informações de competencias;
+Na pasta sql presente na raíz deste projeto existem os scripts para:
+  * Criação das tabelas, inserção de 10 competências e cinco endereços - tabelas.sql
+  * Inserção de 5 empresas com um endereço, uma competência e uma vaga associada - insere_empresas.sql
+  * Inserção de 5 candidatos com um endereço, uma competência e uma formação associada - insere_candidatos.sql
+
+### Curtidas e Match
+
+Finalmente temos o match entre nossos heróis.
+
+No arquivo sql/matches.sql são criadas duas novas tabelas:
+
+* curtidas_em_vaga -> que armazena o id dos candidatos que curtiram cada vaga
+* curtidas_em_candidato -> que armazena o id das empresas que curtiram cada candidato
+
+Além disso são inseridos algumas curtidas:
+
+![img_2.png](img_2.png)
+
+Note que a vaga com id 1(que é da empresa com id 1) foi curtida pelo candidato de id 8 e o candidato 8 curtiu a empresa 1!
+
+Temos o primeiro match de nosso sistema!
+
+Para visualizá-lo, também no arquivo sql/matches.sql criamos uma VIEW chamada matches.
+
+![img_5.png](img_5.png)
+
+Esta view cria uma tabela chamada 'vagas_por_empresa' que possibilita a visualização de qual foi a empresa que publicou cada vaga que recebeu uma curtida, presente na tabela curtidas_em_vaga.
+
+Então, unimos esta tabela a com a tabela curtidas_em_candidato e buscamos apenas os registros de curtidas que foram mútuas, ou seja, o candidato x curtiu uma vaga de uma empresa y e essa mesma empresa y curtiu  o candidato x.
+
+Basta agora utilizar a view:
+
+![img_3.png](img_3.png)
+
+Vamos testar um novo match! 
+
+O candidato id 9 foi curtido pela empresa id 2, agora o candidato id 9 irá curtir a vaga de id 2 (que é da empresa de id 2)
+
+![img_4.png](img_4.png)
