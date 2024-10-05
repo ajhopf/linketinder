@@ -2,7 +2,7 @@ package com.linketinder.view
 
 import com.linketinder.model.Candidato
 import com.linketinder.model.Empresa
-import com.linketinder.model.Pessoa
+import com.linketinder.model.Usuario
 import com.linketinder.service.CandidatoService
 import com.linketinder.service.EmpresaService
 
@@ -20,7 +20,7 @@ class ListagemView {
         candidatos.each {candidato -> printInfosDePessoa(candidato)}
     }
 
-    static <T extends Pessoa> void printInfosDePessoa(T pessoa) {
+    static <T extends Usuario> void printInfosDePessoa(T pessoa) {
         boolean isEmpresa = pessoa.getClass() == Empresa
         boolean isCandidato = pessoa.getClass() == Candidato
         String infosEspecificas = "Não foi possível obter o cpf / cnpj deste cadastro"

@@ -1,11 +1,19 @@
 package com.linketinder.model
 
-class Candidato extends Pessoa {
+class Candidato extends Usuario {
+    String sobrenome
     String cpf
-    Integer idade
+    Date dataNascimento
 
     @Override
     String toString() {
-        "Candidato: $super.nome, $super.email, idade: $idade anos, cpf: $cpf, Competencias: $super.competencias"
+        "Candidato: " +
+                "$super.nome, " +
+                "$sobrenome, " +
+                "$super.email, " +
+                "data de nascimento: $dataNascimento, " +
+                "cpf: $cpf, " +
+                "Competencias: $super.competencias" +
+                "Endereço: $super.endereco"
     }
 }

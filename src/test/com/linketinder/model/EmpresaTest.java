@@ -1,5 +1,6 @@
 package com.linketinder.model;
 
+import com.linketinder.model.enums.Afinidade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,7 @@ class EmpresaTest {
         empresa.setCnpj("12345");
         empresa.setDescricao("Descrição");
         List<Competencia> competencias = new ArrayList<>();
-        competencias.add(new Competencia("Java"));
+        competencias.add(new Competencia("Java", 3.0, Afinidade.MUITO_ALTA));
         Endereco endereco = new Endereco();
         empresa.setCompetencias(competencias);
         empresa.setEndereco(endereco);

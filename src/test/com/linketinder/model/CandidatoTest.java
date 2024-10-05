@@ -1,11 +1,11 @@
 package com.linketinder.model;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import com.linketinder.model.enums.Afinidade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,12 +14,12 @@ class CandidatoTest {
         Candidato candidato = new Candidato();
 
         candidato.setNome("André");
-        candidato.setIdade(32);
+        candidato.setSobrenome("Hopf");
         candidato.setEmail("andre.hopf@hotmail.com");
         candidato.setCpf("12345");
         candidato.setDescricao("Descrição");
         List<Competencia> competencias = new ArrayList<>();
-        competencias.add(new Competencia("Java"));
+        competencias.add(new Competencia("Java", 3.0, Afinidade.MUITO_ALTA));
         Endereco endereco = new Endereco();
         candidato.setCompetencias(competencias);
         candidato.setEndereco(endereco);
@@ -32,7 +32,7 @@ class CandidatoTest {
     void toStringTest() {
         Candidato candidato = createCandidato();
 
-        assertEquals("Candidato: André, andre.hopf@hotmail.com, idade: 32 anos, cpf: 12345, Competencias: [Java]", candidato.toString()) ;
+        assertEquals("Candidato: André, Hopf, andre.hopf@hotmail.com, idade: null, cpf: 12345, Competencias: [Java]", candidato.toString()) ;
     }
 
     @Test
@@ -52,20 +52,4 @@ class CandidatoTest {
         assertEquals("1234578", candidato.getCpf());
     }
 
-    @Test
-    @DisplayName("Quando getIdade é invocado deve retornar a idade do candidato")
-    void getIdade() {
-        Candidato candidato = createCandidato();
-
-        assertEquals(32, candidato.getIdade());
-    }
-
-    @Test
-    @DisplayName("Quando setIdade é invocado deve alterar o cpf do candidato pelo novo valor")
-    void setIdade() {
-        Candidato candidato = createCandidato();
-        candidato.setIdade(10);
-
-        assertEquals(10, candidato.getIdade());
-    }
 }
