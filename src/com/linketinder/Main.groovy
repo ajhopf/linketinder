@@ -1,7 +1,10 @@
 package com.linketinder
 
 import com.linketinder.model.Candidato
+import com.linketinder.model.Competencia
+import com.linketinder.model.Endereco
 import com.linketinder.model.dtos.CandidatoDTO
+import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.CandidatoRepository
 import com.linketinder.repository.CompetenciaRepository
 import com.linketinder.repository.EmpresaRepository
@@ -14,6 +17,9 @@ import com.linketinder.util.IniciarDB
 import com.linketinder.util.SqlFactory
 import com.linketinder.view.MenuInicial
 import groovy.sql.Sql
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 static void main(String[] args) {
 //    Map services = criarBeans()
@@ -33,6 +39,20 @@ static void main(String[] args) {
         CompetenciaService competenciaService = new CompetenciaService(competenciaRepository)
         CandidatoService candidatoService = new CandidatoService(candidatoRepository, enderecoService, competenciaService)
 
+        Candidato candidato = new Candidato()
+
+        candidato.nome = 'André'
+        candidato.sobrenome = 'Hopf'
+        candidato.descricao = 'Developer'
+        candidato.senha = 'umaSenhaTops'
+        candidato.email = 'andre.hopf@hotmail.com'
+        candidato.cpf = '022.567.470-00'
+        candidato.dataNascimento = LocalDate.parse("14/03/1992", DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        candidato.competencias = [new Competencia('Java', 1, Afinidade.fromValor(3))]
+        candidato.endereco = new Endereco(cep: '88064-074', pais: "Brasil", cidade: "Florianópolis", estado: "Santa Catarina")
+        candidato.telefone = "(48) 99903-0959"
+
+        candidatoService.adicionarCandidato(candidato)
 
         List<Candidato> candidatos = candidatoService.listarCandidatos()
 

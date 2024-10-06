@@ -1,5 +1,6 @@
 package com.linketinder.repository
 
+import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.model.dtos.CompetenciaDTO
 import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.interfaces.ICompetenciaDAO
@@ -34,5 +35,32 @@ class CompetenciaRepository implements ICompetenciaDAO {
         }
 
         return competencias
+    }
+
+    @Override
+    void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId) {
+        def inserirCompetencia = """
+            INSERT INTO competencias_usuario (usuario_id, competencia_id, anos_experiencia, afinidade)
+            VALUES (?, ?, ?, ?)
+        """
+
+        def competenciaParams = [usuarioId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
+
+        sql.executeInsert(inserirCompetencia, competenciaParams)
+    }
+
+    @Override
+    Integer obterIdDeCompetencia(String competenciaString) {
+        def statement = """
+            SELECT id FROM competencias c WHERE c.competencia LIKE $competenciaString
+        """
+
+        def row = sql.firstRow(statement)
+
+        if (row == null) {
+            throw new CompetenciaNotFoundException("Não foi possível encontrar a competência ${competenciaString}")
+        }
+
+        return row.id as Integer
     }
 }

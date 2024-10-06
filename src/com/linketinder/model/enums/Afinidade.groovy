@@ -21,4 +21,8 @@ enum Afinidade {
         }
         throw new IllegalArgumentException('A afinidade aceita valores de 1 a 5')
     }
+
+    int getAfinidade() {
+        return afinidade
+    }
 }

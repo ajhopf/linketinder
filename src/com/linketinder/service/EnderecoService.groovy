@@ -18,11 +18,31 @@ class EnderecoService {
 
     Endereco obterEnderecoDoUsuario(Integer id)  {
         try {
-            EnderecoDTO enderecoDto = repository.obterEnderecoPeloId(id)
+            EnderecoDTO enderecoDto = repository.obterEnderecoDoUsuarioPeloId(id)
 
             return EnderecoMapper.toEntity(enderecoDto)
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }
     }
+
+    void adicionarEndereco(Endereco endereco, Integer usuarioId) {
+        try {
+            EnderecoDTO enderecoDTO = EnderecoMapper.toDTO(endereco, usuarioId)
+
+            Integer enderecoJaExisteId = repository.obterIdDeEnderecoPeloCep(enderecoDTO.cep)
+
+            if (enderecoJaExisteId == -1) {
+                Integer enderecoId = repository.adicionarNovoEndereco(enderecoDTO)
+                repository.adicionarEnderecoParaUsuario(usuarioId, enderecoId)
+            } else {
+                repository.adicionarEnderecoParaUsuario(usuarioId, enderecoJaExisteId)
+            }
+
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
+
 }

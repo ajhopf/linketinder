@@ -1,11 +1,8 @@
 package com.linketinder.service
 
-import com.linketinder.exceptions.RepositoryAccessException
-import com.linketinder.model.Competencia
+
 import com.linketinder.model.Endereco
-import com.linketinder.model.dtos.CompetenciaDTO
 import com.linketinder.model.dtos.EnderecoDTO
-import com.linketinder.repository.CompetenciaRepository
 import com.linketinder.repository.EnderecoRepository
 import spock.lang.Specification
 
@@ -22,7 +19,7 @@ class EnderecoServiceTest extends Specification {
         EnderecoDTO endereco = new EnderecoDTO(cep: '88063-074', cidade: 'Florianópolis', estado: 'Santa Catarina', pais: 'Brasil')
 
         when:
-        when(repository.obterEnderecoPeloId(any(Integer))).thenReturn(endereco);
+        when(repository.obterEnderecoDoUsuarioPeloId(any(Integer))).thenReturn(endereco);
         Endereco resultado = enderecoService.obterEnderecoDoUsuario(1);
 
         then:
@@ -36,7 +33,7 @@ class EnderecoServiceTest extends Specification {
         EnderecoDTO endereco = new EnderecoDTO()
 
         when:
-        when(repository.obterEnderecoPeloId(any(Integer))).thenReturn(endereco);
+        when(repository.obterEnderecoDoUsuarioPeloId(any(Integer))).thenReturn(endereco);
         Endereco resultado = enderecoService.obterEnderecoDoUsuario(1);
 
         then:

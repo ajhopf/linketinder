@@ -1,6 +1,6 @@
 package com.linketinder.service
 
-
+import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
@@ -21,16 +21,30 @@ class CandidatoService {
         this.enderecoService = enderecoService
         this.competenciaService = competenciaService
     }
-//
-    Candidato adicionarCandidato(Candidato candidato) {
-//        Integer id = MyUtil.gerarNovoId(listarCandidatos())
-//        candidato.id = id
 
-        CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
+    void adicionarCandidato(Candidato candidato) {
+        try {
+            CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
 
-        repository.adicionarCandidato(candidato)
+            for (competencia in candidato.competencias) {
+                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+            }
 
-        candidato
+            Integer usuarioId = repository.adicionarCandidato(candidatoDTO)
+
+            enderecoService.adicionarEndereco(candidato.endereco, usuarioId)
+
+            for (competencia in candidato.competencias) {
+                competenciaService.adicionarCompetenciaDeUsuario(competencia, usuarioId)
+            }
+
+            println "Candidato criado com sucesso! Id: $usuarioId"
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        } catch (CompetenciaNotFoundException e) {
+            throw new CompetenciaNotFoundException(e.getMessage() + ' . Candidato não foi criado')
+        }
+
     }
 
     List<Candidato> listarCandidatos() {

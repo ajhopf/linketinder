@@ -4,7 +4,10 @@ import groovy.transform.ToString
 
 @ToString(includePackage = false)
 abstract class Usuario extends Identificavel {
-    String nome, email, descricao
+    String nome
+    String email
+    String descricao
+    String senha
     Endereco endereco
     List<Competencia> competencias
 }

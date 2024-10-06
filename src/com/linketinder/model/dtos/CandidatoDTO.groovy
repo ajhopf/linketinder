@@ -1,7 +1,11 @@
 package com.linketinder.model.dtos
 
+
+import java.time.LocalDate
+
 class CandidatoDTO extends UsuarioDTO {
     String cpf
     String sobrenome
-    Date dataNascimento
+    LocalDate dataNascimento
+    String telefone
 }

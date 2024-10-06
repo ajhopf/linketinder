@@ -1,9 +1,7 @@
 package com.linketinder.model.mappers
 
 import com.linketinder.model.Competencia
-import com.linketinder.model.Endereco
 import com.linketinder.model.dtos.CompetenciaDTO
-import com.linketinder.model.dtos.EnderecoDTO
 
 class CompetenciaMapper {
     static CompetenciaDTO toDTO(Competencia competencia) {

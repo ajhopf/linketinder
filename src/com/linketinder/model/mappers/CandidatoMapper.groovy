@@ -14,7 +14,9 @@ class CandidatoMapper {
                 email: candidato.email,
                 descricao: candidato.descricao,
                 cpf: candidato.cpf,
-                dataNascimento: candidato.dataNascimento
+                dataNascimento: candidato.dataNascimento,
+                senha: candidato.senha,
+                telefone: candidato.telefone
         )
     }
 
@@ -28,7 +30,9 @@ class CandidatoMapper {
                 cpf: candidatoDTO.cpf,
                 dataNascimento: candidatoDTO.dataNascimento,
                 endereco: endereco,
-                competencias:  competencias
+                competencias:  competencias,
+                senha: candidatoDTO.senha,
+                telefone: candidatoDTO.telefone
         )
     }
 }

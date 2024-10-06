@@ -5,4 +5,5 @@ abstract class UsuarioDTO {
     String nome
     String email
     String descricao
+    String senha
 }
