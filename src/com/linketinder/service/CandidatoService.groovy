@@ -1,5 +1,6 @@
 package com.linketinder.service
 
+import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Candidato
@@ -22,7 +23,32 @@ class CandidatoService {
         this.competenciaService = competenciaService
     }
 
-    void adicionarCandidato(Candidato candidato) {
+    Candidato obterCandidatoPeloId(Integer usuarioId) throws RepositoryAccessException, CandidatoNotFoundException {
+        try{
+            CandidatoDTO candidatoDTO = repository.obterCandidatoPeloId(usuarioId)
+            Endereco endereco = enderecoService.obterEnderecoDoUsuario(usuarioId)
+            List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuario(usuarioId)
+
+            return CandidatoMapper.toEntity(candidatoDTO, endereco, competencias)
+        } catch (SQLException e){
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
+        } catch (CandidatoNotFoundException e) {
+            throw e
+        }
+    }
+
+    void deletarCandidatoPeloId(Integer usuarioId) throws RepositoryAccessException, CandidatoNotFoundException{
+       try {
+            repository.obterCandidatoPeloId(usuarioId)
+            repository.deletarCandidatoPeloId(usuarioId)
+       } catch (SQLException e) {
+           throw new RepositoryAccessException(e.getMessage(), e.getCause())
+       } catch (CandidatoNotFoundException e) {
+           throw e
+       }
+    }
+
+    void adicionarCandidato(Candidato candidato) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {
             CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
 
@@ -47,7 +73,7 @@ class CandidatoService {
 
     }
 
-    List<Candidato> listarCandidatos() {
+    List<Candidato> listarCandidatos() throws SQLException {
         List<Candidato> candidatos = []
 
         try {

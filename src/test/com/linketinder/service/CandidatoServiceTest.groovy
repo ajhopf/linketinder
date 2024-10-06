@@ -1,5 +1,6 @@
 package com.linketinder.service
 
+import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Candidato
@@ -10,6 +11,8 @@ import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.CandidatoRepository
 
 import spock.lang.Specification
+
+import java.sql.SQLException
 
 import static org.mockito.Mockito.*;
 
@@ -87,6 +90,37 @@ class CandidatoServiceTest extends Specification {
         then:
         verify(competenciaService, times(1)).adicionarCompetenciaDeUsuario(any(Competencia), eq(1))
         verify(enderecoService, times(1)).adicionarEndereco(any(Endereco), eq(1))
+    }
+
+    void "obterCandidatoPeloId lança CandidatoNotFoundException quando não é encontrado um candidato"() {
+        given:
+        when(repository.obterCandidatoPeloId(any(Integer))).thenThrow(CandidatoNotFoundException.class)
+
+        when:
+        candidatoService.obterCandidatoPeloId(1)
+
+        then:
+        thrown(CandidatoNotFoundException)
+    }
+
+    void "deletarCandidatoPeloId invoca o metodo deletarCandidatoPeloId do Repository"() {
+        when:
+        doNothing().when(repository).deletarCandidatoPeloId(1)
+        candidatoService.deletarCandidatoPeloId(1)
+
+        then:
+        verify(repository, times(1)).deletarCandidatoPeloId(1)
+    }
+
+    void "deletarCandidatoPeloId lança CandidatoNotFoundException quando não é encontrado um candidato"() {
+        given:
+        when(repository.obterCandidatoPeloId(1)).thenThrow(CandidatoNotFoundException.class)
+
+        when:
+        candidatoService.deletarCandidatoPeloId(1)
+
+        then:
+        thrown(CandidatoNotFoundException)
     }
 
 }

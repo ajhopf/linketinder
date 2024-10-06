@@ -11,7 +11,7 @@ class MenuInicial {
         while (true) {
             gerarMenuInicial()
 
-            int opcaoSelecionada = MyUtil.getIntInput(0, 4, "Selecione a opção desejada: ", sc)
+            int opcaoSelecionada = MyUtil.getIntInput(0, 5, "Selecione a opção desejada: ", sc)
 
             switch (opcaoSelecionada) {
                 case 0:
@@ -29,6 +29,9 @@ class MenuInicial {
                 case 4:
                     CadastroCandidatoView.adicionarCandidato(candidatoService, sc)
                     break
+                case 5:
+                    DeletarView.deletarCandidato(candidatoService, sc)
+                    break
 
                 default: println "Você escolheu a opção " + opcaoSelecionada
             }
@@ -45,6 +48,7 @@ class MenuInicial {
         |2. Adicionar Empresa
         |3. Listar Candidatos
         |4. Adicionar Candidato
+        |5. Deletar Candidato
         |0. Sair do Sistema
         |---------------------------------------------
         '''.stripMargin()
