@@ -6,7 +6,6 @@ import com.linketinder.model.Competencia
 import com.linketinder.model.dtos.CompetenciaDTO
 import com.linketinder.model.mappers.CompetenciaMapper
 import com.linketinder.repository.CompetenciaRepository
-import net.bytebuddy.implementation.bytecode.Throw
 
 import java.sql.SQLException
 
@@ -17,7 +16,7 @@ class CompetenciaService {
         this.repository = repository
     }
 
-    void adicionarCompetenciaDeUsuario(Competencia competencia, Integer usuarioId) {
+    void adicionarCompetenciaDeUsuario(Competencia competencia, Integer usuarioId) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
             Integer competenciaId = repository.obterIdDeCompetencia(competencia.competencia)
@@ -28,15 +27,19 @@ class CompetenciaService {
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         } catch (CompetenciaNotFoundException e) {
-            throw new CompetenciaNotFoundException(e.getMessage())
+            throw e
         }
     }
 
-    void verificarSeCompetenciaExiste(String competencia) {
-        repository.obterIdDeCompetencia(competencia)
+    void verificarSeCompetenciaExiste(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
+        try {
+            repository.obterIdDeCompetencia(competencia)
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
     }
 
-    List<Competencia> listarCompetenciasDeUsuario(Integer usuarioId) {
+    List<Competencia> listarCompetenciasDeUsuario(Integer usuarioId) throws RepositoryAccessException {
         try {
             List<CompetenciaDTO> competenciasDTO = repository.listarCompetenciasDeUsuario(usuarioId)
             List<Competencia> competencias = []

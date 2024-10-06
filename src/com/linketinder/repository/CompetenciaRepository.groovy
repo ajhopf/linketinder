@@ -6,6 +6,8 @@ import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.interfaces.ICompetenciaDAO
 import groovy.sql.Sql
 
+import java.sql.SQLException
+
 class CompetenciaRepository implements ICompetenciaDAO {
     private Sql sql = null
 
@@ -14,7 +16,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    List<CompetenciaDTO> listarCompetenciasDeUsuario(Integer usuarioId) {
+    List<CompetenciaDTO> listarCompetenciasDeUsuario(Integer usuarioId) throws SQLException {
         def statement = """
                 select c.competencia, cu.afinidade, cu.anos_experiencia 
                 from competencias_usuario cu
@@ -38,7 +40,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId) {
+    void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId) throws SQLException  {
         def inserirCompetencia = """
             INSERT INTO competencias_usuario (usuario_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
@@ -50,7 +52,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    Integer obterIdDeCompetencia(String competenciaString) {
+    Integer obterIdDeCompetencia(String competenciaString) throws SQLException, CompetenciaNotFoundException {
         def statement = """
             SELECT id FROM competencias c WHERE c.competencia LIKE $competenciaString
         """

@@ -1,10 +1,12 @@
 package com.linketinder.service
 
+import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
 import com.linketinder.model.Endereco
 import com.linketinder.model.dtos.CandidatoDTO
+import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.CandidatoRepository
 
 import spock.lang.Specification
@@ -54,6 +56,37 @@ class CandidatoServiceTest extends Specification {
 
         then:
         thrown(RepositoryAccessException)
+    }
+
+
+    void "adicionarCandidato() lança CompetenciaNotFoundException quando candidato tem competencia invalida"() {
+        given:
+            Candidato candidato = new Candidato()
+            candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
+            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenThrow(CompetenciaNotFoundException.class)
+
+        when:
+            candidatoService.adicionarCandidato(candidato)
+
+        then:
+            thrown(CompetenciaNotFoundException)
+    }
+
+    void "adicionarCandidato() cria novo candidato com suas competencias e endereco"() {
+        given:
+        Candidato candidato = new Candidato()
+        candidato.endereco = new Endereco()
+        candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
+        doNothing().when(competenciaService).verificarSeCompetenciaExiste(any(String))
+
+        when(repository.adicionarCandidato(any(CandidatoDTO))).thenReturn(1)
+
+        when:
+        candidatoService.adicionarCandidato(candidato)
+
+        then:
+        verify(competenciaService, times(1)).adicionarCompetenciaDeUsuario(any(Competencia), eq(1))
+        verify(enderecoService, times(1)).adicionarEndereco(any(Endereco), eq(1))
     }
 
 }
