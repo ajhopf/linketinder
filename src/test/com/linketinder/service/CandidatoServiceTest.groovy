@@ -12,8 +12,6 @@ import com.linketinder.repository.CandidatoRepository
 
 import spock.lang.Specification
 
-import java.sql.SQLException
-
 import static org.mockito.Mockito.*;
 
 class CandidatoServiceTest extends Specification {

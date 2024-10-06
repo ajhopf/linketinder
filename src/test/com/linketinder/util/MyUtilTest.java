@@ -2,6 +2,7 @@ package com.linketinder.util;
 
 import com.linketinder.model.Empresa;
 import com.linketinder.model.Identificavel;
+import jdk.internal.util.xml.impl.Input;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ class MyUtilTest {
             Scanner sc = new Scanner(System.in);
 
             //act
-            int result = MyUtil.getIntInput(1, 10, "Digite um número:", sc);
+            int result = InputHelpers.getIntInput(1, 10, "Digite um número:", sc);
 
             //assert
             assertEquals(5, result);
@@ -48,7 +49,7 @@ class MyUtilTest {
             System.setOut(new PrintStream(outputStreamCaptor));
 
             //act
-            MyUtil.getIntInput(1, 3, "Digite um número:", sc);
+            InputHelpers.getIntInput(1, 3, "Digite um número:", sc);
 
             //assert
             assertEquals("Digite um número:\nEscolha um número entre 1 e 3", outputStreamCaptor.toString().trim());
@@ -64,7 +65,7 @@ class MyUtilTest {
             System.setOut(new PrintStream(outputStreamCaptor));
 
             //act
-            MyUtil.getIntInput(1, 3, "Digite um número:", sc);
+            InputHelpers.getIntInput(1, 3, "Digite um número:", sc);
 
             //assert
             assertEquals("Digite um número:\nVocê deve escolher utilizando um número de 1 a 3", outputStreamCaptor.toString().trim());
@@ -82,7 +83,7 @@ class MyUtilTest {
             Scanner sc = new Scanner(System.in);
 
             //act
-            String result = MyUtil.obterString("title", sc);
+            String result = InputHelpers.obterString("title", sc);
 
             //assert
             assertEquals(mensagem, result);

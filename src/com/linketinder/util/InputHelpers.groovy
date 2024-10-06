@@ -1,22 +1,46 @@
-package com.linketinder.view
+package com.linketinder.util
 
-import com.linketinder.model.Candidato
+import com.linketinder.exceptions.OpcaoInvalidaException
 import com.linketinder.model.Competencia
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.model.enums.Afinidade
-import com.linketinder.service.CandidatoService
 import com.linketinder.service.EmpresaService
-import com.linketinder.util.MyUtil
 
-class CadastroView {
+class InputHelpers {
+    static String obterString(String title, Scanner sc) {
+        println title
+        return sc.nextLine()
+    }
+
+    static int getIntInput(int min, int max, String title, Scanner sc) {
+        println title
+
+        while (true) {
+            try {
+                String stringValue = sc.nextLine()
+
+                int value = Integer.parseInt(stringValue)
+
+                if (value < min || value > max) {
+                    throw new OpcaoInvalidaException("Escolha um número entre $min e $max")
+                }
+                return value;
+            } catch (OpcaoInvalidaException e) {
+                println e.getMessage()
+            } catch (InputMismatchException | NumberFormatException e) {
+                println "Você deve escolher utilizando um número de $min a $max"
+            }
+        }
+    }
+
 
     static void adicionarEmpresa(EmpresaService service, Scanner sc) {
         println "Criar nova Empresa"
         printInfosIniciais()
 
         Map infosBasicas = obterInfosBasicas(sc)
-        String cnpj = MyUtil.obterString("Digite o cnpj da empresa", sc)
+        String cnpj = obterString("Digite o cnpj da empresa", sc)
         Endereco endereco = obterEndereco(sc)
         List<Competencia> competencias = obterCompetencias(sc)
 
@@ -40,13 +64,13 @@ class CadastroView {
     }
 
     static Map obterInfosBasicas(Scanner sc, isEmpresa = true) {
-        String nome = MyUtil.obterString("Digite o nome ${isEmpresa ? "da empresa" : "do candidato"}:", sc)
-        String email = MyUtil.obterString("Digite o email ${isEmpresa ? "corporativo da empresa" : "do candidato"}:", sc)
+        String nome = obterString("Digite o nome ${isEmpresa ? "da empresa" : "do candidato"}:", sc)
+        String email = obterString("Digite o email ${isEmpresa ? "corporativo da empresa" : "do candidato"}:", sc)
 
         boolean senhaInvalida = true
         String senha = null
         while (senhaInvalida) {
-            senha = MyUtil.obterString('Digite a senha - deve ter no minimo 6 caracteres', sc)
+            senha = obterString('Digite a senha - deve ter no minimo 6 caracteres', sc)
 
             if (senha.size() > 6) {
                 senhaInvalida = false
@@ -55,7 +79,7 @@ class CadastroView {
             }
         }
 
-        String descricao = MyUtil.obterString("Digite a descrição ${isEmpresa ? "da empresa" : "do candidato"}:", sc)
+        String descricao = obterString("Digite a descrição ${isEmpresa ? "da empresa" : "do candidato"}:", sc)
 
         [
                 nome: nome,
@@ -68,15 +92,15 @@ class CadastroView {
     static Endereco obterEndereco(Scanner sc, isEmpresa = true) {
         String finalDaString = isEmpresa ? "da empresa" : "do candidato"
 
-        String pais = MyUtil.obterString("Digite o país $finalDaString:", sc)
-        String estado = MyUtil.obterString("Digite o estado $finalDaString:", sc)
-        String cidade = MyUtil.obterString("Digite a cidade $finalDaString", sc)
+        String pais = obterString("Digite o país $finalDaString:", sc)
+        String estado = obterString("Digite o estado $finalDaString:", sc)
+        String cidade = obterString("Digite a cidade $finalDaString", sc)
 
         String cep = null
         boolean cepInvalido = true
 
         while(cepInvalido) {
-            cep = MyUtil.obterString("Digite o cep $finalDaString no formato 99999-999:", sc)
+            cep = obterString("Digite o cep $finalDaString no formato 99999-999:", sc)
 
             if (cep ==~ /^\d{5}-\d{3}$/) {
                 cepInvalido = false
@@ -96,12 +120,12 @@ class CadastroView {
 
         while (true) {
             println "Para parar de adicionar competências digite 'sair'"
-            String competencia = MyUtil.obterString("Digite uma competência", sc)
+            String competencia = obterString("Digite uma competência", sc)
             if (competencia == "sair") {
                 break
             }
-            Double anosExperiencia = MyUtil.getIntInput(0, 50, 'Anos de experiencia', sc)
-            Integer afinidade = MyUtil.getIntInput(1, 5, 'Digite o nível de afiidade entre 1 e 5', sc)
+            Double anosExperiencia = getIntInput(0, 50, 'Anos de experiencia', sc)
+            Integer afinidade = getIntInput(1, 5, 'Digite o nível de afiidade entre 1 e 5', sc)
             competencias << new Competencia(competencia, anosExperiencia, Afinidade.fromValor(afinidade))
         }
 

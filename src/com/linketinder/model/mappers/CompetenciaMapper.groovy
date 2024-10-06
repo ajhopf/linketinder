@@ -13,6 +13,6 @@ class CompetenciaMapper {
     }
 
     static Competencia toEntity(CompetenciaDTO competenciaDTO) {
-        return new Competencia(competenciaDTO.competencia, competenciaDTO.anosExperiencia, competenciaDTO.afinidade)
+        return new Competencia(competenciaDTO.id, competenciaDTO.competencia, competenciaDTO.anosExperiencia, competenciaDTO.afinidade)
     }
 }

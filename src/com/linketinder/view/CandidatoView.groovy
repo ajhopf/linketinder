@@ -4,24 +4,24 @@ import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
 import com.linketinder.model.Endereco
 import com.linketinder.service.CandidatoService
-import com.linketinder.util.MyUtil
+import com.linketinder.util.InputHelpers
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class CadastroCandidatoView {
+class CandidatoView {
     static void adicionarCandidato(CandidatoService service, Scanner sc) {
         println "Criar novo Cadastro de Candidato"
-        CadastroView.printInfosIniciais()
-        String sobrenome = MyUtil.obterString('Digite o sobrenome do candidato', sc)
-        Map infosBasicas = CadastroView.obterInfosBasicas(sc, false)
+        InputHelpers.printInfosIniciais()
+        String sobrenome = InputHelpers.obterString('Digite o sobrenome do candidato', sc)
+        Map infosBasicas = InputHelpers.obterInfosBasicas(sc, false)
         String telefone = obterTelefone(sc)
         String cpf = obterCpf(sc)
         LocalDate dataDeNascimento = obterDataDeNascimento(sc)
-        Endereco endereco = CadastroView.obterEndereco(sc, false)
-        List<Competencia> competencias = CadastroView.obterCompetencias(sc, false)
+        Endereco endereco = InputHelpers.obterEndereco(sc, false)
+        List<Competencia> competencias = InputHelpers.obterCompetencias(sc, false)
 
         Candidato candidato = new Candidato(
                 nome: infosBasicas.nome,
@@ -46,7 +46,7 @@ class CadastroCandidatoView {
         boolean cpfInvalido = true
 
         while(cpfInvalido) {
-            cpf = MyUtil.obterString("Digite o cpf no formato 000.000.000-00", sc)
+            cpf = InputHelpers.obterString("Digite o cpf no formato 000.000.000-00", sc)
             if (cpf ==~ /\d{3}\.\d{3}\.\d{3}-\d{2}/) {
                 cpfInvalido = false
             } else {
@@ -62,7 +62,7 @@ class CadastroCandidatoView {
         boolean dataInvalida = true
 
         while (dataInvalida) {
-            String dataString = MyUtil.obterString("Digite a data de nascimento no formato dd/MM/yyyy", sc)
+            String dataString = InputHelpers.obterString("Digite a data de nascimento no formato dd/MM/yyyy", sc)
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             simpleDateFormat.setLenient(false);
@@ -85,7 +85,7 @@ class CadastroCandidatoView {
         boolean telefoneInvalido = true
 
         while(telefoneInvalido) {
-            telefone = MyUtil.obterString("Digite o telefone no formato (DD) 99999-9999", sc)
+            telefone = InputHelpers.obterString("Digite o telefone no formato (DD) 99999-9999", sc)
             if (telefone ==~ /^\(\d{2}\)\s\d{5}-\d{4}$/) {
                 telefoneInvalido = false
             } else {
