@@ -30,7 +30,7 @@ class ListagemView {
             infosEspecificas = "CNPJ: $empresa.cnpj"
         } else if (isCandidato) {
             Candidato candidato = pessoa as Candidato
-            infosEspecificas = "CPF: $candidato.cpf\n|Idade: $candidato.idade anos"
+            infosEspecificas = "CPF: $candidato.cpf\n|Data de Nascimento: $candidato.dataNascimento\n|Telefone: $candidato.telefone"
         }
 
         println """

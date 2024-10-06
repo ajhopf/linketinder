@@ -4,33 +4,12 @@ import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
+import com.linketinder.model.enums.Afinidade
 import com.linketinder.service.CandidatoService
 import com.linketinder.service.EmpresaService
 import com.linketinder.util.MyUtil
 
 class CadastroView {
-    static void adicionarCandidato(CandidatoService service, Scanner sc) {
-        println "Criar novo Cadastro de Candidato"
-        printInfosIniciais()
-        Map infosBasicas = obterInfosBasicas(sc, false)
-        String cpf = MyUtil.obterString("Digite o cpf do candidato", sc)
-        Integer idade = MyUtil.getIntInput(0, 100, "Digite a idade do candidato", sc)
-        Endereco endereco = obterEndereco(sc, false)
-        List<Competencia> competencias = obterCompetencias(sc, false)
-
-        Candidato candidato = new Candidato(
-                nome: infosBasicas.nome,
-                email: infosBasicas.email,
-                descricao: infosBasicas.descricao,
-                idade: idade,
-                cpf: cpf,
-                endereco: endereco,
-                competencias: competencias
-        )
-
-        service.adicionarCandidato(candidato)
-    }
-
 
     static void adicionarEmpresa(EmpresaService service, Scanner sc) {
         println "Criar nova Empresa"
@@ -63,12 +42,26 @@ class CadastroView {
     static Map obterInfosBasicas(Scanner sc, isEmpresa = true) {
         String nome = MyUtil.obterString("Digite o nome ${isEmpresa ? "da empresa" : "do candidato"}:", sc)
         String email = MyUtil.obterString("Digite o email ${isEmpresa ? "corporativo da empresa" : "do candidato"}:", sc)
+
+        boolean senhaInvalida = true
+        String senha = null
+        while (senhaInvalida) {
+            senha = MyUtil.obterString('Digite a senha - deve ter no minimo 6 caracteres', sc)
+
+            if (senha.size() > 6) {
+                senhaInvalida = false
+            } else {
+                println 'Senha deve ter no minimo 6 caracteres'
+            }
+        }
+
         String descricao = MyUtil.obterString("Digite a descrição ${isEmpresa ? "da empresa" : "do candidato"}:", sc)
 
         [
                 nome: nome,
                 email: email,
                 descricao: descricao,
+                senha: senha
         ]
     }
 
@@ -77,9 +70,23 @@ class CadastroView {
 
         String pais = MyUtil.obterString("Digite o país $finalDaString:", sc)
         String estado = MyUtil.obterString("Digite o estado $finalDaString:", sc)
-        String cep = MyUtil.obterString("Digite o cep da $finalDaString:", sc)
+        String cidade = MyUtil.obterString("Digite a cidade $finalDaString", sc)
 
-        new Endereco(pais: pais, estado: estado, cep: cep)
+        String cep = null
+        boolean cepInvalido = true
+
+        while(cepInvalido) {
+            cep = MyUtil.obterString("Digite o cep $finalDaString no formato 99999-999:", sc)
+
+            if (cep ==~ /^\d{5}-\d{3}$/) {
+                cepInvalido = false
+            } else {
+                println 'Cep informado está em um formato inválido'
+            }
+        }
+
+
+        new Endereco(pais: pais, estado: estado, cep: cep, cidade: cidade)
     }
 
     static List<Competencia> obterCompetencias(Scanner sc, isEmpresa = true) {
@@ -93,7 +100,9 @@ class CadastroView {
             if (competencia == "sair") {
                 break
             }
-            competencias << new Competencia(competencia)
+            Double anosExperiencia = MyUtil.getIntInput(0, 50, 'Anos de experiencia', sc)
+            Integer afinidade = MyUtil.getIntInput(1, 5, 'Digite o nível de afiidade entre 1 e 5', sc)
+            competencias << new Competencia(competencia, anosExperiencia, Afinidade.fromValor(afinidade))
         }
 
         competencias

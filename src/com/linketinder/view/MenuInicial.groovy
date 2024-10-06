@@ -27,7 +27,7 @@ class MenuInicial {
                     ListagemView.listarCandidatos(candidatoService)
                     break
                 case 4:
-                    CadastroView.adicionarCandidato(candidatoService, sc)
+                    CadastroCandidatoView.adicionarCandidato(candidatoService, sc)
                     break
 
                 default: println "Você escolheu a opção " + opcaoSelecionada
