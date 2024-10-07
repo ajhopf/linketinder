@@ -11,46 +11,51 @@ class MenuInicial {
 
         while (true) {
             gerarMenuInicial()
+            try {
+                int opcaoSelecionada = InputHelpers.getIntInput(0, 16, "Selecione a opção desejada: ", sc)
 
-            int opcaoSelecionada = InputHelpers.getIntInput(0, 16, "Selecione a opção desejada: ", sc)
+                switch (opcaoSelecionada) {
+                    case 0:
+                        println "Até logo!"
+                        return
+                    case 1:
+                        CompetenciaView.listarCompetencias(competenciaService)
+                        break
+                    case 2:
+                        CompetenciaView.adicionarCompetencia(competenciaService, sc)
+                        break
+                    case 3:
+                        CompetenciaView.editarCompetencia(competenciaService, sc)
+                        break
+                    case 4:
+                        CompetenciaView.deletarCompetencia(competenciaService, sc)
+                        break
+                    case 5:
+                        ListagemView.listarEmpresas(empresaService)
+                        break
+                    case 6:
+                        EmpresaView.adicionarEmpresa(empresaService, sc)
+                        break
+                    case 13:
+                        ListagemView.listarCandidatos(candidatoService)
+                        break
+                    case 14:
+                        CandidatoView.adicionarCandidato(candidatoService, sc)
+                        break
+                    case 16:
+                        DeletarView.deletarCandidato(candidatoService, sc)
+                        break
 
-            switch (opcaoSelecionada) {
-                case 0:
-                    println "Até logo!"
-                    return
-                case 1:
-                    CompetenciaView.listarCompetencias(competenciaService)
-                    break
-                case 2:
-                    CompetenciaView.adicionarCompetencia(competenciaService, sc)
-                    break
-                case 3:
-                    CompetenciaView.editarCompetencia(competenciaService, sc)
-                    break
-                case 4:
-                    CompetenciaView.deletarCompetencia(competenciaService, sc)
-                    break
-                case 5:
-                    ListagemView.listarEmpresas(empresaService)
-                    break
-                case 6:
-                    InputHelpers.adicionarEmpresa(empresaService, sc)
-                    break
-                case 13:
-                    ListagemView.listarCandidatos(candidatoService)
-                    break
-                case 14:
-                    CandidatoView.adicionarCandidato(candidatoService, sc)
-                    break
-                case 16:
-                    DeletarView.deletarCandidato(candidatoService, sc)
-                    break
+                    default: println "Você escolheu a opção " + opcaoSelecionada
+                }
 
-                default: println "Você escolheu a opção " + opcaoSelecionada
+            } catch (Exception e) {
+                e.getMessage()
+                e.printStackTrace()
             }
         }
-
     }
+
 
     static void gerarMenuInicial(){
         println '''---------------------------------------------

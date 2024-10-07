@@ -3,17 +3,18 @@ package com.linketinder.service
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.model.dtos.EmpresaDTO
+
 import com.linketinder.repository.EmpresaRepository
 import spock.lang.Specification
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.*
 
 class EmpresaServiceTest extends Specification {
-    EmpresaRepository repository = mock(EmpresaRepository.class);
-    EnderecoService enderecoService = mock(EnderecoService.class);
-    EmpresaService empresaService = new EmpresaService(repository, enderecoService);
+    EmpresaRepository repository = mock(EmpresaRepository.class)
+    EnderecoService enderecoService = mock(EnderecoService.class)
+    EmpresaService empresaService = new EmpresaService(repository, enderecoService)
 
-    def "listarEmpresas() retorna uma lista empresas"() {
+    void "listarEmpresas() retorna uma lista empresas"() {
         given:
             EmpresaDTO empresa1 = new EmpresaDTO()
             empresa1.id = 1
@@ -30,4 +31,17 @@ class EmpresaServiceTest extends Specification {
             resultado[0].id == 1
     }
 
+    void "adicionarEmpresa() cria uma empresa"(){
+        given:
+        Empresa emoresa = new Empresa()
+        emoresa.endereco = new Endereco()
+
+        when(repository.adicionarEmpresa(any(EmpresaDTO))).thenReturn(1)
+
+        when:
+        empresaService.adicionarEmpresa(emoresa)
+
+        then:
+        verify(enderecoService, times(1)).adicionarEndereco(any(Endereco), eq(1))
+    }
 }

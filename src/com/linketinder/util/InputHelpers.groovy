@@ -2,12 +2,17 @@ package com.linketinder.util
 
 import com.linketinder.exceptions.OpcaoInvalidaException
 import com.linketinder.model.Competencia
-import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.model.enums.Afinidade
-import com.linketinder.service.EmpresaService
 
 class InputHelpers {
+    static void printInfosIniciais() {
+        println "---------------------------"
+        println "ATENÇÃO: esta é uma versão inicial do programa em que o cadastro de novas empresas e candidatos está livremente habilitado"
+        println "Na versão final a adição de empresas e candidatos só será possível através de um formulário ou feito por um administrador do sistema"
+        println "---------------------------"
+    }
+
     static String obterString(String title, Scanner sc) {
         println title
         return sc.nextLine()
@@ -25,42 +30,13 @@ class InputHelpers {
                 if (value < min || value > max) {
                     throw new OpcaoInvalidaException("Escolha um número entre $min e $max")
                 }
-                return value;
+                return value
             } catch (OpcaoInvalidaException e) {
                 println e.getMessage()
             } catch (InputMismatchException | NumberFormatException e) {
                 println "Você deve escolher utilizando um número de $min a $max"
             }
         }
-    }
-
-
-    static void adicionarEmpresa(EmpresaService service, Scanner sc) {
-        println "Criar nova Empresa"
-        printInfosIniciais()
-
-        Map infosBasicas = obterInfosBasicas(sc)
-        String cnpj = obterString("Digite o cnpj da empresa", sc)
-        Endereco endereco = obterEndereco(sc)
-        List<Competencia> competencias = obterCompetencias(sc)
-
-        Empresa empresa = new Empresa(
-                nome: infosBasicas.nome,
-                email: infosBasicas.email,
-                descricao: infosBasicas.descricao,
-                cnpj: cnpj,
-                endereco: endereco,
-                competencias: competencias
-        )
-
-        service.adicionarEmpresa(empresa);
-    }
-
-    static void printInfosIniciais() {
-        println "---------------------------"
-        println "ATENÇÃO: esta é uma versão inicial do programa em que o cadastro de novas empresas e candidatos está livremente habilitado"
-        println "Na versão final a adição de empresas e candidatos só será possível através de um formulário ou feito por um administrador do sistema"
-        println "---------------------------"
     }
 
     static Map obterInfosBasicas(Scanner sc, isEmpresa = true) {
@@ -72,7 +48,7 @@ class InputHelpers {
         while (senhaInvalida) {
             senha = obterString('Digite a senha - deve ter no minimo 6 caracteres', sc)
 
-            if (senha.size() > 6) {
+            if (senha.size() >= 6) {
                 senhaInvalida = false
             } else {
                 println 'Senha deve ter no minimo 6 caracteres'

@@ -1,10 +1,7 @@
 package com.linketinder.model.mappers
 
-import com.linketinder.model.Candidato
-import com.linketinder.model.Competencia
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
-import com.linketinder.model.dtos.CandidatoDTO
 import com.linketinder.model.dtos.EmpresaDTO
 
 class EmpresaMapper {

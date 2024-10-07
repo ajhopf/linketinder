@@ -1,8 +1,6 @@
 package com.linketinder.util;
 
-import com.linketinder.model.Empresa;
-import com.linketinder.model.Identificavel;
-import jdk.internal.util.xml.impl.Input;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,40 +87,5 @@ class MyUtilTest {
         }
     }
 
-    @Nested
-    @DisplayName("Método: gerarNovoId")
-    class GerarNovoIdTests {
-        @Test
-        @DisplayName("Quando fornecida uma lista vazia, deve retornar 0")
-        void gerarNovoIdEmUmaListaVaziaRetornaIdZero() {
-            //arrange
-            List<Identificavel> lista = new ArrayList<>();
-
-            //act
-            int resultado = MyUtil.gerarNovoId(lista);
-            //assert
-
-            assertEquals(0, resultado);
-        }
-
-        @Test
-        @DisplayName("Quando fornecida uma lista com itens, deve retornar o maior ID presente na lista acrescido de 1")
-        void gerarNovoIdEmUmaListaComItens() {
-            //arrange
-            List<Identificavel> lista = new ArrayList<>();
-            Empresa empresa = new Empresa();
-            Empresa outraEmpresa = new Empresa();
-            empresa.setId(10);
-            outraEmpresa.setId(3);
-            lista.add(empresa);
-            lista.add(outraEmpresa);
-
-            //act
-            int resultado = MyUtil.gerarNovoId(lista);
-            //assert
-
-            assertEquals(11, resultado);
-        }
-    }
 
 }
