@@ -1,5 +1,6 @@
 package com.linketinder.service
 
+import com.linketinder.exceptions.VagaNotFoundException
 import com.linketinder.model.Competencia
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
@@ -12,15 +13,15 @@ import com.linketinder.repository.VagaRepository
 import spock.lang.Specification
 
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.*
 
 class VagaServiceTest extends Specification {
     VagaRepository repository = mock(VagaRepository.class)
     EnderecoService enderecoService = mock(EnderecoService.class)
-    CompetenciaService competenciaService = mock(CompetenciaService.class);
-    VagaService vagaService = new VagaService(repository, competenciaService, enderecoService);
+    CompetenciaService competenciaService = mock(CompetenciaService.class)
+    VagaService vagaService = new VagaService(repository, competenciaService, enderecoService)
 
-    def "listarVagas() retorna lista de vagas"() {
+    void "listarVagas() retorna lista de vagas"() {
         given:
             VagaResponseDTO vagaResponseDTO = new VagaResponseDTO()
             vagaResponseDTO.nome = 'Teste'
@@ -39,7 +40,7 @@ class VagaServiceTest extends Specification {
             result[0].competencias.size() == 1
     }
 
-    def "adicionarVaga() retorna id da vaga quando adiciona vaga"() {
+    void "adicionarVaga() retorna id da vaga quando adiciona vaga"() {
         given:
             Vaga vaga = new Vaga()
             List<Competencia> competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
@@ -55,5 +56,14 @@ class VagaServiceTest extends Specification {
             Integer result = vagaService.adicionarVaga(vaga)
         then:
             result == 1
+    }
+
+    void "deleteVaga lança VagaNotFoundException quando não existe vaga com id informado"() {
+        given:
+            when(repository.obterVagaPeloId(1)).thenThrow(VagaNotFoundException.class)
+        when:
+            vagaService.deleteVaga(1)
+        then:
+            thrown(VagaNotFoundException)
     }
 }

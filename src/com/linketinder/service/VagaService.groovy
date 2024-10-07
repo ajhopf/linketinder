@@ -1,5 +1,6 @@
 package com.linketinder.service
 
+import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.exceptions.VagaNotFoundException
 import com.linketinder.model.Competencia
@@ -97,6 +98,17 @@ class VagaService {
             return vagaId
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
+        }
+    }
+
+    void deleteVaga(Integer vagaId) throws RepositoryAccessException, VagaNotFoundException{
+        try {
+            repository.obterVagaPeloId(vagaId)
+            repository.deleteVaga(vagaId)
+        } catch (SQLException e) {
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
+        } catch (VagaNotFoundException e) {
+            throw e
         }
     }
 

@@ -1,11 +1,14 @@
 package com.linketinder.view
 
+import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.exceptions.EmpresaNotFoundException
+import com.linketinder.exceptions.VagaNotFoundException
 import com.linketinder.model.Competencia
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.model.Vaga
+import com.linketinder.service.CandidatoService
 import com.linketinder.service.EmpresaService
 import com.linketinder.service.VagaService
 import com.linketinder.util.InputHelpers
@@ -87,5 +90,23 @@ class VagaView {
                 println e.getMessage()
             }
         }
+    }
+
+    static void deletarVaga(VagaService service, Scanner sc) {
+        println "Deletar Vaga"
+
+        boolean idInvalido = true
+
+        while(idInvalido) {
+            Integer idDaVaga = InputHelpers.getIntInput(0, 5000, 'Digite o id da vaga', sc)
+            try {
+                service.deleteVaga(idDaVaga)
+                println 'Vaga deletada com sucesso'
+                idInvalido = false
+            } catch (VagaNotFoundException e) {
+                println e.getMessage()
+            }
+        }
+
     }
 }

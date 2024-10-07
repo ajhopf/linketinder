@@ -1,5 +1,6 @@
 package com.linketinder.view
 
+import com.linketinder.model.Vaga
 import com.linketinder.service.CandidatoService
 import com.linketinder.service.CompetenciaService
 import com.linketinder.service.EmpresaService
@@ -52,6 +53,9 @@ class MenuInicial {
                     case 11:
                         VagaView.editarVaga(vagaService, sc)
                         break
+                    case 12:
+                        VagaView.deletarVaga(vagaService, sc)
+                        break
                     case 13:
                         ListagemView.listarCandidatos(candidatoService)
                         break
@@ -59,7 +63,7 @@ class MenuInicial {
                         CandidatoView.adicionarCandidato(candidatoService, sc)
                         break
                     case 16:
-                        DeletarView.deletarCandidato(candidatoService, sc)
+                        CandidatoView.deletarCandidato(candidatoService, sc)
                         break
 
                     default: println "Você escolheu a opção " + opcaoSelecionada

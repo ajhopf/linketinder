@@ -61,7 +61,7 @@ class VagaRepository implements IVagaDAO {
             WHERE v.id = $vagaId
         """
 
-        VagaResponseDTO vagaResponseDTO;
+        VagaResponseDTO vagaResponseDTO
 
         this.sql.eachRow(stmt) { row ->
             vagaResponseDTO = rowToDto(row)
@@ -127,7 +127,12 @@ class VagaRepository implements IVagaDAO {
 
     @Override
     void deleteVaga(Integer id) {
+        def stmt = """
+            DELETE FROM vagas
+            WHERE id = $id
+        """
 
+        sql.executeUpdate(stmt)
     }
 
     void deletarCompetenciasVaga(Integer vagaId) {

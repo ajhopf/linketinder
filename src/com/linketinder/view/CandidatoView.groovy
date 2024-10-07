@@ -1,5 +1,6 @@
 package com.linketinder.view
 
+import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
 import com.linketinder.model.Endereco
@@ -64,13 +65,13 @@ class CandidatoView {
         while (dataInvalida) {
             String dataString = InputHelpers.obterString("Digite a data de nascimento no formato dd/MM/yyyy", sc)
 
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            simpleDateFormat.setLenient(false);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy")
+            simpleDateFormat.setLenient(false)
             try {
                 simpleDateFormat.parse( dataString )
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                dataDeNascimento = LocalDate.parse(dataString, formatter);
-                dataInvalida = false;
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+                dataDeNascimento = LocalDate.parse(dataString, formatter)
+                dataInvalida = false
             } catch (ParseException e) {
                 println 'Formato da data não é válido'
             }
@@ -94,5 +95,23 @@ class CandidatoView {
         }
 
         return telefone
+    }
+
+    static void deletarCandidato(CandidatoService service, Scanner sc) {
+        println "Deletar Candidato"
+
+        boolean idInvalido = true
+
+        while(idInvalido) {
+            Integer idDoCandidato = InputHelpers.getIntInput(0, 5000, 'Digite o id do candidato', sc)
+            try {
+                service.deletarCandidatoPeloId(idDoCandidato)
+                println 'Candidato deletado com sucesso'
+                idInvalido = false
+            } catch (CandidatoNotFoundException e) {
+                println e.getMessage()
+            }
+        }
+
     }
 }
