@@ -6,6 +6,7 @@ import com.linketinder.model.dtos.CandidatoDTO
 import com.linketinder.model.dtos.CompetenciaDTO
 import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.interfaces.ICompetenciaDAO
+import com.linketinder.service.CompetenciaService
 import com.linketinder.util.InputHelpers
 import groovy.sql.Sql
 
@@ -135,6 +136,20 @@ class CompetenciaRepository implements ICompetenciaDAO {
 
         if (result == 0 ) {
             throw new CompetenciaNotFoundException('Não foi possível atualizar a competencia')
+        }
+    }
+
+    @Override
+    void deleteCompetencia(Integer id) throws CompetenciaNotFoundException, SQLException {
+        def statement = """
+            DELETE FROM competencias c
+            WHERE c.id = $id
+        """
+
+        int rowsAffected = sql.executeUpdate(statement);
+
+        if (rowsAffected == 0) {
+            throw new CompetenciaNotFoundException("Não foi possível encontrar uma competencia com id $id")
         }
     }
 }

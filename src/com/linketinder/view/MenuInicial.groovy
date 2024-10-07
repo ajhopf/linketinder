@@ -4,7 +4,6 @@ import com.linketinder.service.CandidatoService
 import com.linketinder.service.CompetenciaService
 import com.linketinder.service.EmpresaService
 import com.linketinder.util.InputHelpers
-import com.linketinder.util.MyUtil
 
 class MenuInicial {
     static void iniciar(EmpresaService empresaService, CandidatoService candidatoService, CompetenciaService competenciaService) {
@@ -27,6 +26,9 @@ class MenuInicial {
                     break
                 case 3:
                     CompetenciaView.editarCompetencia(competenciaService, sc)
+                    break
+                case 4:
+                    CompetenciaView.deletarCompetencia(competenciaService, sc)
                     break
                 case 5:
                     ListagemView.listarEmpresas(empresaService)

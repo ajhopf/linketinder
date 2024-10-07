@@ -45,8 +45,18 @@ class CompetenciaView {
                 println e.getMessage()
             }
         }
+    }
 
+    static void deletarCompetencia(CompetenciaService competenciaService, Scanner sc) {
+        println "Deletar Competencia"
 
+        try {
+            Integer competenciaId = InputHelpers.getIntInput(0, 1000, "Digite o id da competencia para deletar", sc)
+
+            competenciaService.deletarCompetencia(competenciaId)
+        } catch (CompetenciaNotFoundException e) {
+            println e.getMessage()
+        }
 
     }
 }

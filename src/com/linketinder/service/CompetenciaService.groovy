@@ -1,6 +1,5 @@
 package com.linketinder.service
 
-import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Competencia
@@ -18,6 +17,7 @@ class CompetenciaService {
         this.repository = repository
     }
 
+
     Competencia obterCompetenciaPeloId(Integer id) {
         try {
             CompetenciaDTO competenciaDTO = repository.obterCompetenciaPeloId(id)
@@ -28,6 +28,7 @@ class CompetenciaService {
             throw e
         }
     }
+
 
     List<Competencia> listarCompetencias() throws RepositoryAccessException {
         try {
@@ -40,42 +41,11 @@ class CompetenciaService {
             }
 
             return competencias
-        } catch(SQLException e) {
-            throw new RepositoryAccessException(e.getMessage(), e.getCause())
-        }
-    }
-
-    void adicionarCompetencia(String competencia) throws RepositoryAccessException {
-        try {
-            Integer competenciaId = repository.adicionarCompetencia(competencia)
-            println "Competencia adicionada com sucesso. Id gerado: $competenciaId"
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }
     }
 
-    void adicionarCompetenciaDeUsuario(Competencia competencia, Integer usuarioId) throws RepositoryAccessException, CompetenciaNotFoundException {
-        try {
-            CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
-            Integer competenciaId = repository.obterIdDeCompetencia(competencia.competencia)
-            competenciaDTO.id = competenciaId
-
-            repository.adicionarCompetenciaUsuario(competenciaDTO, usuarioId)
-
-        } catch (SQLException sqlException) {
-            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
-        } catch (CompetenciaNotFoundException e) {
-            throw e
-        }
-    }
-
-    void verificarSeCompetenciaExiste(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
-        try {
-            repository.obterIdDeCompetencia(competencia)
-        } catch (SQLException sqlException) {
-            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
-        }
-    }
 
     List<Competencia> listarCompetenciasDeUsuario(Integer usuarioId) throws RepositoryAccessException {
         try {
@@ -92,7 +62,43 @@ class CompetenciaService {
         }
     }
 
-    void updateCompetencia(Integer id, Competencia competenciaAtualizada) {
+
+    void adicionarCompetencia(String competencia) throws RepositoryAccessException {
+        try {
+            Integer competenciaId = repository.adicionarCompetencia(competencia)
+            println "Competencia adicionada com sucesso. Id gerado: $competenciaId"
+        } catch (SQLException e) {
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
+        }
+    }
+
+
+    void adicionarCompetenciaDeUsuario(Competencia competencia, Integer usuarioId) throws RepositoryAccessException, CompetenciaNotFoundException {
+        try {
+            CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
+            Integer competenciaId = repository.obterIdDeCompetencia(competencia.competencia)
+            competenciaDTO.id = competenciaId
+
+            repository.adicionarCompetenciaUsuario(competenciaDTO, usuarioId)
+
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        } catch (CompetenciaNotFoundException e) {
+            throw e
+        }
+    }
+
+
+    void verificarSeCompetenciaExiste(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
+        try {
+            repository.obterIdDeCompetencia(competencia)
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
+
+    void updateCompetencia(Integer id, Competencia competenciaAtualizada) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competenciaAtualizada)
 
@@ -101,6 +107,19 @@ class CompetenciaService {
             println "Competência atualizada"
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        } catch (CompetenciaNotFoundException e) {
+            throw e
+        }
+    }
+
+
+    void deletarCompetencia(Integer id) throws RepositoryAccessException, CompetenciaNotFoundException{
+        try {
+            repository.deleteCompetencia(id)
+
+            println "Competência deletada"
+        } catch (SQLException e) {
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
         } catch (CompetenciaNotFoundException e) {
             throw e
         }

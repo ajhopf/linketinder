@@ -5,7 +5,6 @@ import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Competencia
 import com.linketinder.model.dtos.CompetenciaDTO
 import com.linketinder.model.enums.Afinidade
-import com.linketinder.model.mappers.CompetenciaMapper
 import com.linketinder.repository.CompetenciaRepository
 import spock.lang.Specification
 
@@ -113,5 +112,15 @@ class CompetenciaServiceTest extends Specification {
         thrown(CompetenciaNotFoundException)
     }
 
+    void "deletarCompetencia lança CompetenciaNotFound quando não encontra competencia"() {
+        given:
+        when(repository.deleteCompetencia(1)).thenThrow(CompetenciaNotFoundException.class)
+
+        when:
+        competenciaService.deletarCompetencia(1)
+
+        then:
+        thrown(CompetenciaNotFoundException)
+    }
 
 }

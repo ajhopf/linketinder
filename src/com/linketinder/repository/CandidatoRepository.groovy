@@ -15,7 +15,7 @@ class CandidatoRepository implements ICandidatoDAO {
         this.sql = sql
     }
 
-    CandidatoDTO rowToDto(GroovyResultSet row) {
+    static CandidatoDTO rowToDto(GroovyResultSet row) {
         CandidatoDTO candidatoDTO = new CandidatoDTO()
 
         candidatoDTO.id = row.getInt('id')
