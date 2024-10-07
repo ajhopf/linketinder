@@ -1,7 +1,9 @@
 package com.linketinder.repository
 
 import com.linketinder.exceptions.CandidatoNotFoundException
+import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.model.dtos.CandidatoDTO
+import com.linketinder.model.dtos.EmpresaDTO
 import com.linketinder.repository.interfaces.ICandidatoDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
@@ -88,12 +90,39 @@ class CandidatoRepository implements ICandidatoDAO {
     }
 
     @Override
+    void updateCandidato(CandidatoDTO candidatoDTO) {
+        def updateUsuarioStatement = """
+            UPDATE usuarios u
+            SET nome = $candidatoDTO.nome, email = $candidatoDTO.email, senha = $candidatoDTO.senha, descricao = $candidatoDTO.descricao
+            WHERE u.id = $candidatoDTO.id
+        """
+
+        def updateEmpresaStatement = """
+            UPDATE candidatos c
+            SET cpf = $candidatoDTO.cpf, sobrenome = $candidatoDTO.sobrenome, data_nascimento = $candidatoDTO.dataNascimento, telefone = $candidatoDTO.telefone
+            WHERE c.usuario_id = $candidatoDTO.id
+        """
+
+        sql.withTransaction {
+            def row = sql.executeUpdate(updateUsuarioStatement)
+
+            if (row == 0) {
+                throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $candidatoDTO.id")
+            }
+
+            sql.executeInsert(updateEmpresaStatement)
+        }
+    }
+
+    @Override
     void deletarCandidatoPeloId(Integer id) {
+
+        println id
         def deletarUsuario = """
             DELETE FROM usuarios WHERE id = $id
         """
 
-        sql.execute(deletarUsuario)
+        sql.executeUpdate(deletarUsuario)
     }
 }
 

@@ -48,10 +48,6 @@ class VagaRepository implements IVagaDAO {
     }
 
     @Override
-    List<VagaRequestDTO> listarVagasDeEmpresa(Integer usuarioId) {
-        null
-    }
-
     VagaResponseDTO obterVagaPeloId(Integer vagaId) {
         def stmt = """
             SELECT v.id, v.nome, v.descricao, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado
@@ -135,12 +131,4 @@ class VagaRepository implements IVagaDAO {
         sql.executeUpdate(stmt)
     }
 
-    void deletarCompetenciasVaga(Integer vagaId) {
-        def stmt = """
-            DELETE FROM competencias_vaga
-            WHERE vaga_id = $vagaId
-        """
-
-        sql.executeUpdate(stmt)
-    }
 }

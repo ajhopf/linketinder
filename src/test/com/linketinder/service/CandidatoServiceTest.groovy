@@ -12,13 +12,14 @@ import com.linketinder.repository.CandidatoRepository
 
 import spock.lang.Specification
 
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.*
 
 class CandidatoServiceTest extends Specification {
-    CandidatoRepository repository = mock(CandidatoRepository.class);
-    EnderecoService enderecoService = mock(EnderecoService.class);
-    CompetenciaService competenciaService = mock(CompetenciaService.class);
-    CandidatoService candidatoService = new CandidatoService(repository, enderecoService, competenciaService);
+    CandidatoRepository repository = mock(CandidatoRepository.class)
+    EnderecoService enderecoService = mock(EnderecoService.class)
+    CompetenciaService competenciaService = mock(CompetenciaService.class)
+    CandidatoService candidatoService = new CandidatoService(repository, enderecoService, competenciaService)
 
     void "listarCandidatos() retorna lista vazia com tabela sem candidatos"() {
         given:
@@ -26,8 +27,8 @@ class CandidatoServiceTest extends Specification {
         List<CandidatoDTO> candidatoDTOS = []
 
         when:
-        when(repository.listarCandidatos()).thenReturn(candidatoDTOS);
-        List<Candidato> listaResultado = candidatoService.listarCandidatos();
+        when(repository.listarCandidatos()).thenReturn(candidatoDTOS)
+        List<Candidato> listaResultado = candidatoService.listarCandidatos()
 
         then:
         listaResultado == resultadoEsperado
@@ -39,10 +40,10 @@ class CandidatoServiceTest extends Specification {
         List<Competencia> competencias = []
 
         when:
-        when(repository.listarCandidatos()).thenReturn(candidatoDTOS);
+        when(repository.listarCandidatos()).thenReturn(candidatoDTOS)
         when(enderecoService.obterEnderecoDoUsuario(any(Integer))).thenReturn(new Endereco())
         when(competenciaService.listarCompetenciasDeUsuarioOuVaga(any(Integer))).thenReturn(competencias)
-        List<Candidato> listaResultado = candidatoService.listarCandidatos();
+        List<Candidato> listaResultado = candidatoService.listarCandidatos()
 
         then:
         listaResultado.size() == 2
@@ -50,10 +51,10 @@ class CandidatoServiceTest extends Specification {
 
     void "listarCandidatos() lança RepositoryAccessException quando há erro de acesso no repository"() {
         given:
-        when(repository.listarCandidatos()).thenThrow(RepositoryAccessException.class);
+        when(repository.listarCandidatos()).thenThrow(RepositoryAccessException.class)
 
         when:
-        candidatoService.listarCandidatos();
+        candidatoService.listarCandidatos()
 
         then:
         thrown(RepositoryAccessException)
@@ -120,5 +121,31 @@ class CandidatoServiceTest extends Specification {
         then:
         thrown(CandidatoNotFoundException)
     }
+
+    void "updateCandidato lança CompetenciaNotFoundException quando tenta inserir candidato com competencia invalida"(){
+        given:
+        when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenThrow(CompetenciaNotFoundException.class)
+        Competencia competencia = new Competencia('Java', 1, Afinidade.ALTA)
+
+        when:
+        candidatoService.updateCandidato(new Candidato(competencias: [competencia]))
+
+        then:
+        thrown(CompetenciaNotFoundException)
+    }
+
+    void "updateCandidato lança CandidatoNotFoundException quando tenta atualizar candidato com id invalido"(){
+        given:
+        when(repository.updateCandidato(any(CandidatoDTO))).thenThrow(CandidatoNotFoundException.class)
+
+        when:
+        candidatoService.updateCandidato(new Candidato())
+
+        then:
+        thrown(CandidatoNotFoundException)
+    }
+
+
+
 
 }

@@ -76,7 +76,7 @@ class VagaService {
     Integer adicionarVaga(Vaga vaga, boolean isUpdate = false) throws RepositoryAccessException {
         try {
             if (isUpdate) {
-                repository.deletarCompetenciasVaga(vaga.id)
+                competenciaService.deletarCompetenciaEntidade(vaga.id, 'competencias_vaga')
             }
             EnderecoDTO enderecoDTO = EnderecoMapper.toDTO(vaga.endereco)
             Integer enderecoId = enderecoService.adicionarEndereco(enderecoDTO)

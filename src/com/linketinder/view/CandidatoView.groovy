@@ -1,10 +1,13 @@
 package com.linketinder.view
 
 import com.linketinder.exceptions.CandidatoNotFoundException
+import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
+import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.service.CandidatoService
+import com.linketinder.service.EmpresaService
 import com.linketinder.util.InputHelpers
 
 import java.text.ParseException
@@ -13,9 +16,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class CandidatoView {
-    static void adicionarCandidato(CandidatoService service, Scanner sc) {
-        println "Criar novo Cadastro de Candidato"
-        InputHelpers.printInfosIniciais()
+    static Candidato obterInformacoesDeCandidato(Scanner sc) {
         String sobrenome = InputHelpers.obterString('Digite o sobrenome do candidato', sc)
         Map infosBasicas = InputHelpers.obterInfosBasicas(sc, false)
         String telefone = obterTelefone(sc)
@@ -36,6 +37,14 @@ class CandidatoView {
                 endereco: endereco,
                 competencias: competencias
         )
+
+        return candidato
+    }
+
+    static void adicionarCandidato(CandidatoService service, Scanner sc) {
+        println "Criar novo Cadastro de Candidato"
+        InputHelpers.printInfosIniciais()
+        Candidato candidato = obterInformacoesDeCandidato(sc)
 
         service.adicionarCandidato(candidato)
     }
@@ -95,6 +104,30 @@ class CandidatoView {
         }
 
         return telefone
+    }
+
+    static void editarCandidato(CandidatoService candidatoService, Scanner sc) {
+        println "Editar Candidato"
+
+        boolean idInvalido = true
+
+        while (idInvalido) {
+            try {
+                Integer candidatoId = InputHelpers.getIntInput(0, 1000, "Digite o id do candidato para editar", sc)
+                Candidato candidato = candidatoService.obterCandidatoPeloId(candidatoId)
+                idInvalido = false
+
+                println "Candidato selectionado: $candidato.nome"
+                println "Digite as novas informações para o candidato"
+
+                Candidato candidatoAtualizado = obterInformacoesDeCandidato(sc)
+                candidatoAtualizado.id = candidatoId
+
+                candidatoService.updateCandidato(candidatoAtualizado)
+            } catch (CandidatoNotFoundException e) {
+                println e.getMessage()
+            }
+        }
     }
 
     static void deletarCandidato(CandidatoService service, Scanner sc) {

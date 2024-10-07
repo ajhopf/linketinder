@@ -6,5 +6,6 @@ interface ICandidatoDAO {
     List<CandidatoDTO> listarCandidatos()
     Integer adicionarCandidato(CandidatoDTO candidato)
     CandidatoDTO obterCandidatoPeloId(Integer id)
+    void updateCandidato(CandidatoDTO candidatoDTO)
     void deletarCandidatoPeloId(Integer id)
 }

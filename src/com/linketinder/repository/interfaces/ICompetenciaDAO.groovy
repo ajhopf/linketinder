@@ -11,4 +11,5 @@ interface ICompetenciaDAO {
     CompetenciaDTO obterCompetenciaPeloId(Integer id)
     void updateCompetencia(Integer competenciaId, CompetenciaDTO competencia)
     void deleteCompetencia(Integer id)
+    void deleteCompetenciasEntidade(Integer vagaId, String tabela)
 }

@@ -2,12 +2,15 @@ package com.linketinder.service
 
 import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.CompetenciaNotFoundException
+import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
 import com.linketinder.model.Endereco
 import com.linketinder.model.dtos.CandidatoDTO
+import com.linketinder.model.dtos.EmpresaDTO
 import com.linketinder.model.mappers.CandidatoMapper
+import com.linketinder.model.mappers.EmpresaMapper
 import com.linketinder.repository.CandidatoRepository
 
 import java.sql.SQLException
@@ -88,6 +91,34 @@ class CandidatoService {
             return candidatos
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
+    void updateCandidato(Candidato candidato) throws SQLException {
+        try {
+            CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
+
+            for (competencia in candidato.competencias) {
+                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+
+            }
+
+            repository.updateCandidato(candidatoDTO)
+
+            competenciaService.deletarCompetenciaEntidade(candidatoDTO.id, 'competencias_usuario')
+
+            for (competencia in candidato.competencias) {
+                competenciaService.adicionarCompetenciaDeUsuario(competencia, candidatoDTO.id)
+            }
+            enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, candidatoDTO.id, true)
+
+            println "Candidato atualizado"
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        } catch (CandidatoNotFoundException e) {
+            throw e
+        } catch (CompetenciaNotFoundException e) {
+            throw e
         }
     }
 }

@@ -125,4 +125,11 @@ class CompetenciaService {
         }
     }
 
+    void deletarCompetenciaEntidade(Integer entidadeId, String tabelaString) {
+        try {
+            repository.deleteCompetenciasEntidade(entidadeId, tabelaString)
+        } catch (SQLException e) {
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
+        }
+    }
 }

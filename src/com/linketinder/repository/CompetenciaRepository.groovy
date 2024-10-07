@@ -102,7 +102,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
 
         def keys = sql.executeInsert(inserirCompetencia)
 
-        return keys[0][0]
+        return keys[0][0] as Integer
     }
 
     @Override
@@ -154,10 +154,27 @@ class CompetenciaRepository implements ICompetenciaDAO {
             WHERE c.id = $id
         """
 
-        int rowsAffected = sql.executeUpdate(statement);
+        int rowsAffected = sql.executeUpdate(statement)
 
         if (rowsAffected == 0) {
             throw new CompetenciaNotFoundException("Não foi possível encontrar uma competencia com id $id")
         }
+    }
+
+    @Override
+    void deleteCompetenciasEntidade(Integer entidadeId, String tabela) {
+        def stmt = """
+            DELETE FROM competencias_usuario
+            WHERE usuario_id = $entidadeId
+        """
+
+        if (tabela == 'competencias_vaga') {
+            stmt = """
+                DELETE FROM competencias_vaga
+                WHERE vaga_id = $entidadeId
+            """
+        }
+
+        sql.executeUpdate(stmt)
     }
 }
