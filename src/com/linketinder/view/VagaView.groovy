@@ -24,9 +24,22 @@ class VagaView {
             |Descrição: $vaga.descricao
             |Estado: $vaga.endereco.estado
             |Cidade: $vaga.endereco.cidade
+            |Competencias: $vaga.competencias
             """.stripMargin()
         }
     }
+
+    static Vaga obterInfosDeVaga (Scanner sc, Empresa empresa = new Empresa()) {
+        String tituloVaga = InputHelpers.obterString('Digite o titulo da vaga', sc)
+        String descricaoVaga = InputHelpers.obterString('Digite a descricao da vaga', sc)
+        Endereco enderecoVaga = InputHelpers.obterEndereco(sc, true)
+        List<Competencia> competencias = InputHelpers.obterCompetencias(sc)
+
+        Vaga vaga = new Vaga(nome: tituloVaga, descricao: descricaoVaga, endereco: enderecoVaga, empresa: empresa, competencias: competencias)
+
+        return vaga
+    }
+
 
     static void adicionarVaga(VagaService vagaService, EmpresaService empresaService, Scanner sc) {
         println "Adicionar Vaga"
@@ -42,16 +55,35 @@ class VagaView {
 
                 println "Empresa Selecionada: $empresa.nome"
 
-                String tituloVaga = InputHelpers.obterString('Digite o titulo da vaga', sc)
-                String descricaoVaga = InputHelpers.obterString('Digite a descricao da vaga', sc)
-                Endereco enderecoVaga = InputHelpers.obterEndereco(sc, true)
-                List<Competencia> competencias = InputHelpers.obterCompetencias(sc)
+                Vaga vaga = obterInfosDeVaga(sc, empresa)
 
-                Vaga vaga = new Vaga(nome: tituloVaga, descricao: descricaoVaga, endereco: enderecoVaga, empresa: empresa, competencias: competencias)
                 Integer vagaId = vagaService.adicionarVaga(vaga)
 
                 println "Vaga adicionada com sucesso. Id: $vagaId"
             } catch (EmpresaNotFoundException e) {
+                println e.getMessage()
+            }
+        }
+    }
+
+    static void editarVaga(VagaService vagaService, Scanner sc) {
+        println "Editar Vaga"
+
+        boolean idInvalido = true
+
+        while (idInvalido) {
+            try {
+                Integer vagaId = InputHelpers.getIntInput(0, 1000, "Digite o id da vaga para editar", sc)
+                Vaga vaga = vagaService.obterVagaPeloId(vagaId)
+                idInvalido = false
+
+                Vaga vagaAtualizada = obterInfosDeVaga(sc)
+                vagaAtualizada.id = vaga.id
+
+                vagaService.adicionarVaga(vagaAtualizada, true)
+
+                println "Vaga atualizada com sucesso"
+            } catch (CompetenciaNotFoundException e) {
                 println e.getMessage()
             }
         }

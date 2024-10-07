@@ -78,7 +78,7 @@ class CandidatoServiceTest extends Specification {
         Candidato candidato = new Candidato()
         candidato.endereco = new Endereco()
         candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
-        doNothing().when(competenciaService).verificarSeCompetenciaExiste(any(String))
+       when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenReturn(1)
 
         when(repository.adicionarCandidato(any(CandidatoDTO))).thenReturn(1)
 

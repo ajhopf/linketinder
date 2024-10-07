@@ -20,7 +20,7 @@ class CompetenciaServiceTest extends Specification {
         List<CompetenciaDTO> competenciaDTOS = []
 
         when:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer))).thenReturn(competenciaDTOS);
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenReturn(competenciaDTOS);
         List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
 
         then:
@@ -29,19 +29,19 @@ class CompetenciaServiceTest extends Specification {
 
     void "listarCompetenciasDeUsuario() retorna lista com competencias"() {
         given:
-        List<CompetenciaDTO> competenciaDTOS = [new CompetenciaDTO(), new CompetenciaDTO()]
+        List<CompetenciaDTO> competenciaDTOS = [new CompetenciaDTO(id: 1, afinidade: Afinidade.ALTA, anosExperiencia: 3, competencia: 'Java')]
 
         when:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer))).thenReturn(competenciaDTOS)
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenReturn(competenciaDTOS)
         List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
 
         then:
-        listaResultado.size() == 2
+        listaResultado.size() == 1
     }
 
     void "listarCompetenciasDeUsuario() lança RepositoryAccessException quando há erro de acesso no repository"() {
         given:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer))).thenThrow(RepositoryAccessException.class);
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenThrow(RepositoryAccessException.class);
 
         when:
         competenciaService.listarCompetenciasDeUsuarioOuVaga(1);

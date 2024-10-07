@@ -1,16 +1,11 @@
 package com.linketinder.repository
 
-import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.CompetenciaNotFoundException
-import com.linketinder.model.dtos.CandidatoDTO
 import com.linketinder.model.dtos.CompetenciaDTO
 import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.interfaces.ICompetenciaDAO
-import com.linketinder.service.CompetenciaService
-import com.linketinder.util.InputHelpers
 import groovy.sql.Sql
 
-import java.sql.SQLException
 
 class CompetenciaRepository implements ICompetenciaDAO {
     private Sql sql = null
@@ -21,18 +16,19 @@ class CompetenciaRepository implements ICompetenciaDAO {
 
     @Override
     List<CompetenciaDTO> listarCompetenciasDeCandidatoOuVaga(Integer entidadeId, String nomeTabela) {
+        println nomeTabela
 
         def statement = """
-                select c.competencia, t.afinidade, t.anos_experiencia 
+                select c.id, c.competencia, t.afinidade, t.anos_experiencia 
                 from competencias_usuario t
                 INNER JOIN competencias c
-                ON cu.competencia_id = c.id
+                ON t.competencia_id = c.id
                 WHERE t.usuario_id = $entidadeId;
             """
 
         if (nomeTabela == 'competencias_vaga') {
             statement = """
-                select c.competencia, t.afinidade, t.anos_experiencia 
+                select c.id, c.competencia, t.afinidade, t.anos_experiencia 
                 from competencias_vaga t
                 INNER JOIN competencias c
                 ON t.competencia_id = c.id
@@ -44,6 +40,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
 
         sql.eachRow(statement) {row ->
             CompetenciaDTO competencia = new CompetenciaDTO()
+            competencia.id = row.getInt('id')
             competencia.competencia = row.getString('competencia')
             competencia.anosExperiencia = row.getInt('anos_experiencia')
             competencia.afinidade = Afinidade.fromValor(row.getInt('afinidade'))

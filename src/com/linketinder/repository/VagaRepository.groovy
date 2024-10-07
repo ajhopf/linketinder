@@ -1,5 +1,7 @@
 package com.linketinder.repository
 
+import com.linketinder.exceptions.EmpresaNotFoundException
+import com.linketinder.exceptions.VagaNotFoundException
 import com.linketinder.model.dtos.VagaRequestDTO
 import com.linketinder.model.dtos.VagaResponseDTO
 import com.linketinder.repository.interfaces.IVagaDAO
@@ -50,6 +52,28 @@ class VagaRepository implements IVagaDAO {
         null
     }
 
+    VagaResponseDTO obterVagaPeloId(Integer vagaId) {
+        def stmt = """
+            SELECT v.id, v.nome, v.descricao, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado
+            FROM vagas v
+            INNER JOIN usuarios u ON u.id = v.empresa_id
+            INNER JOIN enderecos en ON v.endereco_id = en.id
+            WHERE v.id = $vagaId
+        """
+
+        VagaResponseDTO vagaResponseDTO;
+
+        this.sql.eachRow(stmt) { row ->
+            vagaResponseDTO = rowToDto(row)
+        }
+
+        if (vagaResponseDTO == null) {
+            throw new VagaNotFoundException("Vaga com id $vagaId não encontrada")
+        }
+
+        return vagaResponseDTO
+    }
+
     @Override
     Integer adicionarVaga(VagaRequestDTO vaga) {
         def stmt = """
@@ -78,11 +102,40 @@ class VagaRepository implements IVagaDAO {
 
     @Override
     void updateVaga(Integer vagaId, VagaRequestDTO vaga) {
+        def stmt = """
+            UPDATE vagas
+            SET nome = $vaga.nome, descricao = $vaga.descricao, endereco_id = $vaga.enderecoId
+        """
 
+        def competenciasVagaStmt = """
+            INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
+            VALUES (?, ?, ?, ?)
+        """
+
+        def row = sql.executeUpdate(stmt)
+
+        if (row == 0) {
+            throw new VagaNotFoundException("Não foi possível localizar a vaga com id $vaga.id")
+        }
+
+        for (competencia in vaga.competenciaDTOList) {
+            def params = [vagaId, competencia.id, competencia.anosExperiencia, competencia.afinidade.getAfinidade()]
+
+            sql.executeInsert(competenciasVagaStmt, params)
+        }
     }
 
     @Override
     void deleteVaga(Integer id) {
 
+    }
+
+    void deletarCompetenciasVaga(Integer vagaId) {
+        def stmt = """
+            DELETE FROM competencias_vaga
+            WHERE vaga_id = $vagaId
+        """
+
+        sql.executeUpdate(stmt)
     }
 }

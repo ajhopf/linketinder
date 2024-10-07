@@ -11,7 +11,7 @@ class CompetenciaTest {
     void toStringTest() {
         Competencia competencia = new Competencia("Java", 5.0, Afinidade.MUITO_ALTA);
 
-        assertEquals("Java", competencia.toString()) ;
+        assertEquals("Nome: Java; Anos Experiência: 5.0; Afinidade: MUITO_ALTA", competencia.toString()) ;
     }
 
     @Test

@@ -32,7 +32,7 @@ class CandidatoTest {
     void toStringTest() {
         Candidato candidato = createCandidato();
 
-        assertEquals("Candidato: André, Hopf, andre.hopf@hotmail.com, idade: null, cpf: 12345, Competencias: [Java]", candidato.toString()) ;
+        assertEquals("Candidato: André, Hopf, andre.hopf@hotmail.com, data de nascimento: null, telefone: nullcpf: 12345, Competencias: [Nome: Java; Anos Experiência: 3.0; Afinidade: MUITO_ALTA]Endereço: Endereco(null, null, null, null)", candidato.toString()) ;
     }
 
     @Test
