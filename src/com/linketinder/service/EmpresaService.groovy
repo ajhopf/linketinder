@@ -1,12 +1,10 @@
 package com.linketinder.service
 
-import com.linketinder.exceptions.CompetenciaNotFoundException
+import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
-import com.linketinder.model.dtos.CandidatoDTO
 import com.linketinder.model.dtos.EmpresaDTO
-import com.linketinder.model.mappers.CandidatoMapper
 import com.linketinder.model.mappers.EmpresaMapper
 import com.linketinder.repository.EmpresaRepository
 
@@ -22,17 +20,16 @@ class EmpresaService {
         this.enderecoService = enderecoService
     }
 
-    void adicionarEmpresa(Empresa empresa) {
+    Empresa obterEmpresaPeloId(Integer id) throws RepositoryAccessException, EmpresaNotFoundException {
         try {
-            EmpresaDTO empresaDTO = EmpresaMapper.toDTO(empresa)
+            EmpresaDTO empresaDTO = repository.obterEmpresaPeloId(id)
+            Endereco endereco = enderecoService.obterEnderecoDoUsuario(id)
 
-            Integer usuarioId = repository.adicionarEmpresa(empresaDTO)
-
-            enderecoService.adicionarEndereco(empresa.endereco, usuarioId)
-
-            println "Empresa criada com sucesso! Id: $usuarioId"
-        } catch (SQLException sqlException) {
-            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+            return EmpresaMapper.toEntity(empresaDTO, endereco)
+        } catch (SQLException e){
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
+        } catch (EmpresaNotFoundException e) {
+            throw e
         }
     }
 
@@ -52,6 +49,36 @@ class EmpresaService {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }
 
+    }
+
+    void adicionarEmpresa(Empresa empresa) {
+        try {
+            EmpresaDTO empresaDTO = EmpresaMapper.toDTO(empresa)
+
+            Integer usuarioId = repository.adicionarEmpresa(empresaDTO)
+
+            enderecoService.adicionarEnderecoParaUsuario(empresa.endereco, usuarioId)
+
+            println "Empresa criada com sucesso! Id: $usuarioId"
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
+
+    void updateEmpresa(Empresa empresa) throws SQLException, EmpresaNotFoundException {
+        try {
+            EmpresaDTO empresaDTO = EmpresaMapper.toDTO(empresa)
+
+            repository.updateEmpresa(empresaDTO)
+            enderecoService.adicionarEnderecoParaUsuario(empresa.endereco, empresaDTO.id, true)
+
+            println "Empresa atualizada"
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        } catch (EmpresaNotFoundException e) {
+            throw e
+        }
     }
 
 }

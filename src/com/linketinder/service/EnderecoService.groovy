@@ -26,23 +26,25 @@ class EnderecoService {
         }
     }
 
-    void adicionarEndereco(Endereco endereco, Integer usuarioId) {
+    void adicionarEnderecoParaUsuario(Endereco endereco, Integer usuarioId, boolean isUpdate = false) {
         try {
             EnderecoDTO enderecoDTO = EnderecoMapper.toDTO(endereco, usuarioId)
 
-            Integer enderecoJaExisteId = repository.obterIdDeEnderecoPeloCep(enderecoDTO.cep)
+            Integer enderecoId = repository.obterIdDeEnderecoPeloCep(enderecoDTO.cep)
 
-            if (enderecoJaExisteId == -1) {
-                Integer enderecoId = repository.adicionarNovoEndereco(enderecoDTO)
-                repository.adicionarEnderecoParaUsuario(usuarioId, enderecoId)
+            if (enderecoId == -1) {
+                enderecoId = repository.adicionarNovoEndereco(enderecoDTO)
+            }
+
+            if (isUpdate) {
+                repository.updateEnderecoUsuario(usuarioId, enderecoId)
             } else {
-                repository.adicionarEnderecoParaUsuario(usuarioId, enderecoJaExisteId)
+                repository.adicionarEnderecoParaUsuario(usuarioId, enderecoId)
             }
 
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }
     }
-
 
 }

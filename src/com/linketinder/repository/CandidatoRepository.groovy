@@ -31,7 +31,7 @@ class CandidatoRepository implements ICandidatoDAO {
     }
 
     @Override
-    CandidatoDTO obterCandidatoPeloId(Integer id) throws CandidatoNotFoundException, SQLException {
+    CandidatoDTO obterCandidatoPeloId(Integer id) {
         def stmt = "SELECT * FROM candidatos c INNER JOIN usuarios u ON c.usuario_id = u.id WHERE u.id = $id"
 
         CandidatoDTO candidatoDTO = null
@@ -47,7 +47,7 @@ class CandidatoRepository implements ICandidatoDAO {
     }
 
     @Override
-    List<CandidatoDTO> listarCandidatos() throws SQLException {
+    List<CandidatoDTO> listarCandidatos() {
         def stmt = 'SELECT * FROM candidatos c INNER JOIN usuarios u ON c.usuario_id = u.id'
 
         List<CandidatoDTO> candidatoDTOList = []
@@ -62,7 +62,7 @@ class CandidatoRepository implements ICandidatoDAO {
     }
 
     @Override
-    Integer adicionarCandidato(CandidatoDTO candidato) throws SQLException{
+    Integer adicionarCandidato(CandidatoDTO candidato) {
         Integer novoUsuarioId = null
 
         def insereEmUsuarios = """
@@ -88,7 +88,7 @@ class CandidatoRepository implements ICandidatoDAO {
     }
 
     @Override
-    void deletarCandidatoPeloId(Integer id) throws SQLException {
+    void deletarCandidatoPeloId(Integer id) {
         def deletarUsuario = """
             DELETE FROM usuarios WHERE id = $id
         """

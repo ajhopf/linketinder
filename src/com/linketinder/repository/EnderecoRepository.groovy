@@ -37,6 +37,8 @@ class EnderecoRepository implements IEnderecoDAO{
         return enderecoDTO
     }
 
+
+
     @Override
     Integer obterIdDeEnderecoPeloCep(String cep) {
         def enderecoQuery = """
@@ -78,5 +80,16 @@ class EnderecoRepository implements IEnderecoDAO{
         """
 
         sql.executeInsert(inserirNovoEnderecoParaUsuario)
+    }
+
+    @Override
+    void updateEnderecoUsuario(Integer usuarioId, Integer enderecoId) {
+        def updateEndereco = """
+            UPDATE enderecos_usuario
+            SET  endereco_id = $enderecoId
+            WHERE usuario_id = $usuarioId
+        """
+
+        sql.executeUpdate(updateEndereco)
     }
 }

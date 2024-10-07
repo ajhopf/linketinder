@@ -1,5 +1,10 @@
 package com.linketinder.repository
 
+import com.linketinder.exceptions.CandidatoNotFoundException
+import com.linketinder.exceptions.CompetenciaNotFoundException
+import com.linketinder.exceptions.EmpresaNotFoundException
+import com.linketinder.model.dtos.CandidatoDTO
+import com.linketinder.model.dtos.CompetenciaDTO
 import com.linketinder.model.dtos.EmpresaDTO
 import com.linketinder.repository.interfaces.IEmpresaDAO
 import groovy.sql.GroovyResultSet
@@ -14,7 +19,7 @@ class EmpresaRepository implements IEmpresaDAO {
         this.sql = sql
     }
 
-    static EmpresaDTO rowToDto(GroovyResultSet row) throws SQLException {
+    static EmpresaDTO rowToDto(GroovyResultSet row) {
         EmpresaDTO empresaDTO = new EmpresaDTO()
 
         empresaDTO.id = row.getInt('id')
@@ -27,7 +32,7 @@ class EmpresaRepository implements IEmpresaDAO {
     }
 
     @Override
-    List<EmpresaDTO> listarEmpresas() throws SQLException {
+    List<EmpresaDTO> listarEmpresas() {
         def stmt = 'SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id'
 
         List<EmpresaDTO> empresaDTOSList = []
@@ -42,7 +47,7 @@ class EmpresaRepository implements IEmpresaDAO {
     }
 
     @Override
-    Integer adicionarEmpresa(EmpresaDTO empresa) throws SQLException  {
+    Integer adicionarEmpresa(EmpresaDTO empresa) {
         Integer novaEmpresaId = null
 
         def insereEmUsuarios = """
@@ -70,12 +75,44 @@ class EmpresaRepository implements IEmpresaDAO {
 
     @Override
     EmpresaDTO obterEmpresaPeloId(Integer id) {
-        return null
+        def stmt = "SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id WHERE u.id = $id"
+
+        EmpresaDTO empresaDTO = null
+
+        this.sql.eachRow(stmt) { row ->
+            empresaDTO = rowToDto(row)
+        }
+
+        if (empresaDTO == null) {
+            throw new EmpresaNotFoundException ("Não foi possível localizar a empresa com o id = $id")
+        }
+
+        return empresaDTO
     }
 
     @Override
-    EmpresaDTO updateEmpresa(Object EmpresaDTO) {
-        return null
+    void updateEmpresa(EmpresaDTO empresaDTO) {
+        def updateUsuarioStatement = """
+            UPDATE usuarios u
+            SET nome = $empresaDTO.nome, email = $empresaDTO.email, senha = $empresaDTO.senha, descricao = $empresaDTO.descricao
+            WHERE u.id = $empresaDTO.id
+        """
+
+        def updateEmpresaStatement = """
+            UPDATE empresas e
+            SET cnpj = $empresaDTO.cnpj
+            WHERE e.usuario_id = $empresaDTO.id
+        """
+
+        sql.withTransaction {
+            def row = sql.executeUpdate(updateUsuarioStatement)
+
+            if (row == 0) {
+                throw new EmpresaNotFoundException("Não foi possível localizar a empresa com id $empresaDTO.id")
+            }
+
+            sql.executeInsert(updateEmpresaStatement)
+        }
     }
 
     @Override

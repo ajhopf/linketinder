@@ -58,7 +58,7 @@ class CandidatoService {
 
             Integer usuarioId = repository.adicionarCandidato(candidatoDTO)
 
-            enderecoService.adicionarEndereco(candidato.endereco, usuarioId)
+            enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, usuarioId)
 
             for (competencia in candidato.competencias) {
                 competenciaService.adicionarCompetenciaDeUsuario(competencia, usuarioId)

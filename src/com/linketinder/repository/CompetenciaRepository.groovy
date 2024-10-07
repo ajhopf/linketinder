@@ -20,7 +20,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    List<CompetenciaDTO> listarCompetenciasDeUsuario(Integer usuarioId) throws SQLException {
+    List<CompetenciaDTO> listarCompetenciasDeUsuario(Integer usuarioId) {
         def statement = """
                 select c.competencia, cu.afinidade, cu.anos_experiencia 
                 from competencias_usuario cu
@@ -64,7 +64,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    CompetenciaDTO obterCompetenciaPeloId(Integer id) throws CompetenciaNotFoundException, SQLException {
+    CompetenciaDTO obterCompetenciaPeloId(Integer id) {
         def statement = """
                 SELECT *
                 FROM competencias c
@@ -98,7 +98,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId) throws SQLException  {
+    void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId)  {
         def inserirCompetencia = """
             INSERT INTO competencias_usuario (usuario_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
@@ -110,7 +110,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    Integer obterIdDeCompetencia(String competenciaString) throws SQLException, CompetenciaNotFoundException {
+    Integer obterIdDeCompetencia(String competenciaString) {
         def statement = """
             SELECT id FROM competencias c WHERE c.competencia LIKE $competenciaString
         """
@@ -125,7 +125,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    void updateCompetencia(Integer competenciaId, CompetenciaDTO competencia) throws CompetenciaNotFoundException, SQLException {
+    void updateCompetencia(Integer competenciaId, CompetenciaDTO competencia) {
         def statement = """
             UPDATE competencias c
             SET competencia = $competencia.competencia
@@ -140,7 +140,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     }
 
     @Override
-    void deleteCompetencia(Integer id) throws CompetenciaNotFoundException, SQLException {
+    void deleteCompetencia(Integer id) {
         def statement = """
             DELETE FROM competencias c
             WHERE c.id = $id

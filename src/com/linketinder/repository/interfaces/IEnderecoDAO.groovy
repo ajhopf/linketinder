@@ -8,4 +8,5 @@ interface IEnderecoDAO {
     Integer obterIdDeEnderecoPeloCep(String cep)
     Integer adicionarNovoEndereco(EnderecoDTO enderecoDTO)
     void adicionarEnderecoParaUsuario(Integer usuarioId, Integer enderecoId)
+    void updateEnderecoUsuario(Integer usuarioId, Integer enderecoId)
 }

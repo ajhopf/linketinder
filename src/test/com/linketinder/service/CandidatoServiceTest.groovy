@@ -87,7 +87,7 @@ class CandidatoServiceTest extends Specification {
 
         then:
         verify(competenciaService, times(1)).adicionarCompetenciaDeUsuario(any(Competencia), eq(1))
-        verify(enderecoService, times(1)).adicionarEndereco(any(Endereco), eq(1))
+        verify(enderecoService, times(1)).adicionarEnderecoParaUsuario(any(Endereco), eq(1))
     }
 
     void "obterCandidatoPeloId lança CandidatoNotFoundException quando não é encontrado um candidato"() {

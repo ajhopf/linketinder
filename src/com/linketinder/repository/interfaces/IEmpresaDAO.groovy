@@ -7,6 +7,6 @@ interface IEmpresaDAO {
     List<EmpresaDTO> listarEmpresas()
     Integer adicionarEmpresa(EmpresaDTO empresa)
     EmpresaDTO obterEmpresaPeloId(Integer id)
-    EmpresaDTO updateEmpresa(EmpresaDTO)
+    void updateEmpresa(EmpresaDTO empresaDTO)
     void deleteEmpresaPeloId(Integer id)
 }

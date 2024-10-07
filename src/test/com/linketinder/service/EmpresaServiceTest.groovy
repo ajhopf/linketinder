@@ -1,11 +1,15 @@
 package com.linketinder.service
 
+import com.linketinder.exceptions.EmpresaNotFoundException
+import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.model.dtos.EmpresaDTO
-
+import com.linketinder.model.mappers.EmpresaMapper
 import com.linketinder.repository.EmpresaRepository
 import spock.lang.Specification
+
+import java.sql.SQLException
 
 import static org.mockito.Mockito.*
 
@@ -13,6 +17,17 @@ class EmpresaServiceTest extends Specification {
     EmpresaRepository repository = mock(EmpresaRepository.class)
     EnderecoService enderecoService = mock(EnderecoService.class)
     EmpresaService empresaService = new EmpresaService(repository, enderecoService)
+
+    void "obterEmpresaPeloId lanca EmpresaNotFoundException quando não encontra empresa"() {
+        given:
+        when(repository.obterEmpresaPeloId(any(Integer))).thenThrow(EmpresaNotFoundException.class)
+
+        when:
+        empresaService.obterEmpresaPeloId(1)
+
+        then:
+        thrown(EmpresaNotFoundException)
+    }
 
     void "listarEmpresas() retorna uma lista empresas"() {
         given:
@@ -42,6 +57,17 @@ class EmpresaServiceTest extends Specification {
         empresaService.adicionarEmpresa(emoresa)
 
         then:
-        verify(enderecoService, times(1)).adicionarEndereco(any(Endereco), eq(1))
+        verify(enderecoService, times(1)).adicionarEnderecoParaUsuario(any(Endereco), eq(1))
+    }
+
+    void "updateEmpresa() lanca EmpresaNotFoundException quando empresa não é encontrada"() {
+        given:
+        when(repository.updateEmpresa(any(EmpresaDTO))).thenThrow(EmpresaNotFoundException.class)
+
+        when:
+        empresaService.updateEmpresa(new Empresa())
+
+        then:
+        thrown(EmpresaNotFoundException)
     }
 }
