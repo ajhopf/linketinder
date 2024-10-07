@@ -16,6 +16,16 @@ class EnderecoService {
         this.repository = repository
     }
 
+    Endereco obterEnderecoPeloId(Integer id) {
+        try {
+            EnderecoDTO enderecoDTO = repository.obterEnderecoPeloId(id)
+
+            return EnderecoMapper.toEntity(enderecoDTO)
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
     Endereco obterEnderecoDoUsuario(Integer id)  {
         try {
             EnderecoDTO enderecoDto = repository.obterEnderecoDoUsuarioPeloId(id)

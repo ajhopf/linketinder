@@ -3,10 +3,11 @@ package com.linketinder.view
 import com.linketinder.service.CandidatoService
 import com.linketinder.service.CompetenciaService
 import com.linketinder.service.EmpresaService
+import com.linketinder.service.VagaService
 import com.linketinder.util.InputHelpers
 
 class MenuInicial {
-    static void iniciar(EmpresaService empresaService, CandidatoService candidatoService, CompetenciaService competenciaService) {
+    static void iniciar(EmpresaService empresaService, CandidatoService candidatoService, CompetenciaService competenciaService, VagaService vagaService) {
         Scanner sc = new Scanner(System.in)
 
         while (true) {
@@ -41,6 +42,9 @@ class MenuInicial {
                         break
                     case 8:
                         EmpresaView.deletarEmpresa(empresaService, sc)
+                        break
+                    case 9:
+                        VagaView.listarVagas(vagaService)
                         break
                     case 13:
                         ListagemView.listarCandidatos(candidatoService)

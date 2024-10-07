@@ -8,8 +8,6 @@ import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.CompetenciaRepository
 import spock.lang.Specification
 
-import java.sql.SQLException
-
 import static org.mockito.Mockito.*;
 
 class CompetenciaServiceTest extends Specification {
@@ -22,8 +20,8 @@ class CompetenciaServiceTest extends Specification {
         List<CompetenciaDTO> competenciaDTOS = []
 
         when:
-        when(repository.listarCompetenciasDeUsuario(any(Integer))).thenReturn(competenciaDTOS);
-        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuario(1);
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer))).thenReturn(competenciaDTOS);
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
 
         then:
         listaResultado.size() == 0
@@ -34,8 +32,8 @@ class CompetenciaServiceTest extends Specification {
         List<CompetenciaDTO> competenciaDTOS = [new CompetenciaDTO(), new CompetenciaDTO()]
 
         when:
-        when(repository.listarCompetenciasDeUsuario(any(Integer))).thenReturn(competenciaDTOS)
-        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuario(1);
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer))).thenReturn(competenciaDTOS)
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
 
         then:
         listaResultado.size() == 2
@@ -43,10 +41,10 @@ class CompetenciaServiceTest extends Specification {
 
     void "listarCompetenciasDeUsuario() lança RepositoryAccessException quando há erro de acesso no repository"() {
         given:
-        when(repository.listarCompetenciasDeUsuario(any(Integer))).thenThrow(RepositoryAccessException.class);
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer))).thenThrow(RepositoryAccessException.class);
 
         when:
-        competenciaService.listarCompetenciasDeUsuario(1);
+        competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
 
         then:
         thrown(RepositoryAccessException)

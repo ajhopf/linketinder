@@ -41,7 +41,7 @@ class CandidatoServiceTest extends Specification {
         when:
         when(repository.listarCandidatos()).thenReturn(candidatoDTOS);
         when(enderecoService.obterEnderecoDoUsuario(any(Integer))).thenReturn(new Endereco())
-        when(competenciaService.listarCompetenciasDeUsuario(any(Integer))).thenReturn(competencias)
+        when(competenciaService.listarCompetenciasDeUsuarioOuVaga(any(Integer))).thenReturn(competencias)
         List<Candidato> listaResultado = candidatoService.listarCandidatos();
 
         then:

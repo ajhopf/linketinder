@@ -27,7 +27,7 @@ class CandidatoService {
         try{
             CandidatoDTO candidatoDTO = repository.obterCandidatoPeloId(usuarioId)
             Endereco endereco = enderecoService.obterEnderecoDoUsuario(usuarioId)
-            List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuario(usuarioId)
+            List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(usuarioId)
 
             return CandidatoMapper.toEntity(candidatoDTO, endereco, competencias)
         } catch (SQLException e){
@@ -81,7 +81,7 @@ class CandidatoService {
 
             for (candidato in candidatoDTOList) {
                 Endereco endereco = enderecoService.obterEnderecoDoUsuario(candidato.id)
-                List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuario(candidato.id)
+                List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(candidato.id)
                 candidatos << CandidatoMapper.toEntity(candidato, endereco, competencias)
             }
 

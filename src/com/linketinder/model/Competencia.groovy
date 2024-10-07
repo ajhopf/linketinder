@@ -1,7 +1,6 @@
 package com.linketinder.model
 
 import com.linketinder.model.enums.Afinidade
-import com.linketinder.service.CompetenciaService
 
 class Competencia extends Identificavel{
     String competencia
@@ -24,6 +23,6 @@ class Competencia extends Identificavel{
 
     @Override
     String toString() {
-        "$competencia"
+        "Nome: $competencia; Anos Experiência: $anosExperiencia; Afinidade: $afinidade"
     }
 }

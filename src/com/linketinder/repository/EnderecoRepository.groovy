@@ -11,12 +11,33 @@ class EnderecoRepository implements IEnderecoDAO{
         this.sql = sql
     }
 
+    EnderecoDTO obterEnderecoPeloId(Integer id) {
+        def stmt = """
+            SELECT e.cep, e.pais, e.estado, e.cidade
+            FROM enderecos e             
+            WHERE e.id =  $id
+        """
+        def row = sql.firstRow(stmt)
+
+        if (row == null) {
+            return new EnderecoDTO()
+        }
+
+        EnderecoDTO enderecoDTO = new EnderecoDTO()
+
+        enderecoDTO.cep = row.cep
+        enderecoDTO.pais = row.pais
+        enderecoDTO.estado = row.estado
+        enderecoDTO.cidade = row.cidade
+
+        return enderecoDTO
+    }
+
     @Override
     EnderecoDTO obterEnderecoDoUsuarioPeloId(Integer usuarioId) {
         def endereco = """
                 SELECT e.cep, e.pais, e.estado, e.cidade, eu.usuario_id
-                FROM enderecos e
-                INNER JOIN enderecos_usuario eu
+                FROM enderecos e INNER JOIN enderecos_usuario eu
                 ON e.id = eu.endereco_id
                 WHERE eu.usuario_id =  $usuarioId
             """
