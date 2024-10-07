@@ -17,10 +17,7 @@ class EmpresaTest {
         empresa.setEmail("empresa@hotmail.com");
         empresa.setCnpj("12345");
         empresa.setDescricao("Descrição");
-        List<Competencia> competencias = new ArrayList<>();
-        competencias.add(new Competencia("Java", 3.0, Afinidade.MUITO_ALTA));
         Endereco endereco = new Endereco();
-        empresa.setCompetencias(competencias);
         empresa.setEndereco(endereco);
 
         return empresa;
@@ -31,7 +28,7 @@ class EmpresaTest {
     void toStringTest() {
         Empresa empresa = createEmpresa();
 
-        assertEquals("Empresa: Empresa, empresa@hotmail.com, cpnj: 12345, Competencias: [Java]", empresa.toString()) ;
+        assertEquals("Empresa: Empresa, empresa@hotmail.com, cpnj: 12345", empresa.toString()) ;
     }
 
     @Test

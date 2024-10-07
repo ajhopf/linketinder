@@ -8,7 +8,7 @@ class Empresa extends Usuario {
 
     @Override
     String toString() {
-        "Empresa: $super.nome, $super.email, cpnj: $cnpj, Competencias: $super.competencias"
+        "Empresa: $super.nome, $super.email, cpnj: $cnpj"
     }
 
 }

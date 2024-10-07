@@ -1,6 +1,6 @@
-package com.linketinder.repository;
-
-class OldCandidatoRepositoryTest {
+//package com.linketinder.repository;
+//
+//class OldCandidatoRepositoryTest {
 //    @Nested
 //    @DisplayName("Método: adicionarCandidato")
 //    class AdicionarCandidatoTests {
@@ -48,4 +48,4 @@ class OldCandidatoRepositoryTest {
 //        }
 //    }
 
-}
+//}

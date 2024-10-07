@@ -7,6 +7,7 @@ class Candidato extends Usuario {
     String cpf
     LocalDate dataNascimento
     String telefone
+    List<Competencia> competencias
 
     @Override
     String toString() {
@@ -17,7 +18,7 @@ class Candidato extends Usuario {
                 "data de nascimento: $dataNascimento, " +
                 "telefone: $telefone" +
                 "cpf: $cpf, " +
-                "Competencias: $super.competencias" +
+                "Competencias: $competencias" +
                 "Endereço: $super.endereco"
     }
 }

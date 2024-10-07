@@ -30,7 +30,7 @@ class ListagemView {
             infosEspecificas = "CNPJ: $empresa.cnpj"
         } else if (isCandidato) {
             Candidato candidato = pessoa as Candidato
-            infosEspecificas = "CPF: $candidato.cpf\n|Data de Nascimento: $candidato.dataNascimento\n|Telefone: $candidato.telefone"
+            infosEspecificas = "CPF: $candidato.cpf\n|Data de Nascimento: $candidato.dataNascimento\n|Telefone: $candidato.telefone|Tem interesse nas competências: $candidato.competencias"
         }
 
         println """
@@ -42,7 +42,7 @@ class ListagemView {
             |País: $pessoa.endereco.pais
             |Estado: $pessoa.endereco.estado
             |Descrição: $pessoa.descricao
-            |Tem interesse nas competências: $pessoa.competencias
+            
             """.stripMargin()
     }
 

@@ -9,5 +9,4 @@ abstract class Usuario extends Identificavel {
     String descricao
     String senha
     Endereco endereco
-    List<Competencia> competencias
 }

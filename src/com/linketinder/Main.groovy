@@ -16,14 +16,14 @@ static void main(String[] args) {
     try {
         Sql sql = SqlFactory.newInstance()
 
-        EmpresaRepository empresaRepository = new EmpresaRepository()
+        EmpresaRepository empresaRepository = new EmpresaRepository(sql)
         CandidatoRepository candidatoRepository = new CandidatoRepository(sql)
         EnderecoRepository enderecoRepository = new EnderecoRepository(sql)
         CompetenciaRepository competenciaRepository = new CompetenciaRepository(sql)
 
         EnderecoService enderecoService = new EnderecoService(enderecoRepository)
         CompetenciaService competenciaService = new CompetenciaService(competenciaRepository)
-        EmpresaService empresaService = new EmpresaService(empresaRepository)
+        EmpresaService empresaService = new EmpresaService(empresaRepository, enderecoService)
         CandidatoService candidatoService = new CandidatoService(candidatoRepository, enderecoService, competenciaService)
 
         MenuInicial.iniciar(empresaService, candidatoService, competenciaService)
