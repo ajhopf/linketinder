@@ -36,15 +36,21 @@ class EnderecoService {
         }
     }
 
+    Integer adicionarEndereco(EnderecoDTO endereco) {
+        Integer enderecoId = repository.obterIdDeEnderecoPeloCep(endereco.cep)
+
+        if (enderecoId == -1) {
+            enderecoId = repository.adicionarNovoEndereco(endereco)
+        }
+
+        return enderecoId
+    }
+
     void adicionarEnderecoParaUsuario(Endereco endereco, Integer usuarioId, boolean isUpdate = false) {
         try {
             EnderecoDTO enderecoDTO = EnderecoMapper.toDTO(endereco, usuarioId)
 
-            Integer enderecoId = repository.obterIdDeEnderecoPeloCep(enderecoDTO.cep)
-
-            if (enderecoId == -1) {
-                enderecoId = repository.adicionarNovoEndereco(enderecoDTO)
-            }
+            Integer enderecoId = adicionarEndereco(enderecoDTO)
 
             if (isUpdate) {
                 repository.updateEnderecoUsuario(usuarioId, enderecoId)

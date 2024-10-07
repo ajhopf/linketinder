@@ -65,8 +65,8 @@ class InputHelpers {
         ]
     }
 
-    static Endereco obterEndereco(Scanner sc, isEmpresa = true) {
-        String finalDaString = isEmpresa ? "da empresa" : "do candidato"
+    static Endereco obterEndereco(Scanner sc, isVaga = true) {
+        String finalDaString = isVaga ? "da vaga" : "do candidato"
 
         String pais = obterString("Digite o país $finalDaString:", sc)
         String estado = obterString("Digite o estado $finalDaString:", sc)

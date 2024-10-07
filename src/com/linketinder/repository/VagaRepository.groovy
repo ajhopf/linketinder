@@ -1,8 +1,5 @@
 package com.linketinder.repository
 
-import com.linketinder.model.Vaga
-import com.linketinder.model.dtos.CandidatoDTO
-import com.linketinder.model.dtos.EmpresaDTO
 import com.linketinder.model.dtos.VagaRequestDTO
 import com.linketinder.model.dtos.VagaResponseDTO
 import com.linketinder.repository.interfaces.IVagaDAO
@@ -50,12 +47,33 @@ class VagaRepository implements IVagaDAO {
 
     @Override
     List<VagaRequestDTO> listarVagasDeEmpresa(Integer usuarioId) {
-        return null
+        null
     }
 
     @Override
-    Integer adicionarVaga(Vaga vaga) {
-        return null
+    Integer adicionarVaga(VagaRequestDTO vaga) {
+        def stmt = """
+            INSERT INTO vagas (nome, descricao, empresa_id, endereco_id)
+            VALUES (?, ?, ?, ?)
+        """
+
+        def competenciasVagaStmt = """
+            INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
+            VALUES (?, ?, ?, ?)
+        """
+
+        def vagaParams = [vaga.nome, vaga.descricao, vaga.empresaId, vaga.enderecoId]
+
+        def keys = sql.executeInsert(stmt, vagaParams)
+        Integer vagaId = keys[0][0] as Integer
+
+        for (competencia in vaga.competenciaDTOList) {
+            def params = [vagaId, competencia.id, competencia.anosExperiencia, competencia.afinidade.getAfinidade()]
+
+            sql.executeInsert(competenciasVagaStmt, params)
+        }
+
+        return vagaId
     }
 
     @Override

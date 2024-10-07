@@ -1,12 +1,12 @@
 package com.linketinder.repository.interfaces
 
-import com.linketinder.model.Vaga
 import com.linketinder.model.dtos.VagaRequestDTO
+import com.linketinder.model.dtos.VagaResponseDTO
 
 interface IVagaDAO {
-    List<VagaRequestDTO> listarVagas()
+    List<VagaResponseDTO> listarVagas()
     List<VagaRequestDTO> listarVagasDeEmpresa(Integer usuarioId)
-    Integer adicionarVaga(Vaga vaga)
+    Integer adicionarVaga(VagaRequestDTO vaga)
     void updateVaga(Integer vagaId, VagaRequestDTO vaga)
     void deleteVaga(Integer id)
 }

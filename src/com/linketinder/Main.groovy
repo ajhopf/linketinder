@@ -28,7 +28,7 @@ static void main(String[] args) {
         CompetenciaService competenciaService = new CompetenciaService(competenciaRepository)
         EmpresaService empresaService = new EmpresaService(empresaRepository, enderecoService)
         CandidatoService candidatoService = new CandidatoService(candidatoRepository, enderecoService, competenciaService)
-        VagaService vagaService = new VagaService(vagaRepository, competenciaService)
+        VagaService vagaService = new VagaService(vagaRepository, competenciaService, enderecoService)
 
         MenuInicial.iniciar(empresaService, candidatoService, competenciaService, vagaService)
     } catch (Exception e) {

@@ -1,23 +1,24 @@
 package com.linketinder.service
 
-import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Competencia
+import com.linketinder.model.Empresa
+import com.linketinder.model.Endereco
 import com.linketinder.model.Vaga
+import com.linketinder.model.dtos.EnderecoDTO
+import com.linketinder.model.dtos.VagaRequestDTO
 import com.linketinder.model.dtos.VagaResponseDTO
 import com.linketinder.model.enums.Afinidade
-import com.linketinder.model.mappers.VagaMapper
 import com.linketinder.repository.VagaRepository
 import spock.lang.Specification
 
-import java.sql.SQLException
 
 import static org.mockito.Mockito.*;
 
 class VagaServiceTest extends Specification {
     VagaRepository repository = mock(VagaRepository.class)
-
+    EnderecoService enderecoService = mock(EnderecoService.class)
     CompetenciaService competenciaService = mock(CompetenciaService.class);
-    VagaService vagaService = new VagaService(repository, competenciaService);
+    VagaService vagaService = new VagaService(repository, competenciaService, enderecoService);
 
     def "listarVagas() retorna lista de vagas"() {
         given:
@@ -38,4 +39,21 @@ class VagaServiceTest extends Specification {
             result[0].competencias.size() == 1
     }
 
+    def "adicionarVaga() retorna id da vaga quando adiciona vaga"() {
+        given:
+            Vaga vaga = new Vaga()
+            List<Competencia> competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
+            vaga.id = 1
+            vaga.empresa = new Empresa(id: 1)
+            vaga.competencias = competencias
+            vaga.endereco = new Endereco(cep: "88063-948", cidade: "Florianopolis", estado: "Santa Catarina", pais: "Brasil")
+
+            when(enderecoService.adicionarEndereco(any(EnderecoDTO))).thenReturn(1)
+            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenReturn(1)
+            when(repository.adicionarVaga(any(VagaRequestDTO))).thenReturn(1)
+        when:
+            Integer result = vagaService.adicionarVaga(vaga)
+        then:
+            result == 1
+    }
 }

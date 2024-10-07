@@ -14,6 +14,15 @@ class EnderecoMapper {
         )
     }
 
+    static EnderecoDTO toDTO(Endereco endereco) {
+        return new EnderecoDTO(
+                cep: endereco.cep,
+                pais: endereco.pais,
+                cidade: endereco.cidade,
+                estado: endereco.estado
+        )
+    }
+
     static Endereco toEntity(EnderecoDTO enderecoDTO) {
         return new Endereco(
                 cep: enderecoDTO.cep,

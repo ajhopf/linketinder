@@ -89,9 +89,9 @@ class CompetenciaService {
     }
 
 
-    void verificarSeCompetenciaExiste(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
+    Integer verificarSeCompetenciaExiste(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {
-            repository.obterIdDeCompetencia(competencia)
+            return repository.obterIdDeCompetencia(competencia)
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }

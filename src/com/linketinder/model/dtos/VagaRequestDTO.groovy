@@ -6,4 +6,5 @@ class VagaRequestDTO {
     String descricao
     Integer empresaId
     Integer enderecoId
+    List<CompetenciaDTO> competenciaDTOList
 }
