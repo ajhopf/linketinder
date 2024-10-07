@@ -39,6 +39,9 @@ class MenuInicial {
                     case 7:
                         EmpresaView.editarEmpresa(empresaService, sc)
                         break
+                    case 8:
+                        EmpresaView.deletarEmpresa(empresaService, sc)
+                        break
                     case 13:
                         ListagemView.listarCandidatos(candidatoService)
                         break

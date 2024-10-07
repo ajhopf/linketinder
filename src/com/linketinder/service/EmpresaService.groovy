@@ -1,5 +1,6 @@
 package com.linketinder.service
 
+
 import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Empresa
@@ -76,6 +77,18 @@ class EmpresaService {
             println "Empresa atualizada"
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        } catch (EmpresaNotFoundException e) {
+            throw e
+        }
+    }
+
+    void deleteEmpresa(Integer id) throws RepositoryAccessException, EmpresaNotFoundException{
+        try {
+            repository.deleteEmpresaPeloId(id)
+
+            println "Empresa deletada"
+        } catch (SQLException e) {
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
         } catch (EmpresaNotFoundException e) {
             throw e
         }

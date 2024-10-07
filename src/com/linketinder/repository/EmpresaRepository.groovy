@@ -117,6 +117,15 @@ class EmpresaRepository implements IEmpresaDAO {
 
     @Override
     void deleteEmpresaPeloId(Integer id) {
+        def statement = """
+            DELETE FROM empresas e
+            WHERE e.usuario_id = $id
+        """
 
+        int rowsAffected = sql.executeUpdate(statement)
+
+        if (rowsAffected == 0) {
+            throw new EmpresaNotFoundException("Não foi possível encontrar uma empresa com id $id")
+        }
     }
 }

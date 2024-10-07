@@ -1,6 +1,7 @@
 package com.linketinder.view
 
 import com.linketinder.exceptions.CompetenciaNotFoundException
+import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.service.EmpresaService
@@ -54,6 +55,18 @@ class EmpresaView {
             } catch (CompetenciaNotFoundException e) {
                 println e.getMessage()
             }
+        }
+    }
+
+    static void deletarEmpresa(EmpresaService empresaService, Scanner sc) {
+        println "Deletar Competencia"
+
+        try {
+            Integer competenciaId = InputHelpers.getIntInput(0, 1000, "Digite o id da empresa para deletar", sc)
+
+            empresaService.deleteEmpresa(competenciaId)
+        } catch (EmpresaNotFoundException e) {
+            println e.getMessage()
         }
     }
 
