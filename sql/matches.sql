@@ -1,22 +1,22 @@
 CREATE TABLE curtidas_em_candidato (
 	id SERIAL PRIMARY KEY,
-	candidato_id INT REFERENCES candidatos(usuario_id),
-	empresa_id INT REFERENCES empresas(usuario_id)
+	candidato_id INT REFERENCES candidatos(usuario_id) ON DELETE CASCADE NOT NULL,
+	empresa_id INT REFERENCES empresas(usuario_id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE curtidas_em_vaga (
 	id SERIAL PRIMARY KEY,
-	candidato_id INT REFERENCES candidatos(usuario_id),
-	vaga_id INT REFERENCES vagas(id)
+	candidato_id INT REFERENCES candidatos(usuario_id) ON DELETE CASCADE NOT NULL,
+	vaga_id INT REFERENCES vagas(id) ON DELETE CASCADE NOT NULL
 );
 
-INSERT INTO curtidas_em_candidato (candidato_id, empresa_id) VALUES (8, 1);
-INSERT INTO curtidas_em_candidato (candidato_id, empresa_id) VALUES (9, 2);
-INSERT INTO curtidas_em_candidato (candidato_id, empresa_id) VALUES (11, 3);
+INSERT INTO curtidas_em_candidato (candidato_id, empresa_id) VALUES (7, 1);
+INSERT INTO curtidas_em_candidato (candidato_id, empresa_id) VALUES (8, 2);
+INSERT INTO curtidas_em_candidato (candidato_id, empresa_id) VALUES (10, 3);
 --VAGA 1 É DA EMPRESA 1, VAGA 2 É DA EMPRESA 2...
 INSERT INTO curtidas_em_vaga (candidato_id, vaga_id) VALUES (8, 1);
 INSERT INTO curtidas_em_vaga (candidato_id, vaga_id) VALUES (8, 2);
-INSERT INTO curtidas_em_vaga (candidato_id, vaga_id) VALUES (11, 2);
+INSERT INTO curtidas_em_vaga (candidato_id, vaga_id) VALUES (6, 2);
 
 CREATE VIEW matches AS
 WITH vagas_por_empresa AS (
@@ -41,5 +41,5 @@ SELECT * FROM matches;
 
 
 --segundo match
-INSERT INTO curtidas_em_vaga (candidato_id, vaga_id) VALUES (9, 2);
+INSERT INTO curtidas_em_vaga (candidato_id, vaga_id) VALUES (10, 3);
 

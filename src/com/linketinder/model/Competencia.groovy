@@ -1,17 +1,28 @@
 package com.linketinder.model
 
-import groovy.transform.ToString
+import com.linketinder.model.enums.Afinidade
 
-
-class Competencia {
+class Competencia extends Identificavel{
     String competencia
+    Double anosExperiencia
+    Afinidade afinidade
 
-    Competencia(String competencia) {
+    Competencia(Integer id, String competencia, Double anosExperiencia, Afinidade afinidade) {
         this.competencia = competencia
+        this.anosExperiencia = anosExperiencia
+        this.afinidade = afinidade
+        super.id = id
+    }
+
+
+    Competencia(String competencia, Double anosExperiencia, Afinidade afinidade) {
+        this.competencia = competencia
+        this.anosExperiencia = anosExperiencia
+        this.afinidade = afinidade
     }
 
     @Override
     String toString() {
-        "$competencia"
+        "Nome: $competencia; Anos Experiência: $anosExperiencia; Afinidade: $afinidade"
     }
 }

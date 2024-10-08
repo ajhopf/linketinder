@@ -2,9 +2,11 @@ package com.linketinder.model
 
 import groovy.transform.ToString
 
-@ToString(includePackage = false)
-abstract class Pessoa extends Identificavel {
-    String nome, email, descricao
+@ToString
+class Vaga extends Identificavel {
+    String nome
+    String descricao
     Endereco endereco
+    Empresa empresa
     List<Competencia> competencias
 }

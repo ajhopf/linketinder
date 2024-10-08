@@ -4,5 +4,8 @@ import groovy.transform.ToString
 
 @ToString(includePackage = false)
 class Endereco {
-    String pais, estado, cep
+    String pais
+    String estado
+    String cep
+    String cidade
 }

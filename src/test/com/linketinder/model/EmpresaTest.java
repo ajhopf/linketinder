@@ -1,5 +1,6 @@
 package com.linketinder.model;
 
+import com.linketinder.model.enums.Afinidade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,10 +17,7 @@ class EmpresaTest {
         empresa.setEmail("empresa@hotmail.com");
         empresa.setCnpj("12345");
         empresa.setDescricao("Descrição");
-        List<Competencia> competencias = new ArrayList<>();
-        competencias.add(new Competencia("Java"));
         Endereco endereco = new Endereco();
-        empresa.setCompetencias(competencias);
         empresa.setEndereco(endereco);
 
         return empresa;
@@ -30,7 +28,7 @@ class EmpresaTest {
     void toStringTest() {
         Empresa empresa = createEmpresa();
 
-        assertEquals("Empresa: Empresa, empresa@hotmail.com, cpnj: 12345, Competencias: [Java]", empresa.toString()) ;
+        assertEquals("Empresa: Empresa, empresa@hotmail.com, cpnj: 12345", empresa.toString()) ;
     }
 
     @Test

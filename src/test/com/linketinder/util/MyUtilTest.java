@@ -1,7 +1,6 @@
 package com.linketinder.util;
 
-import com.linketinder.model.Empresa;
-import com.linketinder.model.Identificavel;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +30,7 @@ class MyUtilTest {
             Scanner sc = new Scanner(System.in);
 
             //act
-            int result = MyUtil.getIntInput(1, 10, "Digite um número:", sc);
+            int result = InputHelpers.getIntInput(1, 10, "Digite um número:", sc);
 
             //assert
             assertEquals(5, result);
@@ -48,7 +46,7 @@ class MyUtilTest {
             System.setOut(new PrintStream(outputStreamCaptor));
 
             //act
-            MyUtil.getIntInput(1, 3, "Digite um número:", sc);
+            InputHelpers.getIntInput(1, 3, "Digite um número:", sc);
 
             //assert
             assertEquals("Digite um número:\nEscolha um número entre 1 e 3", outputStreamCaptor.toString().trim());
@@ -64,7 +62,7 @@ class MyUtilTest {
             System.setOut(new PrintStream(outputStreamCaptor));
 
             //act
-            MyUtil.getIntInput(1, 3, "Digite um número:", sc);
+            InputHelpers.getIntInput(1, 3, "Digite um número:", sc);
 
             //assert
             assertEquals("Digite um número:\nVocê deve escolher utilizando um número de 1 a 3", outputStreamCaptor.toString().trim());
@@ -82,47 +80,12 @@ class MyUtilTest {
             Scanner sc = new Scanner(System.in);
 
             //act
-            String result = MyUtil.obterString("title", sc);
+            String result = InputHelpers.obterString("title", sc);
 
             //assert
             assertEquals(mensagem, result);
         }
     }
 
-    @Nested
-    @DisplayName("Método: gerarNovoId")
-    class GerarNovoIdTests {
-        @Test
-        @DisplayName("Quando fornecida uma lista vazia, deve retornar 0")
-        void gerarNovoIdEmUmaListaVaziaRetornaIdZero() {
-            //arrange
-            List<Identificavel> lista = new ArrayList<>();
-
-            //act
-            int resultado = MyUtil.gerarNovoId(lista);
-            //assert
-
-            assertEquals(0, resultado);
-        }
-
-        @Test
-        @DisplayName("Quando fornecida uma lista com itens, deve retornar o maior ID presente na lista acrescido de 1")
-        void gerarNovoIdEmUmaListaComItens() {
-            //arrange
-            List<Identificavel> lista = new ArrayList<>();
-            Empresa empresa = new Empresa();
-            Empresa outraEmpresa = new Empresa();
-            empresa.setId(10);
-            outraEmpresa.setId(3);
-            lista.add(empresa);
-            lista.add(outraEmpresa);
-
-            //act
-            int resultado = MyUtil.gerarNovoId(lista);
-            //assert
-
-            assertEquals(11, resultado);
-        }
-    }
 
 }
