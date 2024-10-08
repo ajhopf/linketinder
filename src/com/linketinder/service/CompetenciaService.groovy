@@ -47,7 +47,7 @@ class CompetenciaService {
     }
 
 
-    List<Competencia> listarCompetenciasDeUsuarioOuVaga(Integer usuarioId, String nomeTabela = 'competencias_usuario') throws RepositoryAccessException {
+    List<Competencia> listarCompetenciasDeUsuarioOuVaga(Integer usuarioId, String nomeTabela = 'competencias_candidato') throws RepositoryAccessException {
         try {
             List<CompetenciaDTO> competenciasDTO = repository.listarCompetenciasDeCandidatoOuVaga(usuarioId, nomeTabela)
             List<Competencia> competencias = []

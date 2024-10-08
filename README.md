@@ -42,20 +42,19 @@ Com um terminal aberto no local que você deseja salvar este projeto, clone este
 git clone https://github.com/ajhopf/linketinder.git
 ````
 
-Visando facilitar o teste do programa, ao iniciar a aplicação você já terá 5 empresas e 5 candidatos cadastrados.
+Para criar as tabelas e popular o seu banco de dados execute os scripts presentes na pasta sql na seguinte ordem:
+1. tabelas.sql (irá criar as tabelas e adicionar competencias e endereços)
+2. insere_empresas.sql (irá adicionar 5 empresas com 1 vaga associada a cada uma)
+3. insere_candidatos.sql (irá adicionar 5 candidatos com competencias associadas)
+4. matches.sql (adiciona as tabelas de curtida e a view de match)
 
-Se você deseja iniciar o sistema sem nenhum cadastro comente ou elimine a linha 12 do arquivo Main.
+A configuração da conexão com o banco de dados PostgreSQL é realizada pela classe SqlFactory.
 
-```
-// com.linketinder.Main.groovy
+A configuração padrão é feita conforme imagem abaixo:
 
-static void main(String[] args) {
-    Map services = criarBeans()
-    // IniciarDB.iniciar(services.candidatoService, services.empresaService)
+![conexao.png](assets/conexao-db.png)
 
-    MenuInicial.iniciar(services.empresaService, services.candidatoService)
-}
-```
+Você provavelmente tem configurações diferentes para o seu banco de dados. Modifique o seu usuário, senha e url de conexão conforme necessário
 
 Para iniciar o sistema, execute o método main.
 
@@ -63,26 +62,22 @@ Para iniciar o sistema, execute o método main.
 
 A navegação do sitema é feita através dos números das opções que são mostradas em cada menu.
 
-![img.png](img.png)
+![menu.png](assets/menu.png)
 
-### Listando Candidatos e Empresas
+Ainda estamos em fase inicial da implementação do aplicativo, portanto o cadastro ainda poderá ser realizado diretamente pelo terminal sem autenticação.
 
-Ao escolher a opção 1 ou 3 será impressa no terminal uma lista com todos os cadastros do respectivo tipo.
+Este projeto é o backend da aplicação, quando finalizado o projeto, o Linketinder terá uma interface gráfica por onde os cadastros e visualização dos dados será feita.
 
+Uma das premissas no linketinder é o anonimato, ou seja, um candidato não pode saber a empresa que publicou as vagas, e uma empresa não sabe quem é o candidato até o momento em que houver o match.
 
-### Adicionando Candidatos e Empresas
+Essa lógica será melhor explorada nas próximas atualizações do sistema.
 
-Ao escolher a opção 2 ou 4 você entrará no modo de cadastro para aquele respectivo item.
+Atualmente, através da linha de comando, podemos fazer o CRUD de Competencias, Empresas, Vagas e Candidatos.
 
-Você irá deparar com a seguinte mensagem:
+mulário para cadastro é simples, sendo necessário apenas digitar a informação solicitada e apertar enter para prosseguir para a próxima pergunta.
 
-![img-2.png](img-2.png)
+Para realizar as operações selecione o número da operação desejada e siga as instruções apresentadas na tela.
 
-Ainda estamos em fase inicial da implementação do aplicativo, portanto o cadastro ainda poderá ser realizado sem validações e diretamente pelo terminal.
-
-No futuro para efetuar um novo cadastro a empresa ou candidato deverão preencher um formulário ou solicitar que seja feito por um administrador do sistema.
-
-O formulário para cadastro é simples, sendo necessário apenas digitar a informação solicitada e apertar enter para prosseguir para a próxima pergunta.
 
 ## PostgreSQL Database
 
@@ -94,12 +89,12 @@ Abaixo é possível visualizar a relação entre as tabelas e também as colunas
 
 Este diagrama foi realizado utilizando http://dbdiagram.io
 
-![modelagem.png](sql%2Fmodelagem.png)
+![diagrama-db.png](sql/diagrama-db.png)
 Link para a modelagem: https://dbdiagram.io/d/66fea3fffb079c7ebd3c107c
 
 Na pasta sql presente na raíz deste projeto existem os scripts para:
   * Criação das tabelas, inserção de 10 competências e cinco endereços - tabelas.sql
-  * Inserção de 5 empresas com um endereço, uma competência e uma vaga associada - insere_empresas.sql
+  * Inserção de 5 empresas com um endereço e uma vaga associada - insere_empresas.sql
   * Inserção de 5 candidatos com um endereço, uma competência e uma formação associada - insere_candidatos.sql
 
 ### Curtidas e Match
@@ -113,7 +108,7 @@ No arquivo sql/matches.sql são criadas duas novas tabelas:
 
 Além disso são inseridos algumas curtidas:
 
-![img_2.png](img_2.png)
+![img_2.png](assets/img_2.png)
 
 Note que a vaga com id 1(que é da empresa com id 1) foi curtida pelo candidato de id 8 e o candidato 8 curtiu a empresa 1!
 
@@ -121,7 +116,7 @@ Temos o primeiro match de nosso sistema!
 
 Para visualizá-lo, também no arquivo sql/matches.sql criamos uma VIEW chamada matches.
 
-![img_5.png](img_5.png)
+![img_5.png](assets/img_5.png)
 
 Esta view cria uma tabela chamada 'vagas_por_empresa' que possibilita a visualização de qual foi a empresa que publicou cada vaga que recebeu uma curtida, presente na tabela curtidas_em_vaga.
 
@@ -129,10 +124,10 @@ Então, unimos esta tabela a com a tabela curtidas_em_candidato e buscamos apena
 
 Basta agora utilizar a view:
 
-![img_3.png](img_3.png)
+![img_3.png](assets/img_3.png)
 
 Vamos testar um novo match! 
 
 O candidato id 9 foi curtido pela empresa id 2, agora o candidato id 9 irá curtir a vaga de id 2 (que é da empresa de id 2)
 
-![img_4.png](img_4.png)
+![img_4.png](assets/img_4.png)

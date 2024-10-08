@@ -16,11 +16,9 @@ class CompetenciaRepository implements ICompetenciaDAO {
 
     @Override
     List<CompetenciaDTO> listarCompetenciasDeCandidatoOuVaga(Integer entidadeId, String nomeTabela) {
-        println nomeTabela
-
         def statement = """
                 select c.id, c.competencia, t.afinidade, t.anos_experiencia 
-                from competencias_usuario t
+                from competencias_candidato t
                 INNER JOIN competencias c
                 ON t.competencia_id = c.id
                 WHERE t.usuario_id = $entidadeId;

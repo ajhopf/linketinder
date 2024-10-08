@@ -15,7 +15,7 @@ class CompetenciaServiceTest extends Specification {
     CompetenciaService competenciaService = new CompetenciaService(repository)
 
 
-    void "listarCompetenciasDeUsuario() retorna lista vazia"() {
+    void "listarCompetenciasDeCandidatoOuVaga() retorna lista vazia"() {
         given:
         List<CompetenciaDTO> competenciaDTOS = []
 
@@ -27,7 +27,7 @@ class CompetenciaServiceTest extends Specification {
         listaResultado.size() == 0
     }
 
-    void "listarCompetenciasDeUsuario() retorna lista com competencias"() {
+    void "listarCompetenciasDeCandidatoOuVaga() retorna lista com competencias"() {
         given:
         List<CompetenciaDTO> competenciaDTOS = [new CompetenciaDTO(id: 1, afinidade: Afinidade.ALTA, anosExperiencia: 3, competencia: 'Java')]
 
@@ -39,7 +39,7 @@ class CompetenciaServiceTest extends Specification {
         listaResultado.size() == 1
     }
 
-    void "listarCompetenciasDeUsuario() lança RepositoryAccessException quando há erro de acesso no repository"() {
+    void "listarCompetenciasDeCandidatoOuVaga() lança RepositoryAccessException quando há erro de acesso no repository"() {
         given:
         when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenThrow(RepositoryAccessException.class);
 

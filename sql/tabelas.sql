@@ -23,12 +23,12 @@ CREATE TABLE usuarios (
 );
 
 CREATE TABLE empresas (
-	usuario_id INT PRIMARY KEY REFERENCES usuarios(id),
+	usuario_id INT PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
 	cnpj VARCHAR(18) NOT NULL
 );
 
 CREATE TABLE candidatos (
-	usuario_id INT PRIMARY KEY REFERENCES usuarios(id),
+	usuario_id INT PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
 	sobrenome VARCHAR(50) NOT NULL,
 	data_nascimento DATE NOT NULL,
 	cpf VARCHAR(14) NOT NULL,
@@ -40,18 +40,18 @@ CREATE TABLE formacoes (
   formacao VARCHAR(100) NOT NULL,
   instituicao VARCHAR(100) NOT NULL,
   ano_de_finalizacao DATE NOT NULL,
-  candidato_id INT REFERENCES candidatos(usuario_id) NOT NULL
+  candidato_id INT REFERENCES candidatos(usuario_id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE enderecos_usuario (
-	usuario_id INT REFERENCES usuarios(id ),
-	endereco_id INT REFERENCES enderecos(id),
+	usuario_id INT REFERENCES usuarios(id ) ON DELETE CASCADE,
+	endereco_id INT REFERENCES enderecos(id) ON DELETE CASCADE,
 	PRIMARY KEY (usuario_id, endereco_id)
 );
 
-CREATE TABLE competencias_usuario (
+CREATE TABLE competencias_candidato (
 	id SERIAL PRIMARY KEY,
-	usuario_id INT REFERENCES usuarios(id) NOT NULL,
+	usuario_id INT REFERENCES candidatos(usuario_id) ON DELETE CASCADE NOT NULL,
 	competencia_id INT REFERENCES competencias(id) NOT NULL,
 	anos_experiencia NUMERIC(3,1) NOT NULL,
 	afinidade INT NOT NULL
@@ -61,13 +61,13 @@ CREATE TABLE vagas (
 	id SERIAL PRIMARY KEY,
 	nome VARCHAR(100) NOT NULL,
 	descricao VARCHAR(1000) NOT NULL,
-	empresa_id INT REFERENCES empresas(usuario_id),
-	endereco_id INT REFERENCES enderecos(id)
+	empresa_id INT REFERENCES empresas(usuario_id) ON DELETE CASCADE NOT NULL,
+	endereco_id INT REFERENCES enderecos(id) ON DELETE CASCADE
 );
 
 CREATE TABLE competencias_vaga (
-	vaga_id INT REFERENCES vagas(id),
-	competencia_id INT REFERENCES competencias(id),
+	vaga_id INT REFERENCES vagas(id) ON DELETE CASCADE NOT NULL,
+	competencia_id INT REFERENCES competencias(id) ON DELETE CASCADE NOT NULL,
 	anos_experiencia NUMERIC(3,1) NOT NULL,
 	afinidade INT NOT NULL
 );
