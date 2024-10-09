@@ -30,9 +30,17 @@ Neste momento ainda estamos em fase inicial da construção do aplicativo, porta
 
 ## Executando o Sistema
 
-Esta aplicação foi desenvolvida com Groovy, uma linguagem derivada do Java.
+Esta aplicação foi desenvolvida com Groovy e utiliza o Gradle como build tool.
 
 Para executar este sistema você deve ter o Java instalado na sua máquina, ou abri-lo utilizando uma IDE com o JVM integrado.
+
+Você poderá executar o programa utilizando o comando
+
+```
+gradle run -q --console=plain
+```
+
+Ou, se você preferir, você pode executar a classe 'Main'.
 
 Para maiores informações visite o [site oficial Java](https://www.java.com/en/) e o [site oficial do Groovy](https://groovy-lang.org/index.html).
 
