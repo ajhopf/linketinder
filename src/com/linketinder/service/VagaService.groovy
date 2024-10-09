@@ -1,6 +1,6 @@
 package com.linketinder.service
 
-import com.linketinder.exceptions.CandidatoNotFoundException
+
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.exceptions.VagaNotFoundException
 import com.linketinder.model.Competencia
@@ -64,7 +64,7 @@ class VagaService {
         List<CompetenciaDTO> competenciaDTOList = []
 
         for (competencia in competencias) {
-            Integer competenciaId = competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+            Integer competenciaId = competenciaService.obterIdDeCompetenciaPeloNome(competencia.competencia)
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
             competenciaDTO.id = competenciaId
             competenciaDTOList << competenciaDTO
@@ -73,11 +73,12 @@ class VagaService {
         return competenciaDTOList
     }
 
-    Integer adicionarVaga(Vaga vaga, boolean isUpdate = false) throws RepositoryAccessException {
+    Integer adicionarOuEditarVaga(Vaga vaga, boolean isUpdate = false) throws RepositoryAccessException {
         try {
             if (isUpdate) {
                 competenciaService.deletarCompetenciaEntidade(vaga.id, 'competencias_vaga')
             }
+
             EnderecoDTO enderecoDTO = EnderecoMapper.toDTO(vaga.endereco)
             Integer enderecoId = enderecoService.adicionarEndereco(enderecoDTO)
 

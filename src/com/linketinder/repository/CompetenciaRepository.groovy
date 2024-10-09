@@ -106,7 +106,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     @Override
     void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId)  {
         def inserirCompetencia = """
-            INSERT INTO competencias_usuario (usuario_id, competencia_id, anos_experiencia, afinidade)
+            INSERT INTO competencias_candidato (usuario_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
         """
 
@@ -162,7 +162,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     @Override
     void deleteCompetenciasEntidade(Integer entidadeId, String tabela) {
         def stmt = """
-            DELETE FROM competencias_usuario
+            DELETE FROM competencias_candidato
             WHERE usuario_id = $entidadeId
         """
 

@@ -1,14 +1,10 @@
 package com.linketinder.repository
 
 import com.linketinder.exceptions.CandidatoNotFoundException
-import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.model.dtos.CandidatoDTO
-import com.linketinder.model.dtos.EmpresaDTO
 import com.linketinder.repository.interfaces.ICandidatoDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
-
-import java.sql.SQLException
 
 class CandidatoRepository implements ICandidatoDAO {
     private Sql sql = null

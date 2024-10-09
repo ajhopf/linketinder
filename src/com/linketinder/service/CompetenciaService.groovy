@@ -18,6 +18,15 @@ class CompetenciaService {
     }
 
 
+    Integer obterIdDeCompetenciaPeloNome(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
+        try {
+            return repository.obterIdDeCompetencia(competencia)
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
+
     Competencia obterCompetenciaPeloId(Integer id) {
         try {
             CompetenciaDTO competenciaDTO = repository.obterCompetenciaPeloId(id)
@@ -52,7 +61,7 @@ class CompetenciaService {
             List<CompetenciaDTO> competenciasDTO = repository.listarCompetenciasDeCandidatoOuVaga(usuarioId, nomeTabela)
             List<Competencia> competencias = []
 
-            for (competencia in competenciasDTO) {
+            competenciasDTO.each {competencia ->
                 competencias << CompetenciaMapper.toEntity(competencia)
             }
 
@@ -85,15 +94,6 @@ class CompetenciaService {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         } catch (CompetenciaNotFoundException e) {
             throw e
-        }
-    }
-
-
-    Integer verificarSeCompetenciaExiste(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
-        try {
-            return repository.obterIdDeCompetencia(competencia)
-        } catch (SQLException sqlException) {
-            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }
     }
 

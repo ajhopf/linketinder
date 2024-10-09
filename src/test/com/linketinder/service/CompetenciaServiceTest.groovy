@@ -8,10 +8,10 @@ import com.linketinder.model.enums.Afinidade
 import com.linketinder.repository.CompetenciaRepository
 import spock.lang.Specification
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.*
 
 class CompetenciaServiceTest extends Specification {
-    CompetenciaRepository repository = mock(CompetenciaRepository.class);
+    CompetenciaRepository repository = mock(CompetenciaRepository.class)
     CompetenciaService competenciaService = new CompetenciaService(repository)
 
 
@@ -20,8 +20,8 @@ class CompetenciaServiceTest extends Specification {
         List<CompetenciaDTO> competenciaDTOS = []
 
         when:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenReturn(competenciaDTOS);
-        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenReturn(competenciaDTOS)
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1)
 
         then:
         listaResultado.size() == 0
@@ -33,7 +33,7 @@ class CompetenciaServiceTest extends Specification {
 
         when:
         when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenReturn(competenciaDTOS)
-        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1)
 
         then:
         listaResultado.size() == 1
@@ -41,21 +41,21 @@ class CompetenciaServiceTest extends Specification {
 
     void "listarCompetenciasDeCandidatoOuVaga() lança RepositoryAccessException quando há erro de acesso no repository"() {
         given:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenThrow(RepositoryAccessException.class);
+        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenThrow(RepositoryAccessException.class)
 
         when:
-        competenciaService.listarCompetenciasDeUsuarioOuVaga(1);
+        competenciaService.listarCompetenciasDeUsuarioOuVaga(1)
 
         then:
         thrown(RepositoryAccessException)
     }
 
-    void "verificarSeCompetenciaExiste() lança CompetenciaNotFoundException quando não encontra a competencia no BD"() {
+    void 'obterIdDeCompetenciaExiste() lança CompetenciaNotFoundException quando não encontra a competencia no BD'() {
         given:
         when(repository.obterIdDeCompetencia(any(String))).thenThrow(CompetenciaNotFoundException.class)
 
         when:
-        competenciaService.verificarSeCompetenciaExiste('jeva')
+        competenciaService.obterIdDeCompetenciaPeloNome('jeva')
 
         then:
         thrown(CompetenciaNotFoundException)

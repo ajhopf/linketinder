@@ -1,6 +1,6 @@
 package com.linketinder.view
 
-import com.linketinder.exceptions.CandidatoNotFoundException
+
 import com.linketinder.exceptions.CompetenciaNotFoundException
 import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.exceptions.VagaNotFoundException
@@ -8,7 +8,6 @@ import com.linketinder.model.Competencia
 import com.linketinder.model.Empresa
 import com.linketinder.model.Endereco
 import com.linketinder.model.Vaga
-import com.linketinder.service.CandidatoService
 import com.linketinder.service.EmpresaService
 import com.linketinder.service.VagaService
 import com.linketinder.util.InputHelpers
@@ -60,7 +59,7 @@ class VagaView {
 
                 Vaga vaga = obterInfosDeVaga(sc, empresa)
 
-                Integer vagaId = vagaService.adicionarVaga(vaga)
+                Integer vagaId = vagaService.adicionarOuEditarVaga(vaga)
 
                 println "Vaga adicionada com sucesso. Id: $vagaId"
             } catch (EmpresaNotFoundException e) {
@@ -83,7 +82,7 @@ class VagaView {
                 Vaga vagaAtualizada = obterInfosDeVaga(sc)
                 vagaAtualizada.id = vaga.id
 
-                vagaService.adicionarVaga(vagaAtualizada, true)
+                vagaService.adicionarOuEditarVaga(vagaAtualizada, true)
 
                 println "Vaga atualizada com sucesso"
             } catch (CompetenciaNotFoundException e) {

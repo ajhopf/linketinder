@@ -2,15 +2,12 @@ package com.linketinder.service
 
 import com.linketinder.exceptions.CandidatoNotFoundException
 import com.linketinder.exceptions.CompetenciaNotFoundException
-import com.linketinder.exceptions.EmpresaNotFoundException
 import com.linketinder.exceptions.RepositoryAccessException
 import com.linketinder.model.Candidato
 import com.linketinder.model.Competencia
 import com.linketinder.model.Endereco
 import com.linketinder.model.dtos.CandidatoDTO
-import com.linketinder.model.dtos.EmpresaDTO
 import com.linketinder.model.mappers.CandidatoMapper
-import com.linketinder.model.mappers.EmpresaMapper
 import com.linketinder.repository.CandidatoRepository
 
 import java.sql.SQLException
@@ -55,15 +52,15 @@ class CandidatoService {
         try {
             CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
 
-            for (competencia in candidato.competencias) {
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+            candidato.competencias.each {competencia ->
+                competenciaService.obterIdDeCompetenciaPeloNome(competencia.competencia)
             }
 
             Integer usuarioId = repository.adicionarCandidato(candidatoDTO)
 
             enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, usuarioId)
 
-            for (competencia in candidato.competencias) {
+            candidato.competencias.each {competencia ->
                 competenciaService.adicionarCompetenciaDeUsuario(competencia, usuarioId)
             }
 
@@ -82,7 +79,7 @@ class CandidatoService {
         try {
             List<CandidatoDTO> candidatoDTOList = repository.listarCandidatos()
 
-            for (candidato in candidatoDTOList) {
+            candidatoDTOList.each {candidato ->
                 Endereco endereco = enderecoService.obterEnderecoDoUsuario(candidato.id)
                 List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(candidato.id)
                 candidatos << CandidatoMapper.toEntity(candidato, endereco, competencias)
@@ -99,7 +96,7 @@ class CandidatoService {
             CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
 
             for (competencia in candidato.competencias) {
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+                competenciaService.obterIdDeCompetenciaPeloNome(competencia.competencia)
 
             }
 

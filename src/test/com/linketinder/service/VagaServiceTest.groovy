@@ -40,7 +40,7 @@ class VagaServiceTest extends Specification {
             result[0].competencias.size() == 1
     }
 
-    void "adicionarVaga() retorna id da vaga quando adiciona vaga"() {
+    void 'adicionarVaga() retorna id da vaga quando adiciona OuEditarVaga'() {
         given:
             Vaga vaga = new Vaga()
             List<Competencia> competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
@@ -50,10 +50,10 @@ class VagaServiceTest extends Specification {
             vaga.endereco = new Endereco(cep: "88063-948", cidade: "Florianopolis", estado: "Santa Catarina", pais: "Brasil")
 
             when(enderecoService.adicionarEndereco(any(EnderecoDTO))).thenReturn(1)
-            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenReturn(1)
+            when(competenciaService.obterIdDeCompetenciaPeloNome(any(String))).thenReturn(1)
             when(repository.adicionarVaga(any(VagaRequestDTO))).thenReturn(1)
         when:
-            Integer result = vagaService.adicionarVaga(vaga)
+            Integer result = vagaService.adicionarOuEditarVaga(vaga)
         then:
             result == 1
     }

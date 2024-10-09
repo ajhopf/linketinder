@@ -40,10 +40,11 @@ class EmpresaService {
         try {
             List<EmpresaDTO> empresaDTOList = repository.listarEmpresas()
 
-            for (empresaDTO in empresaDTOList) {
+            empresaDTOList.each {empresaDTO ->
                 Endereco endereco = enderecoService.obterEnderecoDoUsuario(empresaDTO.id)
                 empresas << EmpresaMapper.toEntity(empresaDTO, endereco)
             }
+
             return empresas
 
         } catch (SQLException sqlException) {

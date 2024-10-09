@@ -75,7 +75,7 @@ class CandidatoView {
             String dataString = InputHelpers.obterString("Digite a data de nascimento no formato dd/MM/yyyy", sc)
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy")
-            simpleDateFormat.setLenient(false)
+
             try {
                 simpleDateFormat.parse( dataString )
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")

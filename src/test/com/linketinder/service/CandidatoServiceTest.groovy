@@ -65,7 +65,7 @@ class CandidatoServiceTest extends Specification {
         given:
             Candidato candidato = new Candidato()
             candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
-            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenThrow(CompetenciaNotFoundException.class)
+            when(competenciaService.obterIdDeCompetenciaPeloNome(any(String))).thenThrow(CompetenciaNotFoundException.class)
 
         when:
             candidatoService.adicionarCandidato(candidato)
@@ -79,7 +79,7 @@ class CandidatoServiceTest extends Specification {
         Candidato candidato = new Candidato()
         candidato.endereco = new Endereco()
         candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
-       when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenReturn(1)
+       when(competenciaService.obterIdDeCompetenciaPeloNome(any(String))).thenReturn(1)
 
         when(repository.adicionarCandidato(any(CandidatoDTO))).thenReturn(1)
 
@@ -124,7 +124,7 @@ class CandidatoServiceTest extends Specification {
 
     void "updateCandidato lança CompetenciaNotFoundException quando tenta inserir candidato com competencia invalida"(){
         given:
-        when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenThrow(CompetenciaNotFoundException.class)
+        when(competenciaService.obterIdDeCompetenciaPeloNome(any(String))).thenThrow(CompetenciaNotFoundException.class)
         Competencia competencia = new Competencia('Java', 1, Afinidade.ALTA)
 
         when:

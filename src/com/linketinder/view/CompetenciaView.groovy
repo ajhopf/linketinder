@@ -19,7 +19,7 @@ class CompetenciaView {
 
         List<Competencia> competencias = competenciaService.listarCompetencias()
 
-        for (competencia in competencias) {
+        competencias.each {competencia ->
             println "Id: $competencia.id | $competencia.competencia"
         }
     }
