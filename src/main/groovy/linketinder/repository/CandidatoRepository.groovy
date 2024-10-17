@@ -119,7 +119,11 @@ class CandidatoRepository implements CandidatoDAO {
             DELETE FROM usuarios WHERE id = $id
         """
 
-        sql.executeUpdate(deletarUsuario)
+        def row = sql.executeUpdate(deletarUsuario)
+
+        if (row == 0) {
+            throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $candidatoDTO.id")
+        }
     }
 }
 

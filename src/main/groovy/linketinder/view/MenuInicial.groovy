@@ -59,10 +59,10 @@ class MenuInicial {
                         ListagemView.listarCandidatos(candidatoService)
                         break
                     case 14:
-                        CandidatoView.adicionarCandidato(candidatoService, sc)
+                        CandidatoView.adicionarCandidato(candidatoService, competenciaService, sc)
                         break
                     case 15:
-                        CandidatoView.editarCandidato(candidatoService, sc)
+                        CandidatoView.editarCandidato(candidatoService, competenciaService, sc)
                         break
                     case 16:
                         CandidatoView.deletarCandidato(candidatoService, sc)
