@@ -7,6 +7,7 @@ import linketinder.model.Competencia
 import linketinder.model.Empresa
 import linketinder.model.Endereco
 import linketinder.model.Vaga
+import linketinder.service.CompetenciaService
 import linketinder.service.EmpresaService
 import linketinder.service.VagaService
 import linketinder.util.InputHelpers
@@ -42,68 +43,61 @@ class VagaView {
     }
 
 
-    static void adicionarVaga(VagaService vagaService, EmpresaService empresaService, Scanner sc) {
+    static void adicionarVaga(VagaService vagaService, EmpresaService empresaService, CompetenciaService competenciaService, Scanner sc) {
         println "Adicionar Vaga"
 
-        boolean idInvalido = true
+        try {
+            Integer empresaId = InputHelpers.getIntInput(0, 1000, "Digite o id da empresa para adicionar uma vaga", sc)
+            Empresa empresa = empresaService.obterEmpresaPeloId(empresaId)
 
-        while (idInvalido) {
-            try {
-                Integer empresaId = InputHelpers.getIntInput(0, 1000, "Digite o id da empresa para adicionar uma vaga", sc)
-                Empresa empresa = empresaService.obterEmpresaPeloId(empresaId)
+            println "Empresa Selecionada: $empresa.nome"
 
-                idInvalido = false
+            Vaga vaga = obterInfosDeVaga(sc, empresa)
 
-                println "Empresa Selecionada: $empresa.nome"
-
-                Vaga vaga = obterInfosDeVaga(sc, empresa)
-
-                Integer vagaId = vagaService.adicionarVaga(vaga)
-
-                println "Vaga adicionada com sucesso. Id: $vagaId"
-            } catch (EmpresaNotFoundException e) {
-                println e.getMessage()
+            vaga.competencias.each {competencia ->
+                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
             }
+
+            Integer vagaId = vagaService.adicionarVaga(vaga)
+
+            println "Vaga adicionada com sucesso. Id: $vagaId"
+        } catch (EmpresaNotFoundException e) {
+            println e.getMessage()
         }
+
     }
 
-    static void editarVaga(VagaService vagaService, Scanner sc) {
+    static void editarVaga(VagaService vagaService, CompetenciaService competenciaService, Scanner sc) {
         println "Editar Vaga"
+        try {
+            Integer vagaId = InputHelpers.getIntInput(0, 1000, "Digite o id da vaga para editar", sc)
+            Vaga vaga = vagaService.obterVagaPeloId(vagaId)
 
-        boolean idInvalido = true
+            Vaga vagaAtualizada = obterInfosDeVaga(sc)
+            vagaAtualizada.id = vaga.id
 
-        while (idInvalido) {
-            try {
-                Integer vagaId = InputHelpers.getIntInput(0, 1000, "Digite o id da vaga para editar", sc)
-                Vaga vaga = vagaService.obterVagaPeloId(vagaId)
-                idInvalido = false
-
-                Vaga vagaAtualizada = obterInfosDeVaga(sc)
-                vagaAtualizada.id = vaga.id
-
-                vagaService.adicionarVaga(vagaAtualizada, true)
-
-                println "Vaga atualizada com sucesso"
-            } catch (CompetenciaNotFoundException e) {
-                println e.getMessage()
+            vaga.competencias.each {competencia ->
+                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
             }
+
+            vagaService.updateVaga(vagaAtualizada)
+
+            println "Vaga atualizada com sucesso"
+        } catch (CompetenciaNotFoundException e) {
+            println e.getMessage()
         }
     }
 
     static void deletarVaga(VagaService service, Scanner sc) {
         println "Deletar Vaga"
 
-        boolean idInvalido = true
+        Integer idDaVaga = InputHelpers.getIntInput(0, 5000, 'Digite o id da vaga', sc)
+        try {
+            service.deleteVaga(idDaVaga)
+            println 'Vaga deletada com sucesso'
 
-        while(idInvalido) {
-            Integer idDaVaga = InputHelpers.getIntInput(0, 5000, 'Digite o id da vaga', sc)
-            try {
-                service.deleteVaga(idDaVaga)
-                println 'Vaga deletada com sucesso'
-                idInvalido = false
-            } catch (VagaNotFoundException e) {
-                println e.getMessage()
-            }
+        } catch (VagaNotFoundException e) {
+            println e.getMessage()
         }
 
     }

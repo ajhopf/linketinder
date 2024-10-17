@@ -5,6 +5,7 @@ import linketinder.exceptions.RepositoryAccessException
 import linketinder.model.Competencia
 
 import linketinder.model.dtos.CompetenciaDTO
+import linketinder.model.enums.TabelaCompetencia
 import linketinder.model.mappers.CompetenciaMapper
 import linketinder.repository.CompetenciaRepository
 
@@ -34,22 +35,23 @@ class CompetenciaService {
         try {
             List<CompetenciaDTO> competenciaDTOList = repository.listarCompetencias()
 
-            List<Competencia> competencias = []
+            List<Competencia> competenciasList = []
 
-            for (competencia in competenciaDTOList) {
-                competencias << CompetenciaMapper.toEntity(competencia)
+            competenciaDTOList.each {competencia ->
+                competenciasList << CompetenciaMapper.toEntity(competencia)
             }
 
-            return competencias
+            return competenciasList
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }
     }
 
 
-    List<Competencia> listarCompetenciasDeUsuarioOuVaga(Integer usuarioId, String nomeTabela = 'competencias_candidato') throws RepositoryAccessException {
+    List<Competencia> listarCompetenciasDeUsuarioOuVaga(Integer usuarioId, TabelaCompetencia tabela) throws RepositoryAccessException {
+
         try {
-            List<CompetenciaDTO> competenciasDTO = repository.listarCompetenciasDeCandidatoOuVaga(usuarioId, nomeTabela)
+            List<CompetenciaDTO> competenciasDTO = repository.listarCompetenciasDeCandidatoOuVaga(usuarioId, tabela.getNomeTabela())
             List<Competencia> competencias = []
 
             for (competencia in competenciasDTO) {

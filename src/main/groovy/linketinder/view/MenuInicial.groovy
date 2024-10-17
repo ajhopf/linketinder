@@ -47,10 +47,10 @@ class MenuInicial {
                         VagaView.listarVagas(vagaService)
                         break
                     case 10:
-                        VagaView.adicionarVaga(vagaService, empresaService, sc)
+                        VagaView.adicionarVaga(vagaService, empresaService, competenciaService, sc)
                         break
                     case 11:
-                        VagaView.editarVaga(vagaService, sc)
+                        VagaView.editarVaga(vagaService, competenciaService, sc)
                         break
                     case 12:
                         VagaView.deletarVaga(vagaService, sc)

@@ -37,13 +37,18 @@ class EnderecoService {
     }
 
     Integer adicionarEndereco(EnderecoDTO endereco) {
-        Integer enderecoId = repository.obterIdDeEnderecoPeloCep(endereco.cep)
+        try {
+            Integer enderecoId = repository.obterIdDeEnderecoPeloCep(endereco.cep)
 
-        if (enderecoId == -1) {
-            enderecoId = repository.adicionarNovoEndereco(endereco)
+            if (enderecoId == -1) {
+                enderecoId = repository.adicionarNovoEndereco(endereco)
+            }
+
+            return enderecoId
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }
 
-        return enderecoId
     }
 
     void adicionarEnderecoParaUsuario(Endereco endereco, Integer usuarioId, boolean isUpdate = false) {

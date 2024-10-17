@@ -106,9 +106,10 @@ class CandidatoView {
                 competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
             }
 
-            service.adicionarCandidato(candidato)
+            Integer id = service.adicionarCandidato(candidato)
+            println "Candidato adicionado com sucesso. Id: $id"
         } catch(CompetenciaNotFoundException e) {
-            println 'Não foi possível adicionar o candidato. Ao menos uma das competências relacionadas ao candidato não existem no sistema.'
+            println 'Não foi possível adicionar competencias ao candidato. Ao menos uma das competências relacionadas ao candidato não existem no sistema.'
         } catch(Exception e) {
             println 'Candidato não adicionado'
             println e.getMessage()
