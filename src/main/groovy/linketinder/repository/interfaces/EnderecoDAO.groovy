@@ -2,7 +2,7 @@ package linketinder.repository.interfaces
 
 import linketinder.model.dtos.EnderecoDTO
 
-interface IEnderecoDAO {
+interface EnderecoDAO {
     EnderecoDTO obterEnderecoDoUsuarioPeloId(Integer id)
     Integer obterIdDeEnderecoPeloCep(String cep)
     Integer adicionarNovoEndereco(EnderecoDTO enderecoDTO)

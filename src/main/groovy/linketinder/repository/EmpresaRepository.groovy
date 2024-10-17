@@ -2,11 +2,11 @@ package linketinder.repository
 
 import linketinder.exceptions.EmpresaNotFoundException
 import linketinder.model.dtos.EmpresaDTO
-import linketinder.repository.interfaces.IEmpresaDAO
+import linketinder.repository.interfaces.EmpresaDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
-class EmpresaRepository implements IEmpresaDAO {
+class EmpresaRepository implements EmpresaDAO {
     private Sql sql = null
 
     EmpresaRepository(Sql sql) {

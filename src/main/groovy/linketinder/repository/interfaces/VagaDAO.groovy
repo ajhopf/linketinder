@@ -3,7 +3,7 @@ package linketinder.repository.interfaces
 import linketinder.model.dtos.VagaRequestDTO
 import linketinder.model.dtos.VagaResponseDTO
 
-interface IVagaDAO {
+interface VagaDAO {
     List<VagaResponseDTO> listarVagas()
     Integer adicionarVaga(VagaRequestDTO vaga)
     VagaResponseDTO obterVagaPeloId(Integer vagaId)

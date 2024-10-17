@@ -1,10 +1,10 @@
 package linketinder.repository
 
 import linketinder.model.dtos.EnderecoDTO
-import linketinder.repository.interfaces.IEnderecoDAO
+import linketinder.repository.interfaces.EnderecoDAO
 import groovy.sql.Sql
 
-class EnderecoRepository implements IEnderecoDAO{
+class EnderecoRepository implements EnderecoDAO{
     private Sql sql = null
 
     EnderecoRepository(Sql sql) {

@@ -2,7 +2,7 @@ package linketinder.repository.interfaces
 
 import linketinder.model.dtos.CompetenciaDTO
 
-interface ICompetenciaDAO {
+interface CompetenciaDAO {
     List<CompetenciaDTO> listarCompetencias()
     List<CompetenciaDTO> listarCompetenciasDeCandidatoOuVaga(Integer usuarioId, String nomeTabela)
     Integer adicionarCompetencia(String competencia)

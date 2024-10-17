@@ -3,11 +3,11 @@ package linketinder.repository
 import linketinder.exceptions.VagaNotFoundException
 import linketinder.model.dtos.VagaRequestDTO
 import linketinder.model.dtos.VagaResponseDTO
-import linketinder.repository.interfaces.IVagaDAO
+import linketinder.repository.interfaces.VagaDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
-class VagaRepository implements IVagaDAO {
+class VagaRepository implements VagaDAO {
     Sql sql
 
     VagaRepository(Sql sql) {

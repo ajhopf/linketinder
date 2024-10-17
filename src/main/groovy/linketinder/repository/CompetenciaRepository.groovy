@@ -3,11 +3,11 @@ package linketinder.repository
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.model.dtos.CompetenciaDTO
 import linketinder.model.enums.Afinidade
-import linketinder.repository.interfaces.ICompetenciaDAO
+import linketinder.repository.interfaces.CompetenciaDAO
 import groovy.sql.Sql
 
 
-class CompetenciaRepository implements ICompetenciaDAO {
+class CompetenciaRepository implements CompetenciaDAO {
     private Sql sql = null
 
     CompetenciaRepository(Sql sql) {

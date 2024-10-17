@@ -2,12 +2,12 @@ package linketinder.repository
 
 import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.model.dtos.CandidatoDTO
-import linketinder.repository.interfaces.ICandidatoDAO
+import linketinder.repository.interfaces.CandidatoDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
 
-class CandidatoRepository implements ICandidatoDAO {
+class CandidatoRepository implements CandidatoDAO {
     private Sql sql = null
 
     CandidatoRepository(Sql sql) {

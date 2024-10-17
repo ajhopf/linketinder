@@ -2,7 +2,7 @@ package linketinder.repository.interfaces
 
 import linketinder.model.dtos.CandidatoDTO
 
-interface ICandidatoDAO {
+interface CandidatoDAO {
     List<CandidatoDTO> listarCandidatos()
     Integer adicionarCandidato(CandidatoDTO candidato)
     CandidatoDTO obterCandidatoPeloId(Integer id)
