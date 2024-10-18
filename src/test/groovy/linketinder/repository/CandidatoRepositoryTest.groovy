@@ -2,12 +2,20 @@ package linketinder.repository
 
 import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.model.dtos.CandidatoDTO
+import spock.lang.Shared
 
 import java.sql.SQLException
 import java.time.LocalDate
 
 class CandidatoRepositoryTest extends SetupRepositoryTest {
     CandidatoDTO candidatoDTO
+
+    @Shared
+    CandidatoRepository candidatoRepository
+
+    def setupSpec() {
+        candidatoRepository = new CandidatoRepository(sql)
+    }
 
     def setup() {
         sql.execute("""
@@ -19,7 +27,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
         sql.execute("""
             INSERT INTO candidatos (usuario_id, sobrenome, data_nascimento, cpf, telefone)
-            VALUES (?, 'Silva', '1990-01-01', '123.456.789-00', '(48) 99999-9999')
+            VALUES (?, 'Hopf', '1990-01-01', '123.456.789-00', '(48) 99999-9999')
         """, [userId])
 
         this.candidatoDTO = new CandidatoDTO(
@@ -27,7 +35,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
                 email: 'andre@example.com',
                 senha: 'password',
                 descricao: 'Desenvolvedor',
-                sobrenome: 'Silva',
+                sobrenome: 'Hopf',
                 dataNascimento: new LocalDate(1991, 1, 11),
                 cpf: '123.456.789-00',
                 telefone: '(48) 99999-9999',
@@ -40,17 +48,17 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
     def "listarCandidatos retorna todos candidatos"() {
         when:
-        def result = repository.listarCandidatos()
+        def result = candidatoRepository.listarCandidatos()
 
         then:
         result.size() == 1
         result[0].nome == 'Andre'
-        result[0].sobrenome == 'Silva'
+        result[0].sobrenome == 'Hopf'
     }
 
     def "obterCandidatoPeloId lança CandidatoNotFoundExcpetion quando não encontra candidato com o id fornecido"() {
         when:
-        repository.obterCandidatoPeloId(304098)
+        candidatoRepository.obterCandidatoPeloId(304098)
 
         then:
         thrown(CandidatoNotFoundException)
@@ -58,11 +66,11 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
     def "obterCandidatoPeloId retorna candidato com o id fornecido"() {
         given: "Lista os candidatos e utiliza o id do único candidato existente"
-        List<CandidatoDTO> candidatos = repository.listarCandidatos()
+        List<CandidatoDTO> candidatos = candidatoRepository.listarCandidatos()
         Integer id = candidatos[0].id
 
         when:
-        CandidatoDTO candidato = repository.obterCandidatoPeloId(id)
+        CandidatoDTO candidato = candidatoRepository.obterCandidatoPeloId(id)
 
         then:
         candidato.id == id
@@ -71,7 +79,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
     def "adicionarCandidato insere candidato e retorna o ID do usuário"() {
         when: "adicionarCandidato é chamado utilizando o candidatoDTO"
-        def userId = repository.adicionarCandidato(candidatoDTO)
+        def userId = candidatoRepository.adicionarCandidato(candidatoDTO)
 
         then: "O id retornado é válido"
         userId != null
@@ -83,7 +91,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
         and: "Candidato foi criado na tabela de candidatos"
         def candidato = sql.firstRow("SELECT * FROM candidatos WHERE usuario_id = ?", [userId])
-        candidato.sobrenome == 'Silva'
+        candidato.sobrenome == 'Hopf'
         candidato.data_nascimento.toString() == '1991-01-11'
         candidato.cpf == '123.456.789-00'
     }
@@ -93,7 +101,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
         candidatoDTO.cpf = null
 
         when: "adicionarCandidato é executado com o candidatoDTO"
-        repository.adicionarCandidato(candidatoDTO)
+        candidatoRepository.adicionarCandidato(candidatoDTO)
 
         then: "Lança uma SQLException"
         thrown(SQLException)
@@ -108,7 +116,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
         candidatoDTO.id = 1234555
 
         when:
-        repository.updateCandidato(candidatoDTO)
+        candidatoRepository.updateCandidato(candidatoDTO)
 
         then:
         thrown(CandidatoNotFoundException)
@@ -116,13 +124,13 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
     def "updateCandidato faz atualização do Usuário e do Candidato"() {
         given: "Busca o candidato existente e altera o nome e o cpf"
-        List<CandidatoDTO> candidatos = repository.listarCandidatos()
+        List<CandidatoDTO> candidatos = candidatoRepository.listarCandidatos()
         CandidatoDTO candidatoDTOAtualizado = candidatos[0]
         candidatoDTOAtualizado.nome = 'Um novo nome'
         candidatoDTOAtualizado.cpf = '999.999.999-00'
 
         when:
-        repository.updateCandidato(candidatoDTOAtualizado)
+        candidatoRepository.updateCandidato(candidatoDTOAtualizado)
 
         then:
         "Um novo nome" == sql.firstRow("SELECT * FROM usuarios").nome
@@ -131,7 +139,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
     def "deletarCandidato lança CandidatoNotFoundException quando invocado com id inexistente"(){
         when:
-        repository.deletarCandidatoPeloId(1234455)
+        candidatoRepository.deletarCandidatoPeloId(1234455)
 
         then:
         thrown(CandidatoNotFoundException)
