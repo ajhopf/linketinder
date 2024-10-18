@@ -94,7 +94,7 @@ class CandidatoRepository implements CandidatoDAO {
             WHERE u.id = $candidatoDTO.id
         """
 
-        def updateEmpresaStatement = """
+        def updateCandidatoStatement = """
             UPDATE candidatos c
             SET cpf = $candidatoDTO.cpf, sobrenome = $candidatoDTO.sobrenome, data_nascimento = $candidatoDTO.dataNascimento, telefone = $candidatoDTO.telefone
             WHERE c.usuario_id = $candidatoDTO.id
@@ -107,7 +107,7 @@ class CandidatoRepository implements CandidatoDAO {
                 throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $candidatoDTO.id")
             }
 
-            sql.executeInsert(updateEmpresaStatement)
+            sql.executeInsert(updateCandidatoStatement)
         }
     }
 
@@ -122,7 +122,7 @@ class CandidatoRepository implements CandidatoDAO {
         def row = sql.executeUpdate(deletarUsuario)
 
         if (row == 0) {
-            throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $candidatoDTO.id")
+            throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $id")
         }
     }
 }
