@@ -1,10 +1,12 @@
 package linketinder.view
 
 import linketinder.exceptions.CandidatoNotFoundException
+import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.model.Candidato
 import linketinder.model.Competencia
 import linketinder.model.Endereco
 import linketinder.service.CandidatoService
+import linketinder.service.CompetenciaService
 import linketinder.util.InputHelpers
 
 import java.text.ParseException
@@ -37,15 +39,6 @@ class CandidatoView {
 
         return candidato
     }
-
-    static void adicionarCandidato(CandidatoService service, Scanner sc) {
-        println "Criar novo Cadastro de Candidato"
-        InputHelpers.printInfosIniciais()
-        Candidato candidato = obterInformacoesDeCandidato(sc)
-
-        service.adicionarCandidato(candidato)
-    }
-
 
     static String obterCpf(Scanner sc) {
         String cpf = ''
@@ -103,45 +96,62 @@ class CandidatoView {
         return telefone
     }
 
-    static void editarCandidato(CandidatoService candidatoService, Scanner sc) {
+    static void adicionarCandidato(CandidatoService service, CompetenciaService competenciaService, Scanner sc) {
+        println "Criar novo Cadastro de Candidato"
+        InputHelpers.printInfosIniciais()
+        Candidato candidato = obterInformacoesDeCandidato(sc)
+
+        try {
+            candidato.competencias.each {competencia ->
+                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+            }
+
+            Integer id = service.adicionarCandidato(candidato)
+            println "Candidato adicionado com sucesso. Id: $id"
+        } catch(CompetenciaNotFoundException e) {
+            println 'Não foi possível adicionar competencias ao candidato. Ao menos uma das competências relacionadas ao candidato não existem no sistema.'
+        } catch(Exception e) {
+            println 'Candidato não adicionado'
+            println e.getMessage()
+        }
+
+    }
+
+    static void editarCandidato(CandidatoService candidatoService, CompetenciaService competenciaService, Scanner sc) {
         println "Editar Candidato"
 
-        boolean idInvalido = true
+        try {
+            Integer candidatoId = InputHelpers.getIntInput(0, 1000, "Digite o id do candidato para editar", sc)
+            Candidato candidato = candidatoService.obterCandidatoPeloId(candidatoId)
 
-        while (idInvalido) {
-            try {
-                Integer candidatoId = InputHelpers.getIntInput(0, 1000, "Digite o id do candidato para editar", sc)
-                Candidato candidato = candidatoService.obterCandidatoPeloId(candidatoId)
-                idInvalido = false
+            println "Candidato selecionado: $candidato.nome"
+            println "Digite as novas informações para o candidato"
 
-                println "Candidato selectionado: $candidato.nome"
-                println "Digite as novas informações para o candidato"
+            Candidato candidatoAtualizado = obterInformacoesDeCandidato(sc)
+            candidatoAtualizado.id = candidatoId
 
-                Candidato candidatoAtualizado = obterInformacoesDeCandidato(sc)
-                candidatoAtualizado.id = candidatoId
-
-                candidatoService.updateCandidato(candidatoAtualizado)
-            } catch (CandidatoNotFoundException e) {
-                println e.getMessage()
+            candidato.competencias.each {competencia ->
+                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
             }
+
+            candidatoService.updateCandidato(candidatoAtualizado)
+        } catch (CandidatoNotFoundException e) {
+            println e.getMessage()
+        } catch(CompetenciaNotFoundException e) {
+            println 'Não foi possível adicionar o candidato. Ao menos uma das competências relacionadas ao candidato não existem no sistema.'
         }
     }
 
     static void deletarCandidato(CandidatoService service, Scanner sc) {
         println "Deletar Candidato"
 
-        boolean idInvalido = true
+        Integer idDoCandidato = InputHelpers.getIntInput(0, 5000, 'Digite o id do candidato', sc)
+        try {
+            service.deletarCandidatoPeloId(idDoCandidato)
+            println 'Candidato deletado com sucesso'
 
-        while(idInvalido) {
-            Integer idDoCandidato = InputHelpers.getIntInput(0, 5000, 'Digite o id do candidato', sc)
-            try {
-                service.deletarCandidatoPeloId(idDoCandidato)
-                println 'Candidato deletado com sucesso'
-                idInvalido = false
-            } catch (CandidatoNotFoundException e) {
-                println e.getMessage()
-            }
+        } catch (CandidatoNotFoundException e) {
+            println e.getMessage()
         }
-
     }
 }

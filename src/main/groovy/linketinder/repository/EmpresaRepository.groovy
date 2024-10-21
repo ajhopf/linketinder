@@ -2,11 +2,11 @@ package linketinder.repository
 
 import linketinder.exceptions.EmpresaNotFoundException
 import linketinder.model.dtos.EmpresaDTO
-import linketinder.repository.interfaces.IEmpresaDAO
+import linketinder.repository.interfaces.EmpresaDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
-class EmpresaRepository implements IEmpresaDAO {
+class EmpresaRepository implements EmpresaDAO {
     private Sql sql = null
 
     EmpresaRepository(Sql sql) {
@@ -41,6 +41,23 @@ class EmpresaRepository implements IEmpresaDAO {
     }
 
     @Override
+    EmpresaDTO obterEmpresaPeloId(Integer id) {
+        def stmt = "SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id WHERE u.id = $id"
+
+        EmpresaDTO empresaDTO = null
+
+        this.sql.eachRow(stmt) { row ->
+            empresaDTO = rowToDto(row)
+        }
+
+        if (empresaDTO == null) {
+            throw new EmpresaNotFoundException ("Não foi possível localizar a empresa com o id = $id")
+        }
+
+        return empresaDTO
+    }
+
+    @Override
     Integer adicionarEmpresa(EmpresaDTO empresa) {
         Integer novaEmpresaId = null
 
@@ -64,24 +81,6 @@ class EmpresaRepository implements IEmpresaDAO {
         }
 
         return novaEmpresaId
-    }
-
-
-    @Override
-    EmpresaDTO obterEmpresaPeloId(Integer id) {
-        def stmt = "SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id WHERE u.id = $id"
-
-        EmpresaDTO empresaDTO = null
-
-        this.sql.eachRow(stmt) { row ->
-            empresaDTO = rowToDto(row)
-        }
-
-        if (empresaDTO == null) {
-            throw new EmpresaNotFoundException ("Não foi possível localizar a empresa com o id = $id")
-        }
-
-        return empresaDTO
     }
 
     @Override
@@ -112,8 +111,8 @@ class EmpresaRepository implements IEmpresaDAO {
     @Override
     void deleteEmpresaPeloId(Integer id) {
         def statement = """
-            DELETE FROM empresas e
-            WHERE e.usuario_id = $id
+            DELETE FROM usuarios e
+            WHERE id = $id
         """
 
         int rowsAffected = sql.executeUpdate(statement)

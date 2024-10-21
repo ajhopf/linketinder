@@ -24,9 +24,10 @@ dependencies {
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.4'
     implementation 'org.spockframework:spock-core'
     implementation 'org.spockframework:spock-core:2.4-M4-groovy-3.0'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
-// https://mvnrepository.com/artifact/org.mockito/mockito-core
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.11.0'
+    testImplementation 'com.h2database:h2:2.1.214'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
 }

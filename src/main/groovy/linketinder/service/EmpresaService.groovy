@@ -29,8 +29,6 @@ class EmpresaService {
             return EmpresaMapper.toEntity(empresaDTO, endereco)
         } catch (SQLException e){
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
-        } catch (EmpresaNotFoundException e) {
-            throw e
         }
     }
 
@@ -52,15 +50,15 @@ class EmpresaService {
 
     }
 
-    void adicionarEmpresa(Empresa empresa) {
+    Integer adicionarEmpresa(Empresa empresa) {
         try {
             EmpresaDTO empresaDTO = EmpresaMapper.toDTO(empresa)
 
-            Integer usuarioId = repository.adicionarEmpresa(empresaDTO)
+            Integer empresaId = repository.adicionarEmpresa(empresaDTO)
 
-            enderecoService.adicionarEnderecoParaUsuario(empresa.endereco, usuarioId)
+            enderecoService.adicionarEnderecoParaUsuario(empresa.endereco, empresaId)
 
-            println "Empresa criada com sucesso! Id: $usuarioId"
+            return empresaId
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }
@@ -73,24 +71,16 @@ class EmpresaService {
 
             repository.updateEmpresa(empresaDTO)
             enderecoService.adicionarEnderecoParaUsuario(empresa.endereco, empresaDTO.id, true)
-
-            println "Empresa atualizada"
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
-        } catch (EmpresaNotFoundException e) {
-            throw e
         }
     }
 
-    void deleteEmpresa(Integer id) throws RepositoryAccessException, EmpresaNotFoundException{
+    void deleteEmpresa(Integer id) throws RepositoryAccessException, EmpresaNotFoundException {
         try {
             repository.deleteEmpresaPeloId(id)
-
-            println "Empresa deletada"
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
-        } catch (EmpresaNotFoundException e) {
-            throw e
         }
     }
 

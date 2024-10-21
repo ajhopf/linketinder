@@ -1,14 +1,30 @@
 package linketinder.repository
 
+import groovy.sql.GroovyRowResult
 import linketinder.model.dtos.EnderecoDTO
-import linketinder.repository.interfaces.IEnderecoDAO
+import linketinder.repository.interfaces.EnderecoDAO
 import groovy.sql.Sql
 
-class EnderecoRepository implements IEnderecoDAO{
+class EnderecoRepository implements EnderecoDAO{
     private Sql sql = null
 
     EnderecoRepository(Sql sql) {
         this.sql = sql
+    }
+
+    private static EnderecoDTO rowToEnderecoDTO(GroovyRowResult row) {
+        EnderecoDTO enderecoDTO = new EnderecoDTO()
+
+        if (row == null) {
+            return enderecoDTO
+        }
+
+        enderecoDTO.cep = row.cep
+        enderecoDTO.pais = row.pais
+        enderecoDTO.estado = row.estado
+        enderecoDTO.cidade = row.cidade
+
+        return enderecoDTO
     }
 
     EnderecoDTO obterEnderecoPeloId(Integer id) {
@@ -19,18 +35,7 @@ class EnderecoRepository implements IEnderecoDAO{
         """
         def row = sql.firstRow(stmt)
 
-        if (row == null) {
-            return new EnderecoDTO()
-        }
-
-        EnderecoDTO enderecoDTO = new EnderecoDTO()
-
-        enderecoDTO.cep = row.cep
-        enderecoDTO.pais = row.pais
-        enderecoDTO.estado = row.estado
-        enderecoDTO.cidade = row.cidade
-
-        return enderecoDTO
+        return rowToEnderecoDTO(row)
     }
 
     @Override
@@ -48,16 +53,12 @@ class EnderecoRepository implements IEnderecoDAO{
             return new EnderecoDTO()
         }
 
-        EnderecoDTO enderecoDTO = new EnderecoDTO()
-        enderecoDTO.cep = row.cep
-        enderecoDTO.pais = row.pais
-        enderecoDTO.estado = row.estado
-        enderecoDTO.cidade = row.cidade
+        EnderecoDTO enderecoDTO = rowToEnderecoDTO(row)
+
         enderecoDTO.usuarioId = row.usuario_id as Integer
 
         return enderecoDTO
     }
-
 
 
     @Override

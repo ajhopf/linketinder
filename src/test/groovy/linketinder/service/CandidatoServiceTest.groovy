@@ -86,7 +86,7 @@ class CandidatoServiceTest extends Specification {
         candidatoService.adicionarCandidato(candidato)
 
         then:
-        verify(competenciaService, times(1)).adicionarCompetenciaDeUsuario(any(Competencia), eq(1))
+        verify(competenciaService, times(1)).adicionarCompetenciaDeEntidade(any(Competencia), eq(1))
         verify(enderecoService, times(1)).adicionarEnderecoParaUsuario(any(Endereco), eq(1))
     }
 

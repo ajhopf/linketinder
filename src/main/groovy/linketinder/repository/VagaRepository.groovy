@@ -3,11 +3,11 @@ package linketinder.repository
 import linketinder.exceptions.VagaNotFoundException
 import linketinder.model.dtos.VagaRequestDTO
 import linketinder.model.dtos.VagaResponseDTO
-import linketinder.repository.interfaces.IVagaDAO
+import linketinder.repository.interfaces.VagaDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
-class VagaRepository implements IVagaDAO {
+class VagaRepository implements VagaDAO {
     Sql sql
 
     VagaRepository(Sql sql) {
@@ -76,47 +76,25 @@ class VagaRepository implements IVagaDAO {
             VALUES (?, ?, ?, ?)
         """
 
-        def competenciasVagaStmt = """
-            INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
-            VALUES (?, ?, ?, ?)
-        """
-
         def vagaParams = [vaga.nome, vaga.descricao, vaga.empresaId, vaga.enderecoId]
 
         def keys = sql.executeInsert(stmt, vagaParams)
-        Integer vagaId = keys[0][0] as Integer
+        return  keys[0][0] as Integer
 
-        for (competencia in vaga.competenciaDTOList) {
-            def params = [vagaId, competencia.id, competencia.anosExperiencia, competencia.afinidade.getAfinidade()]
-
-            sql.executeInsert(competenciasVagaStmt, params)
-        }
-
-        return vagaId
     }
 
     @Override
     void updateVaga(Integer vagaId, VagaRequestDTO vaga) {
         def stmt = """
             UPDATE vagas
-            SET nome = $vaga.nome, descricao = $vaga.descricao, endereco_id = $vaga.enderecoId
+            SET nome = ?, descricao = ?, endereco_id = ?
+            WHERE id = ?
         """
 
-        def competenciasVagaStmt = """
-            INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
-            VALUES (?, ?, ?, ?)
-        """
-
-        def row = sql.executeUpdate(stmt)
+        def row = sql.executeUpdate(stmt, [vaga.nome, vaga.descricao, vaga.enderecoId, vagaId])
 
         if (row == 0) {
             throw new VagaNotFoundException("Não foi possível localizar a vaga com id $vaga.id")
-        }
-
-        for (competencia in vaga.competenciaDTOList) {
-            def params = [vagaId, competencia.id, competencia.anosExperiencia, competencia.afinidade.getAfinidade()]
-
-            sql.executeInsert(competenciasVagaStmt, params)
         }
     }
 

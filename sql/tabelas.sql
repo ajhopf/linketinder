@@ -52,7 +52,7 @@ CREATE TABLE enderecos_usuario (
 CREATE TABLE competencias_candidato (
 	id SERIAL PRIMARY KEY,
 	usuario_id INT REFERENCES candidatos(usuario_id) ON DELETE CASCADE NOT NULL,
-	competencia_id INT REFERENCES competencias(id) NOT NULL,
+	competencia_id INT REFERENCES competencias(id) ON DELETE CASCADE NOT NULL,
 	anos_experiencia NUMERIC(3,1) NOT NULL,
 	afinidade INT NOT NULL
 );

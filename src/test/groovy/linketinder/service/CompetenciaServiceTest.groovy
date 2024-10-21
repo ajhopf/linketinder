@@ -66,7 +66,7 @@ class CompetenciaServiceTest extends Specification {
         when(repository.obterIdDeCompetencia(any(String))).thenThrow(CompetenciaNotFoundException.class)
 
         when:
-        competenciaService.adicionarCompetenciaDeUsuario(new Competencia('jeva', 1, Afinidade.ALTA), 1)
+        competenciaService.adicionarCompetenciaDeEntidade(new Competencia('jeva', 1, Afinidade.ALTA), 1)
 
         then:
         thrown(CompetenciaNotFoundException)
@@ -77,7 +77,7 @@ class CompetenciaServiceTest extends Specification {
         when(repository.obterIdDeCompetencia(any(String))).thenReturn(1)
 
         when:
-        competenciaService.adicionarCompetenciaDeUsuario(new Competencia('jeva', 1, Afinidade.ALTA), 1)
+        competenciaService.adicionarCompetenciaDeEntidade(new Competencia('jeva', 1, Afinidade.ALTA), 1)
 
         then:
         verify(repository, times(1))

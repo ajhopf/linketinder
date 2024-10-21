@@ -3,11 +3,11 @@ package linketinder.repository
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.model.dtos.CompetenciaDTO
 import linketinder.model.enums.Afinidade
-import linketinder.repository.interfaces.ICompetenciaDAO
+import linketinder.repository.interfaces.CompetenciaDAO
 import groovy.sql.Sql
 
 
-class CompetenciaRepository implements ICompetenciaDAO {
+class CompetenciaRepository implements CompetenciaDAO {
     private Sql sql = null
 
     CompetenciaRepository(Sql sql) {
@@ -84,7 +84,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
             competenciaDTO.id = row.getInt('id')
         }
 
-        if (competenciaDTO == null) {
+        if (competenciaDTO.competencia == null) {
             throw new CompetenciaNotFoundException("Não foi possível localizar a competencia com o id = $id")
         }
 
@@ -106,11 +106,23 @@ class CompetenciaRepository implements ICompetenciaDAO {
     @Override
     void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId)  {
         def inserirCompetencia = """
-            INSERT INTO competencias_usuario (usuario_id, competencia_id, anos_experiencia, afinidade)
+            INSERT INTO competencias_candidato (usuario_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
         """
 
         def competenciaParams = [usuarioId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
+
+        sql.executeInsert(inserirCompetencia, competenciaParams)
+    }
+
+    @Override
+    void adicionarCompetenciasVaga(CompetenciaDTO competenciaDTO, Integer vagaId)  {
+        def inserirCompetencia = """
+            INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
+            VALUES (?, ?, ?, ?)
+        """
+
+        def competenciaParams = [vagaId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
 
         sql.executeInsert(inserirCompetencia, competenciaParams)
     }
@@ -162,7 +174,7 @@ class CompetenciaRepository implements ICompetenciaDAO {
     @Override
     void deleteCompetenciasEntidade(Integer entidadeId, String tabela) {
         def stmt = """
-            DELETE FROM competencias_usuario
+            DELETE FROM competencias_candidato
             WHERE usuario_id = $entidadeId
         """
 

@@ -7,6 +7,7 @@ import linketinder.model.Candidato
 import linketinder.model.Competencia
 import linketinder.model.Endereco
 import linketinder.model.dtos.CandidatoDTO
+import linketinder.model.enums.TabelaCompetencia
 import linketinder.model.mappers.CandidatoMapper
 import linketinder.repository.CandidatoRepository
 
@@ -27,50 +28,12 @@ class CandidatoService {
         try{
             CandidatoDTO candidatoDTO = repository.obterCandidatoPeloId(usuarioId)
             Endereco endereco = enderecoService.obterEnderecoDoUsuario(usuarioId)
-            List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(usuarioId)
+            List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(usuarioId, TabelaCompetencia.COMPETENCIAS_CANDIDATO)
 
             return CandidatoMapper.toEntity(candidatoDTO, endereco, competencias)
         } catch (SQLException e){
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
-        } catch (CandidatoNotFoundException e) {
-            throw e
         }
-    }
-
-    void deletarCandidatoPeloId(Integer usuarioId) throws RepositoryAccessException, CandidatoNotFoundException{
-       try {
-            repository.obterCandidatoPeloId(usuarioId)
-            repository.deletarCandidatoPeloId(usuarioId)
-       } catch (SQLException e) {
-           throw new RepositoryAccessException(e.getMessage(), e.getCause())
-       } catch (CandidatoNotFoundException e) {
-           throw e
-       }
-    }
-
-    void adicionarCandidato(Candidato candidato) throws RepositoryAccessException, CompetenciaNotFoundException {
-        try {
-            CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
-
-            for (competencia in candidato.competencias) {
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
-            }
-
-            Integer usuarioId = repository.adicionarCandidato(candidatoDTO)
-
-            enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, usuarioId)
-
-            for (competencia in candidato.competencias) {
-                competenciaService.adicionarCompetenciaDeUsuario(competencia, usuarioId)
-            }
-
-            println "Candidato criado com sucesso! Id: $usuarioId"
-        } catch (SQLException sqlException) {
-            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
-        } catch (CompetenciaNotFoundException e) {
-            throw new CompetenciaNotFoundException(e.getMessage() + ' . Candidato não foi criado')
-        }
-
     }
 
     List<Candidato> listarCandidatos() throws SQLException {
@@ -81,7 +44,7 @@ class CandidatoService {
 
             for (candidato in candidatoDTOList) {
                 Endereco endereco = enderecoService.obterEnderecoDoUsuario(candidato.id)
-                List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(candidato.id)
+                List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(candidato.id, TabelaCompetencia.COMPETENCIAS_CANDIDATO)
                 candidatos << CandidatoMapper.toEntity(candidato, endereco, competencias)
             }
 
@@ -91,31 +54,53 @@ class CandidatoService {
         }
     }
 
+    private void adicionarCompetenciasDoCandidato(List<Competencia> competencias, Integer candidatoId) {
+        competencias.each {competencia ->
+            try {
+                competenciaService.adicionarCompetenciaDeEntidade(competencia, candidatoId)
+            } catch(CompetenciaNotFoundException e) {
+                println "Não foi possível adicionar a competencia $competencia ao candidato."
+                println e.getMessage()
+            }
+        }
+    }
+
+    Integer adicionarCandidato(Candidato candidato) throws RepositoryAccessException, CompetenciaNotFoundException {
+        try {
+            CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
+
+            Integer candidatoId = repository.adicionarCandidato(candidatoDTO)
+
+            enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, candidatoId)
+
+            adicionarCompetenciasDoCandidato(candidato.competencias, candidatoId)
+
+            return candidatoId
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
     void updateCandidato(Candidato candidato) throws SQLException {
         try {
             CandidatoDTO candidatoDTO = CandidatoMapper.toDTO(candidato)
 
-            for (competencia in candidato.competencias) {
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
-
-            }
-
             repository.updateCandidato(candidatoDTO)
 
             competenciaService.deletarCompetenciaEntidade(candidatoDTO.id, 'competencias_usuario')
+            adicionarCompetenciasDoCandidato(candidato.competencias, candidatoDTO.id)
 
-            for (competencia in candidato.competencias) {
-                competenciaService.adicionarCompetenciaDeUsuario(competencia, candidatoDTO.id)
-            }
             enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, candidatoDTO.id, true)
-
-            println "Candidato atualizado"
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
-        } catch (CandidatoNotFoundException e) {
-            throw e
-        } catch (CompetenciaNotFoundException e) {
-            throw e
+        }
+    }
+
+    void deletarCandidatoPeloId(Integer usuarioId) throws RepositoryAccessException, CandidatoNotFoundException{
+        try {
+            repository.deletarCandidatoPeloId(usuarioId)
+        } catch (SQLException e) {
+            throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }
     }
 }

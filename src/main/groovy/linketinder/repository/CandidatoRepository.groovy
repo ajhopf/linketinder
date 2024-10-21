@@ -2,12 +2,12 @@ package linketinder.repository
 
 import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.model.dtos.CandidatoDTO
-import linketinder.repository.interfaces.ICandidatoDAO
+import linketinder.repository.interfaces.CandidatoDAO
 import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
 
-class CandidatoRepository implements ICandidatoDAO {
+class CandidatoRepository implements CandidatoDAO {
     private Sql sql = null
 
     CandidatoRepository(Sql sql) {
@@ -94,7 +94,7 @@ class CandidatoRepository implements ICandidatoDAO {
             WHERE u.id = $candidatoDTO.id
         """
 
-        def updateEmpresaStatement = """
+        def updateCandidatoStatement = """
             UPDATE candidatos c
             SET cpf = $candidatoDTO.cpf, sobrenome = $candidatoDTO.sobrenome, data_nascimento = $candidatoDTO.dataNascimento, telefone = $candidatoDTO.telefone
             WHERE c.usuario_id = $candidatoDTO.id
@@ -107,7 +107,7 @@ class CandidatoRepository implements ICandidatoDAO {
                 throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $candidatoDTO.id")
             }
 
-            sql.executeInsert(updateEmpresaStatement)
+            sql.executeInsert(updateCandidatoStatement)
         }
     }
 
@@ -119,7 +119,11 @@ class CandidatoRepository implements ICandidatoDAO {
             DELETE FROM usuarios WHERE id = $id
         """
 
-        sql.executeUpdate(deletarUsuario)
+        def row = sql.executeUpdate(deletarUsuario)
+
+        if (row == 0) {
+            throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $id")
+        }
     }
 }
 

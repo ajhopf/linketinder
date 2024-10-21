@@ -27,6 +27,12 @@ Esta aplicação visa reduzir a possibilidade de viés por parte dos contrantes 
 
 Neste momento ainda estamos em fase inicial da construção do aplicativo, portanto ainda dependemos da interação com o terminal para a visualização e inserção de novos cadastros.
 
+Buscando a aplicação de boas práticas dos princípios de clean code o presente projeto busca:
+* Utilizar nomes autoexplicativos para variáveis, métodos e classes
+* Utilizar funções pequenas e que realizem apenas uma função específica
+* A mínima necessidade de utilizar comentários
+* Tratar possíveis erros
+* Utilizar testes unitários
 
 ## Executando o Sistema
 
