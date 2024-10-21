@@ -20,7 +20,6 @@ class SetupRepositoryTest extends Specification {
 
         sql = Sql.newInstance(url, user, password, driver)
 
-        // Criação do tipo e das tabelas, caso não existam
         sql.execute("CREATE TYPE tipo_usuario AS ENUM ('empresa', 'candidato')")
 
         sql.execute("""
