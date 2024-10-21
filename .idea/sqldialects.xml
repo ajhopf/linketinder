@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/sql/tabelas.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/src/test/groovy/linketinder/repository/CandidatoRepositoryTest.groovy" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/test/groovy/linketinder/repository/CompetenciaRepositoryTest.groovy" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/test/groovy/linketinder/repository/EmpresaRepositoryTest.groovy" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/test/groovy/linketinder/repository/SetupRepositoryTest.groovy" dialect="PostgreSQL" />
   </component>
   <component name="SqlResolveMappings">

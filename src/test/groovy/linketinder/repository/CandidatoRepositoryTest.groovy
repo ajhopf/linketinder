@@ -65,9 +65,8 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
     }
 
     def "obterCandidatoPeloId retorna candidato com o id fornecido"() {
-        given: "Lista os candidatos e utiliza o id do único candidato existente"
-        List<CandidatoDTO> candidatos = candidatoRepository.listarCandidatos()
-        Integer id = candidatos[0].id
+        given:
+        Integer id = sql.firstRow("SELECT id FROM usuarios WHERE email = 'andre@example.com'").id as Integer
 
         when:
         CandidatoDTO candidato = candidatoRepository.obterCandidatoPeloId(id)
@@ -124,13 +123,14 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
     def "updateCandidato faz atualização do Usuário e do Candidato"() {
         given: "Busca o candidato existente e altera o nome e o cpf"
-        List<CandidatoDTO> candidatos = candidatoRepository.listarCandidatos()
-        CandidatoDTO candidatoDTOAtualizado = candidatos[0]
-        candidatoDTOAtualizado.nome = 'Um novo nome'
-        candidatoDTOAtualizado.cpf = '999.999.999-00'
+        Integer userId = sql.firstRow("SELECT id FROM usuarios WHERE email = 'andre@example.com'").id as Integer
+        candidatoDTO.id = userId
+        candidatoDTO.nome = 'Um novo nome'
+        candidatoDTO.cpf ='999.999.999-00'
+
 
         when:
-        candidatoRepository.updateCandidato(candidatoDTOAtualizado)
+        candidatoRepository.updateCandidato(candidatoDTO)
 
         then:
         "Um novo nome" == sql.firstRow("SELECT * FROM usuarios").nome
@@ -143,5 +143,17 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
 
         then:
         thrown(CandidatoNotFoundException)
+    }
+
+    def "deletarCandidato remove registro de usuario e candidato"() {
+        given:
+        Integer userId = sql.firstRow("SELECT id FROM usuarios WHERE email = 'andre@example.com'").id as Integer
+
+        when:
+        candidatoRepository.deletarCandidatoPeloId(userId)
+
+        then:
+        null == sql.firstRow("SELECT id FROM usuarios WHERE email = 'andre@example.com'")
+        null == sql.firstRow("SELECT * FROM candidatos WHERE cpf = '123.456.789-00'")
     }
 }
