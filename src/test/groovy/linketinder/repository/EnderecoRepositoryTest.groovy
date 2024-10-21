@@ -6,7 +6,6 @@ import spock.lang.Shared
 import java.sql.SQLException
 
 class EnderecoRepositoryTest extends SetupRepositoryTest {
-    EnderecoDTO enderecoDTO
 
     @Shared
     EnderecoRepository enderecoRepository

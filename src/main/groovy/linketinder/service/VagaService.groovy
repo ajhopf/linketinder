@@ -92,6 +92,10 @@ class VagaService {
 
             Integer vagaId = repository.adicionarVaga(vagaRequestDTO)
 
+            vaga.competencias.each {competencia ->
+                competenciaService.adicionarCompetenciaDeEntidade(competencia, vagaId, true)
+            }
+
             return vagaId
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
@@ -105,6 +109,10 @@ class VagaService {
             VagaRequestDTO vagaRequestDTO = obterVagaRequestDto(vagaAtualizada)
 
             repository.updateVaga(vagaAtualizada.id, vagaRequestDTO)
+
+            vagaAtualizada.competencias.each {competencia ->
+                competenciaService.adicionarCompetenciaDeEntidade(competencia, vagaAtualizada.id, true)
+            }
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }

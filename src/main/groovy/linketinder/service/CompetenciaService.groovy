@@ -74,14 +74,17 @@ class CompetenciaService {
         }
     }
 
-
-    void adicionarCompetenciaDeUsuario(Competencia competencia, Integer usuarioId) throws RepositoryAccessException, CompetenciaNotFoundException {
+    void adicionarCompetenciaDeEntidade(Competencia competencia, Integer entidadeId, boolean isVaga = false) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
             Integer competenciaId = repository.obterIdDeCompetencia(competencia.competencia)
             competenciaDTO.id = competenciaId
 
-            repository.adicionarCompetenciaUsuario(competenciaDTO, usuarioId)
+            if (isVaga) {
+                repository.adicionarCompetenciasVaga(competenciaDTO, entidadeId)
+            } else {
+                repository.adicionarCompetenciaUsuario(competenciaDTO, entidadeId)
+            }
 
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())

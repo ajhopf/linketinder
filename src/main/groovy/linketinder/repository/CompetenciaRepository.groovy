@@ -116,6 +116,18 @@ class CompetenciaRepository implements CompetenciaDAO {
     }
 
     @Override
+    void adicionarCompetenciasVaga(CompetenciaDTO competenciaDTO, Integer vagaId)  {
+        def inserirCompetencia = """
+            INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
+            VALUES (?, ?, ?, ?)
+        """
+
+        def competenciaParams = [vagaId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
+
+        sql.executeInsert(inserirCompetencia, competenciaParams)
+    }
+
+    @Override
     Integer obterIdDeCompetencia(String competenciaString) {
         def statement = """
             SELECT id FROM competencias c WHERE c.competencia LIKE $competenciaString

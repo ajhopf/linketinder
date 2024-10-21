@@ -57,7 +57,7 @@ class CandidatoService {
     private void adicionarCompetenciasDoCandidato(List<Competencia> competencias, Integer candidatoId) {
         competencias.each {competencia ->
             try {
-                competenciaService.adicionarCompetenciaDeUsuario(competencia, candidatoId)
+                competenciaService.adicionarCompetenciaDeEntidade(competencia, candidatoId)
             } catch(CompetenciaNotFoundException e) {
                 println "Não foi possível adicionar a competencia $competencia ao candidato."
                 println e.getMessage()
