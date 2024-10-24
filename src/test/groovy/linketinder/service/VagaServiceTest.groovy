@@ -30,7 +30,7 @@ class VagaServiceTest extends Specification {
             List<VagaResponseDTO> vagaResponseDTOS = [vagaResponseDTO]
             List<Competencia> competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
             when(repository.listarVagas()).thenReturn(vagaResponseDTOS)
-            when(competenciaService.listarCompetenciasDeUsuarioOuVaga(any(Integer), any(String)))
+            when(competenciaService.listarCompetenciasDeVaga(any(Integer)))
                 .thenReturn(competencias)
         when:
             List<Vaga> result = vagaService.listarVagas()

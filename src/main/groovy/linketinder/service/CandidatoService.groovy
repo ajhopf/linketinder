@@ -28,7 +28,7 @@ class CandidatoService {
         try{
             CandidatoDTO candidatoDTO = repository.obterCandidatoPeloId(usuarioId)
             Endereco endereco = enderecoService.obterEnderecoDoUsuario(usuarioId)
-            List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(usuarioId, TabelaCompetencia.COMPETENCIAS_CANDIDATO)
+            List<Competencia> competencias = competenciaService.listarCompetenciasDeCandidato(usuarioId)
 
             return CandidatoMapper.toEntity(candidatoDTO, endereco, competencias)
         } catch (SQLException e){
@@ -42,10 +42,9 @@ class CandidatoService {
         try {
             List<CandidatoDTO> candidatoDTOList = repository.listarCandidatos()
 
-            for (candidato in candidatoDTOList) {
-                Endereco endereco = enderecoService.obterEnderecoDoUsuario(candidato.id)
-                List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(candidato.id, TabelaCompetencia.COMPETENCIAS_CANDIDATO)
-                candidatos << CandidatoMapper.toEntity(candidato, endereco, competencias)
+            for (candidatoDTO in candidatoDTOList) {
+                Candidato candidato = obterCandidatoPeloId(candidatoDTO.id)
+                candidatos << candidato
             }
 
             return candidatos
@@ -54,10 +53,10 @@ class CandidatoService {
         }
     }
 
-    private void adicionarCompetenciasDoCandidato(List<Competencia> competencias, Integer candidatoId) {
+    void adicionarCompetenciasDoCandidato(List<Competencia> competencias, Integer candidatoId) {
         competencias.each {competencia ->
             try {
-                competenciaService.adicionarCompetenciaDeEntidade(competencia, candidatoId)
+                competenciaService.adicionarCompetenciaCandidato(competencia, candidatoId)
             } catch(CompetenciaNotFoundException e) {
                 println "Não foi possível adicionar a competencia $competencia ao candidato."
                 println e.getMessage()
@@ -87,7 +86,7 @@ class CandidatoService {
 
             repository.updateCandidato(candidatoDTO)
 
-            competenciaService.deletarCompetenciaEntidade(candidatoDTO.id, 'competencias_usuario')
+            competenciaService.deletarCompetenciasDeCandidato(candidatoDTO.id)
             adicionarCompetenciasDoCandidato(candidato.competencias, candidatoDTO.id)
 
             enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, candidatoDTO.id, true)

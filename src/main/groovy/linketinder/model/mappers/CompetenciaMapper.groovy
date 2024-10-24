@@ -15,4 +15,14 @@ class CompetenciaMapper {
     static Competencia toEntity(CompetenciaDTO competenciaDTO) {
         return new Competencia(competenciaDTO.id, competenciaDTO.competencia, competenciaDTO.anosExperiencia, competenciaDTO.afinidade)
     }
+
+    static List<Competencia> dtoListToEntityList(List<CompetenciaDTO> competenciasDTO) {
+        List<Competencia> competencias = []
+
+        for (competencia in competenciasDTO) {
+            competencias << toEntity(competencia)
+        }
+
+        return competencias
+    }
 }

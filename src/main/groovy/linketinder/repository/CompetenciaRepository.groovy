@@ -14,26 +14,7 @@ class CompetenciaRepository implements CompetenciaDAO {
         this.sql = sql
     }
 
-    @Override
-    List<CompetenciaDTO> listarCompetenciasDeCandidatoOuVaga(Integer entidadeId, String nomeTabela) {
-        def statement = """
-                select c.id, c.competencia, t.afinidade, t.anos_experiencia 
-                from competencias_candidato t
-                INNER JOIN competencias c
-                ON t.competencia_id = c.id
-                WHERE t.usuario_id = $entidadeId;
-            """
-
-        if (nomeTabela == 'competencias_vaga') {
-            statement = """
-                select c.id, c.competencia, t.afinidade, t.anos_experiencia 
-                from competencias_vaga t
-                INNER JOIN competencias c
-                ON t.competencia_id = c.id
-                WHERE t.vaga_id = $entidadeId;
-            """
-        }
-
+    private List<CompetenciaDTO> listarCompetenciasDeEntidade(String statement) {
         List<CompetenciaDTO> competencias = []
 
         sql.eachRow(statement) {row ->
@@ -48,6 +29,33 @@ class CompetenciaRepository implements CompetenciaDAO {
 
         return competencias
     }
+
+    @Override
+    List<CompetenciaDTO> listarCompetenciasDeCandidato(Integer candidatoId) {
+        GString statement = """
+                select c.id, c.competencia, t.afinidade, t.anos_experiencia 
+                from competencias_candidato t
+                INNER JOIN competencias c
+                ON t.competencia_id = c.id
+                WHERE t.usuario_id = $candidatoId;
+            """
+
+        return listarCompetenciasDeEntidade(statement)
+    }
+
+    @Override
+    List<CompetenciaDTO> listarCompetenciasDeVaga(Integer vagaId) {
+        GString statement = """
+            select c.id, c.competencia, t.afinidade, t.anos_experiencia 
+            from competencias_vaga t
+            INNER JOIN competencias c
+            ON t.competencia_id = c.id
+            WHERE t.vaga_id = $vagaId;
+        """
+
+        return listarCompetenciasDeEntidade(statement)
+    }
+
 
     @Override
     List<CompetenciaDTO> listarCompetencias() {
@@ -79,7 +87,7 @@ class CompetenciaRepository implements CompetenciaDAO {
 
         CompetenciaDTO competenciaDTO = new CompetenciaDTO()
 
-        this.sql.eachRow(statement) {row ->
+        this.sql.firstRow(statement) { row ->
             competenciaDTO.competencia = row.getString('competencia')
             competenciaDTO.id = row.getInt('id')
         }
@@ -104,19 +112,19 @@ class CompetenciaRepository implements CompetenciaDAO {
     }
 
     @Override
-    void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId)  {
+    void adicionarCompetenciaCandidato(CompetenciaDTO competenciaDTO, Integer candidatoId)  {
         def inserirCompetencia = """
             INSERT INTO competencias_candidato (usuario_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
         """
 
-        def competenciaParams = [usuarioId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
+        def competenciaParams = [candidatoId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
 
         sql.executeInsert(inserirCompetencia, competenciaParams)
     }
 
     @Override
-    void adicionarCompetenciasVaga(CompetenciaDTO competenciaDTO, Integer vagaId)  {
+    void adicionarCompetenciaVaga(CompetenciaDTO competenciaDTO, Integer vagaId)  {
         def inserirCompetencia = """
             INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
@@ -171,20 +179,23 @@ class CompetenciaRepository implements CompetenciaDAO {
         }
     }
 
-    @Override
-    void deleteCompetenciasEntidade(Integer entidadeId, String tabela) {
-        def stmt = """
+    void deletarCompetenciasCandidato(Integer candidatoId) {
+        GString stmt = """
             DELETE FROM competencias_candidato
-            WHERE usuario_id = $entidadeId
+            WHERE usuario_id = $candidatoId
         """
-
-        if (tabela == 'competencias_vaga') {
-            stmt = """
-                DELETE FROM competencias_vaga
-                WHERE vaga_id = $entidadeId
-            """
-        }
 
         sql.executeUpdate(stmt)
     }
+
+    void deletarCompetenciasVaga(Integer vagaId) {
+        GString stmt = """
+                DELETE FROM competencias_vaga
+                WHERE vaga_id = $vagaId
+            """
+
+        sql.executeUpdate(stmt)
+    }
+
+
 }

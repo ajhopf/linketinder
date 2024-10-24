@@ -11,7 +11,9 @@ class CompetenciaView {
 
         String competencia = InputHelpers.obterString('Digite a competência', sc)
 
-        competenciaService.adicionarCompetencia(competencia)
+        Integer competenciaId = competenciaService.adicionarCompetencia(competencia)
+
+        println "Competencia adicionada com sucesso. Id gerado: $competenciaId"
     }
 
     static void listarCompetencias(CompetenciaService competenciaService) {
@@ -41,6 +43,8 @@ class CompetenciaView {
                 competencia.competencia = competenciaNova
 
                 competenciaService.updateCompetencia(competenciaId, competencia)
+
+                println "Competencia Atualizada"
             } catch (CompetenciaNotFoundException e) {
                 println e.getMessage()
             }
@@ -54,6 +58,8 @@ class CompetenciaView {
             Integer competenciaId = InputHelpers.getIntInput(0, 1000, "Digite o id da competencia para deletar", sc)
 
             competenciaService.deletarCompetencia(competenciaId)
+
+            println "Competencia Deletada"
         } catch (CompetenciaNotFoundException e) {
             println e.getMessage()
         }

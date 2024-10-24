@@ -1,7 +1,9 @@
 package linketinder.model.mappers
 
+import linketinder.model.Competencia
 import linketinder.model.Endereco
 import linketinder.model.Vaga
+import linketinder.model.dtos.CompetenciaDTO
 import linketinder.model.dtos.VagaRequestDTO
 import linketinder.model.dtos.VagaResponseDTO
 
@@ -37,4 +39,17 @@ class VagaMapper {
                 endereco: enderecoSimples,
         )
     }
+
+//    static List<CompetenciaDTO> entityListToDTOList(List<Competencia> competencias) {
+//        List<CompetenciaDTO> competenciaDTOList = []
+//
+//        for (competencia in competencias) {
+//            Integer competenciaId = competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+//            CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
+//            competenciaDTO.id = competenciaId
+//            competenciaDTOList << competenciaDTO
+//        }
+//
+//        return competenciaDTOList
+//    }
 }

@@ -91,26 +91,26 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
             result[0].competencia == 'Groovy'
     }
 
-    def "listarCompetenciasDeCandidatoOuVaga retorna competencia de candidato"() {
+    def "listarCompetenciasDeCandidato retorna competencia de candidato"() {
         given:
             Integer userId = sql.firstRow("SELECT id FROM usuarios WHERE email = 'andre@example.com'").id as Integer
 
         when:
             def result = competenciaRepository
-                    .listarCompetenciasDeCandidatoOuVaga(userId, TabelaCompetencia.COMPETENCIAS_CANDIDATO.nomeTabela)
+                    .listarCompetenciasDeCandidato(userId)
 
         then:
             result.size() == 1
             result[0].competencia == 'Groovy'
     }
 
-    def "listarCompetenciasDeCandidatoOuVaga retorna competencia de vaga"() {
+    def "listarCompetenciasDeVaga retorna competencia de vaga"() {
         given:
             Integer vagaId = sql.firstRow("SELECT id FROM vagas WHERE nome = 'vaga'").id as Integer
 
         when:
             def result = competenciaRepository
-                    .listarCompetenciasDeCandidatoOuVaga(vagaId, TabelaCompetencia.COMPETENCIAS_VAGA.nomeTabela)
+                    .listarCompetenciasDeVaga(vagaId)
 
         then:
             result.size() == 1
@@ -148,7 +148,7 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
             result != null
     }
 
-    def "adicionarCompetenciaUsuario lança SQLException quando não encontra usuario"() {
+    def 'adicionarCompetenciaUsuario lança SQLException quando não encontra candidato'() {
         given:
             List<CompetenciaDTO> competencias = competenciaRepository.listarCompetencias()
             Integer id = competencias[0].id
@@ -158,13 +158,13 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
             competenciaDTO.anosExperiencia = 3
 
         when:
-            competenciaRepository.adicionarCompetenciaUsuario(competenciaDTO, 1233123123)
+            competenciaRepository.adicionarCompetenciaCandidato(competenciaDTO, 1233123123)
 
         then:
             thrown(SQLException)
     }
 
-    def "adicionarCompetenciaUsuario adiciona Competencias ao usuario"() {
+    def 'adicionarCompetenciaUsuario adiciona Competencias ao candidato'() {
         given:
             sql.execute("""
                         INSERT INTO usuarios (tipo, nome, email, senha, descricao)
@@ -185,7 +185,7 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
             competenciaDTO.anosExperiencia = 3
 
         when:
-            competenciaRepository.adicionarCompetenciaUsuario(competenciaDTO, usuarioId)
+            competenciaRepository.adicionarCompetenciaCandidato(competenciaDTO, usuarioId)
 
         then:
             def competenciaCandidato = sql.firstRow("SELECT * FROM competencias_candidato WHERE usuario_id = $usuarioId")

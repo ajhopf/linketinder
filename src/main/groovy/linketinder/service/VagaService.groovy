@@ -8,7 +8,6 @@ import linketinder.model.dtos.CompetenciaDTO
 import linketinder.model.dtos.EnderecoDTO
 import linketinder.model.dtos.VagaRequestDTO
 import linketinder.model.dtos.VagaResponseDTO
-import linketinder.model.enums.TabelaCompetencia
 import linketinder.model.mappers.CompetenciaMapper
 import linketinder.model.mappers.EnderecoMapper
 import linketinder.model.mappers.VagaMapper
@@ -32,6 +31,8 @@ class VagaService {
 
         for (competencia in competencias) {
             Integer competenciaId = competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+
+
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
             competenciaDTO.id = competenciaId
             competenciaDTOList << competenciaDTO
@@ -74,7 +75,7 @@ class VagaService {
             for (vagaDTO in vagasDTOList) {
                 Vaga vaga = VagaMapper.toEntity(vagaDTO)
 
-                List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(vagaDTO.id, TabelaCompetencia.COMPETENCIAS_VAGA)
+                List<Competencia> competencias = competenciaService.listarCompetenciasDeVaga(vagaDTO.id)
 
                 vaga.competencias = competencias
                 vagas << vaga
@@ -86,15 +87,19 @@ class VagaService {
         }
     }
 
+    void adicionarCompetenciasDaVaga(List<Competencia> competencias) {
+        competencias.each {competencia ->
+            competenciaService.adicionarCompetenciaVaga(competencia, vagaId)
+        }
+    }
+
     Integer adicionarVaga(Vaga vaga) throws RepositoryAccessException {
         try {
             VagaRequestDTO vagaRequestDTO = obterVagaRequestDto(vaga)
 
             Integer vagaId = repository.adicionarVaga(vagaRequestDTO)
 
-            vaga.competencias.each {competencia ->
-                competenciaService.adicionarCompetenciaDeEntidade(competencia, vagaId, true)
-            }
+            adicionarCompetenciasDaVaga(vaga.competencias)
 
             return vagaId
         } catch (SQLException e) {
@@ -104,15 +109,13 @@ class VagaService {
 
     void updateVaga(Vaga vagaAtualizada) {
         try {
-            competenciaService.deletarCompetenciaEntidade(vagaAtualizada.id, 'competencias_vaga')
+            competenciaService.deletarCompetenciasDeVaga(vagaAtualizada.id)
 
             VagaRequestDTO vagaRequestDTO = obterVagaRequestDto(vagaAtualizada)
 
             repository.updateVaga(vagaAtualizada.id, vagaRequestDTO)
 
-            vagaAtualizada.competencias.each {competencia ->
-                competenciaService.adicionarCompetenciaDeEntidade(competencia, vagaAtualizada.id, true)
-            }
+            adicionarCompetenciasDaVaga(vagaAtualizada.competencias)
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }

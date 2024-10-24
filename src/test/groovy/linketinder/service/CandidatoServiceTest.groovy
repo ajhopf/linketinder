@@ -41,7 +41,7 @@ class CandidatoServiceTest extends Specification {
         when:
         when(repository.listarCandidatos()).thenReturn(candidatoDTOS)
         when(enderecoService.obterEnderecoDoUsuario(any(Integer))).thenReturn(new Endereco())
-        when(competenciaService.listarCompetenciasDeUsuarioOuVaga(any(Integer))).thenReturn(competencias)
+        when(competenciaService.listarCompetenciasDeCandidato(any(Integer))).thenReturn(competencias)
         List<Candidato> listaResultado = candidatoService.listarCandidatos()
 
         then:
@@ -60,17 +60,39 @@ class CandidatoServiceTest extends Specification {
     }
 
 
-    void "adicionarCandidato() lança CompetenciaNotFoundException quando candidato tem competencia invalida"() {
+    def "adicionarCompetenciasDoCandidato adiciona competencias ao candidato com sucesso"() {
         given:
-            Candidato candidato = new Candidato()
-            candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
-            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenThrow(CompetenciaNotFoundException.class)
+        List<Competencia> competencias = [
+                new Competencia("Java", 10, Afinidade.MUITO_ALTA),
+                new Competencia("Groovy", 10, Afinidade.MUITO_ALTA)]
+        Integer candidatoId = 1
 
-        when:
-            candidatoService.adicionarCandidato(candidato)
+        when: "adicionarCompetenciasDoCandidato é chamado"
+        candidatoService.adicionarCompetenciasDoCandidato(competencias, candidatoId)
 
-        then:
-            thrown(CompetenciaNotFoundException)
+        then: "o serviço de competencia deve ser chamado para cada competencia"
+        1 * competenciaService.adicionarCompetenciaCandidato(competencias[0], candidatoId)
+        1 * competenciaService.adicionarCompetenciaCandidato(competencias[1], candidatoId)
+    }
+
+    def "deve tratar CompetenciaNotFoundException ao adicionar competencias"() {
+        given: "uma lista de competencias e um candidatoId"
+        List<Competencia> competencias = [new Competencia(nome: "Java"), new Competencia(nome: "Groovy")]
+        Integer candidatoId = 1
+
+        and: "o serviço de competencia lança uma exceção para a segunda competencia"
+        competenciaService.adicionarCompetenciaDeEntidade(competencias[0], candidatoId) >> {}
+        competenciaService.adicionarCompetenciaDeEntidade(competencias[1], candidatoId) >> { throw new CompetenciaNotFoundException("Competência não encontrada") }
+
+        when: "adicionarCompetenciasDoCandidato é chamado"
+        candidatoService.adicionarCompetenciasDoCandidato(competencias, candidatoId)
+
+        then: "o serviço de competencia deve ser chamado para cada competencia"
+        1 * competenciaService.adicionarCompetenciaDeEntidade(competencias[0], candidatoId)
+        1 * competenciaService.adicionarCompetenciaDeEntidade(competencias[1], candidatoId)
+
+        and: "não lança exceção e imprime a mensagem de erro para a competencia não encontrada"
+        noExceptionThrown()
     }
 
     void "adicionarCandidato() cria novo candidato com suas competencias e endereco"() {
