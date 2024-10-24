@@ -1,5 +1,6 @@
 package linketinder.service
 
+import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
 import linketinder.exceptions.VagaNotFoundException
 import linketinder.model.Competencia
@@ -30,8 +31,7 @@ class VagaService {
         List<CompetenciaDTO> competenciaDTOList = []
 
         for (competencia in competencias) {
-            Integer competenciaId = competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
-
+            Integer competenciaId = competenciaService.obterIdDeCompetencia(competencia.competencia)
 
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
             competenciaDTO.id = competenciaId
@@ -41,7 +41,7 @@ class VagaService {
         return competenciaDTOList
     }
 
-    VagaRequestDTO obterVagaRequestDto(Vaga vaga) {
+    VagaRequestDTO construirVagaRequestDto(Vaga vaga) {
         EnderecoDTO enderecoDTO = EnderecoMapper.toDTO(vaga.endereco)
         Integer enderecoId = enderecoService.adicionarEndereco(enderecoDTO)
 
@@ -87,19 +87,25 @@ class VagaService {
         }
     }
 
-    void adicionarCompetenciasDaVaga(List<Competencia> competencias) {
+    void adicionarCompetenciasDaVaga(List<Competencia> competencias, Integer vagaId) {
         competencias.each {competencia ->
-            competenciaService.adicionarCompetenciaVaga(competencia, vagaId)
+            try {
+                competenciaService.adicionarCompetenciaVaga(competencia, vagaId)
+            } catch(CompetenciaNotFoundException e) {
+                println "Não foi possível adicionar a competencia $competencia à vaga."
+                println e.getMessage()
+            }
         }
+
     }
 
     Integer adicionarVaga(Vaga vaga) throws RepositoryAccessException {
         try {
-            VagaRequestDTO vagaRequestDTO = obterVagaRequestDto(vaga)
+            VagaRequestDTO vagaRequestDTO = construirVagaRequestDto(vaga)
 
             Integer vagaId = repository.adicionarVaga(vagaRequestDTO)
 
-            adicionarCompetenciasDaVaga(vaga.competencias)
+            adicionarCompetenciasDaVaga(vaga.competencias, vagaId)
 
             return vagaId
         } catch (SQLException e) {
@@ -111,11 +117,11 @@ class VagaService {
         try {
             competenciaService.deletarCompetenciasDeVaga(vagaAtualizada.id)
 
-            VagaRequestDTO vagaRequestDTO = obterVagaRequestDto(vagaAtualizada)
+            VagaRequestDTO vagaRequestDTO = construirVagaRequestDto(vagaAtualizada)
 
             repository.updateVaga(vagaAtualizada.id, vagaRequestDTO)
 
-            adicionarCompetenciasDaVaga(vagaAtualizada.competencias)
+            adicionarCompetenciasDaVaga(vagaAtualizada.competencias, vagaAtualizada.id)
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }

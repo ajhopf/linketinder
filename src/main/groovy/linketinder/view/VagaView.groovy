@@ -55,7 +55,7 @@ class VagaView {
             Vaga vaga = obterInfosDeVaga(sc, empresa)
 
             vaga.competencias.each {competencia ->
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+                competenciaService.obterIdDeCompetencia(competencia.competencia)
             }
 
             Integer vagaId = vagaService.adicionarVaga(vaga)
@@ -77,7 +77,7 @@ class VagaView {
             vagaAtualizada.id = vaga.id
 
             vaga.competencias.each {competencia ->
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+                competenciaService.obterIdDeCompetencia(competencia.competencia)
             }
 
             vagaService.updateVaga(vagaAtualizada)

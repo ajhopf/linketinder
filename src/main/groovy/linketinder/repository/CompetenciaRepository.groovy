@@ -1,5 +1,6 @@
 package linketinder.repository
 
+import groovy.sql.GroovyRowResult
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.model.dtos.CompetenciaDTO
 import linketinder.model.enums.Afinidade
@@ -82,19 +83,18 @@ class CompetenciaRepository implements CompetenciaDAO {
         def statement = """
                 SELECT *
                 FROM competencias c
-                WHERE c.id = $id 
+                WHERE c.id = ?
             """
 
+        GroovyRowResult row = this.sql.firstRow(statement, [id])
+
+        if (row == null) {
+            throw new CompetenciaNotFoundException("Não foi possível localizar a competência com o id = $id")
+        }
+
         CompetenciaDTO competenciaDTO = new CompetenciaDTO()
-
-        this.sql.firstRow(statement) { row ->
-            competenciaDTO.competencia = row.getString('competencia')
-            competenciaDTO.id = row.getInt('id')
-        }
-
-        if (competenciaDTO.competencia == null) {
-            throw new CompetenciaNotFoundException("Não foi possível localizar a competencia com o id = $id")
-        }
+        competenciaDTO.competencia = row.get('competencia')
+        competenciaDTO.id = row.get('id') as Integer
 
         return competenciaDTO
     }

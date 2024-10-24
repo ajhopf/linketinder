@@ -29,6 +29,15 @@ class CompetenciaService {
         }
     }
 
+
+    Integer obterIdDeCompetencia(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
+        try {
+            return repository.obterIdDeCompetencia(competencia)
+        } catch (SQLException sqlException) {
+            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
+        }
+    }
+
     private List<Competencia> listarCompetenciasHelper(Closure<List<CompetenciaDTO>> listarCompetenciasFn) {
         try {
             List<CompetenciaDTO> competenciasDTOS = listarCompetenciasFn.call()
@@ -86,16 +95,6 @@ class CompetenciaService {
             repository.adicionarCompetenciaVaga(competenciaDTO, id)
         }
     }
-
-
-    Integer verificarSeCompetenciaExiste(String competencia) throws RepositoryAccessException, CompetenciaNotFoundException {
-        try {
-            return repository.obterIdDeCompetencia(competencia)
-        } catch (SQLException sqlException) {
-            throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
-        }
-    }
-
 
     void updateCompetencia(Integer id, Competencia competenciaAtualizada) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {

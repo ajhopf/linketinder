@@ -50,7 +50,7 @@ class VagaServiceTest extends Specification {
             vaga.endereco = new Endereco(cep: "88063-948", cidade: "Florianopolis", estado: "Santa Catarina", pais: "Brasil")
 
             when(enderecoService.adicionarEndereco(any(EnderecoDTO))).thenReturn(1)
-            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenReturn(1)
+            when(competenciaService.obterIdDeCompetencia(any(String))).thenReturn(1)
             when(repository.adicionarVaga(any(VagaRequestDTO))).thenReturn(1)
         when:
             Integer result = vagaService.adicionarVaga(vaga)

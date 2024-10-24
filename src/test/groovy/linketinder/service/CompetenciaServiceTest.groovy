@@ -87,12 +87,12 @@ class CompetenciaServiceTest extends Specification {
         thrown(RepositoryAccessException)
     }
 
-    void "verificarSeCompetenciaExiste() lança CompetenciaNotFoundException quando não encontra a competencia no BD"() {
+    void 'obterIdDeCompetenciaExiste() lança CompetenciaNotFoundException quando não encontra a competencia no BD'() {
         given:
         when(repository.obterIdDeCompetencia(any(String))).thenThrow(CompetenciaNotFoundException.class)
 
         when:
-        competenciaService.verificarSeCompetenciaExiste('jeva')
+        competenciaService.obterIdDeCompetencia('jeva')
 
         then:
         thrown(CompetenciaNotFoundException)

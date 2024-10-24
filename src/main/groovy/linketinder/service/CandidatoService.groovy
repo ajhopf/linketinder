@@ -36,6 +36,8 @@ class CandidatoService {
         }
     }
 
+
+
     List<Candidato> listarCandidatos() throws SQLException {
         List<Candidato> candidatos = []
 
@@ -43,7 +45,10 @@ class CandidatoService {
             List<CandidatoDTO> candidatoDTOList = repository.listarCandidatos()
 
             for (candidatoDTO in candidatoDTOList) {
-                Candidato candidato = obterCandidatoPeloId(candidatoDTO.id)
+                Endereco endereco = enderecoService.obterEnderecoDoUsuario(candidatoDTO.id)
+                List<Competencia> competencias = competenciaService.listarCompetenciasDeCandidato(candidatoDTO.id)
+                Candidato candidato = CandidatoMapper.toEntity(candidatoDTO, endereco, competencias)
+
                 candidatos << candidato
             }
 

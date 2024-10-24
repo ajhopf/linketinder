@@ -119,7 +119,7 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
 
     def "obterCompetenciaPeloId lança CompetenciaNotFoundException quando id é inexistente"() {
         when:
-            competenciaRepository.obterCompetenciaPeloId(12344255)
+            competenciaRepository.obterCompetenciaPeloId(12344)
 
         then:
             thrown CompetenciaNotFoundException
@@ -129,6 +129,7 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
         given:
             List<CompetenciaDTO> competencias = competenciaRepository.listarCompetencias()
             Integer id = competencias[0].id
+
 
         when:
             def result = competenciaRepository.obterCompetenciaPeloId(id)
@@ -258,7 +259,7 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
             null == sql.firstRow("SELECT id FROM competencias WHERE competencia = 'Groovy'")
     }
 
-    def "deleteCompetenciasEntidade deleta todas competencias do usuario"() {
+    def "deleteCompetenciasCandidato deleta todas competencias do usuario"() {
         given:
             Integer usuarioId = sql.firstRow("SELECT id FROM usuarios WHERE email = 'andre@example.com'").id as Integer
 
@@ -279,13 +280,13 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
                         VALUES (?, ?, 3, 5)
                     """, [usuarioId, competencia2])
         when:
-            competenciaRepository.deleteCompetenciasEntidade(usuarioId, TabelaCompetencia.COMPETENCIAS_CANDIDATO.nomeTabela)
+            competenciaRepository.deletarCompetenciasCandidato(usuarioId)
 
         then:
             null == sql.firstRow("SELECT id FROM competencias_candidato WHERE usuario_id = $usuarioId")
     }
 
-    def "deleteCompetenciasEntidade deleta todas competencias da vaga"() {
+    def "deleteCompetenciasVaga deleta todas competencias da vaga"() {
         given:
         Integer vagaId = sql.firstRow("SELECT id FROM vagas WHERE nome = 'vaga'").id as Integer
 
@@ -306,7 +307,7 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
                         VALUES (?, ?, 3, 5)
                     """, [vagaId, competencia2])
         when:
-        competenciaRepository.deleteCompetenciasEntidade(vagaId, TabelaCompetencia.COMPETENCIAS_VAGA.nomeTabela)
+        competenciaRepository.deletarCompetenciasVaga(vagaId)
 
         then:
         null == sql.firstRow("SELECT * FROM competencias_vaga WHERE vaga_id = $vagaId")
