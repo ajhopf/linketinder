@@ -176,7 +176,7 @@ class VagaRepositoryTest extends SetupRepositoryTest {
             Integer vagaId = sql.firstRow("SELECT id FROM vagas").id as Integer
 
         when:
-            vagaRepository.deleteVaga(vagaId)
+            vagaRepository.deletarVaga(vagaId)
 
         then:
             null == sql.firstRow("SELECT * FROM vagas")

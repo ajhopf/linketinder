@@ -99,7 +99,7 @@ class VagaRepository implements VagaDAO {
     }
 
     @Override
-    void deleteVaga(Integer id) {
+    void deletarVaga(Integer id) {
         def stmt = """
             DELETE FROM vagas
             WHERE id = $id

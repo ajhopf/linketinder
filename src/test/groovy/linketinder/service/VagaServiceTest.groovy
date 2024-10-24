@@ -30,7 +30,7 @@ class VagaServiceTest extends Specification {
             List<VagaResponseDTO> vagaResponseDTOS = [vagaResponseDTO]
             List<Competencia> competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
             when(repository.listarVagas()).thenReturn(vagaResponseDTOS)
-            when(competenciaService.listarCompetenciasDeUsuarioOuVaga(any(Integer), any(String)))
+            when(competenciaService.listarCompetenciasDeVaga(any(Integer)))
                 .thenReturn(competencias)
         when:
             List<Vaga> result = vagaService.listarVagas()
@@ -50,7 +50,7 @@ class VagaServiceTest extends Specification {
             vaga.endereco = new Endereco(cep: "88063-948", cidade: "Florianopolis", estado: "Santa Catarina", pais: "Brasil")
 
             when(enderecoService.adicionarEndereco(any(EnderecoDTO))).thenReturn(1)
-            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenReturn(1)
+            when(competenciaService.obterIdDeCompetencia(any(String))).thenReturn(1)
             when(repository.adicionarVaga(any(VagaRequestDTO))).thenReturn(1)
         when:
             Integer result = vagaService.adicionarVaga(vaga)
@@ -62,7 +62,7 @@ class VagaServiceTest extends Specification {
         given:
             when(repository.obterVagaPeloId(1)).thenThrow(VagaNotFoundException.class)
         when:
-            vagaService.deleteVaga(1)
+            vagaService.deletarVaga(1)
         then:
             thrown(VagaNotFoundException)
     }

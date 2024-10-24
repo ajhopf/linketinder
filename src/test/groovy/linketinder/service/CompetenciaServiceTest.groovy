@@ -15,73 +15,135 @@ class CompetenciaServiceTest extends Specification {
     CompetenciaService competenciaService = new CompetenciaService(repository)
 
 
-    void "listarCompetenciasDeCandidatoOuVaga() retorna lista vazia"() {
+    void "listarCompetenciasDeVaga() retorna lista vazia"() {
         given:
         List<CompetenciaDTO> competenciaDTOS = []
 
         when:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenReturn(competenciaDTOS)
-        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1)
+        when(repository.listarCompetenciasDeVaga(any(Integer))).thenReturn(competenciaDTOS)
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeVaga(1)
 
         then:
         listaResultado.size() == 0
     }
 
-    void "listarCompetenciasDeCandidatoOuVaga() retorna lista com competencias"() {
+
+    void "listarCompetenciasDeVaga() retorna lista com competencias"() {
         given:
         List<CompetenciaDTO> competenciaDTOS = [new CompetenciaDTO(id: 1, afinidade: Afinidade.ALTA, anosExperiencia: 3, competencia: 'Java')]
 
         when:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenReturn(competenciaDTOS)
-        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeUsuarioOuVaga(1)
+        when(repository.listarCompetenciasDeVaga(any(Integer))).thenReturn(competenciaDTOS)
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeVaga(1)
 
         then:
         listaResultado.size() == 1
     }
 
-    void "listarCompetenciasDeCandidatoOuVaga() lança RepositoryAccessException quando há erro de acesso no repository"() {
+    void "listarCompetenciasDeVaga() lança RepositoryAccessException quando há erro de acesso no repository"() {
         given:
-        when(repository.listarCompetenciasDeCandidatoOuVaga(any(Integer), anyString())).thenThrow(RepositoryAccessException.class)
+        when(repository.listarCompetenciasDeVaga(any(Integer))).thenThrow(RepositoryAccessException.class)
 
         when:
-        competenciaService.listarCompetenciasDeUsuarioOuVaga(1)
+        competenciaService.listarCompetenciasDeVaga(1)
 
         then:
         thrown(RepositoryAccessException)
     }
 
-    void "verificarSeCompetenciaExiste() lança CompetenciaNotFoundException quando não encontra a competencia no BD"() {
+    void "listarCompetenciasDeCandidato() retorna lista vazia"() {
+        given:
+        List<CompetenciaDTO> competenciaDTOS = []
+
+        when:
+        when(repository.listarCompetenciasDeCandidato(any(Integer))).thenReturn(competenciaDTOS)
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeCandidato(1)
+
+        then:
+        listaResultado.size() == 0
+    }
+
+    void "listarCompetenciasDeCandidato() retorna lista com competencias"() {
+        given:
+        List<CompetenciaDTO> competenciaDTOS = [new CompetenciaDTO(id: 1, afinidade: Afinidade.ALTA, anosExperiencia: 3, competencia: 'Java')]
+
+        when:
+        when(repository.listarCompetenciasDeCandidato(any(Integer))).thenReturn(competenciaDTOS)
+        List<Competencia> listaResultado = competenciaService.listarCompetenciasDeCandidato(1)
+
+        then:
+        listaResultado.size() == 1
+    }
+
+
+    void "listarCompetenciasDeCandidato() lança RepositoryAccessException quando há erro de acesso no repository"() {
+        given:
+        when(repository.listarCompetenciasDeCandidato(any(Integer))).thenThrow(RepositoryAccessException.class)
+
+        when:
+        competenciaService.listarCompetenciasDeCandidato(1)
+
+        then:
+        thrown(RepositoryAccessException)
+    }
+
+    void 'obterIdDeCompetenciaExiste() lança CompetenciaNotFoundException quando não encontra a competencia no BD'() {
         given:
         when(repository.obterIdDeCompetencia(any(String))).thenThrow(CompetenciaNotFoundException.class)
 
         when:
-        competenciaService.verificarSeCompetenciaExiste('jeva')
+        competenciaService.obterIdDeCompetencia('jeva')
 
         then:
         thrown(CompetenciaNotFoundException)
     }
 
-    void "adicionarCompetencia() lança CompetenciaNotFoundException quando não encontra a competencia no BD"() {
+    void "adicionarCompetenciaVaga() lança CompetenciaNotFoundException quando não encontra a competencia no BD"() {
         given:
         when(repository.obterIdDeCompetencia(any(String))).thenThrow(CompetenciaNotFoundException.class)
 
         when:
-        competenciaService.adicionarCompetenciaDeEntidade(new Competencia('jeva', 1, Afinidade.ALTA), 1)
+        competenciaService.adicionarCompetenciaVaga(new Competencia('jeva', 1, Afinidade.ALTA), 1)
 
         then:
         thrown(CompetenciaNotFoundException)
     }
 
-    void "adicionarCompetencia() invoca adicionarCompetenciaDeUsuario uma vez"() {
+    void "adicionarCompetenciaVaga() invoca repository.adicionarCompetenciaVaga uma vez"() {
         given:
         when(repository.obterIdDeCompetencia(any(String))).thenReturn(1)
+        Competencia competencia = new Competencia('Java', 1, Afinidade.ALTA)
 
         when:
-        competenciaService.adicionarCompetenciaDeEntidade(new Competencia('jeva', 1, Afinidade.ALTA), 1)
+        competenciaService.adicionarCompetenciaVaga(competencia, 1)
 
         then:
         verify(repository, times(1))
-                .adicionarCompetenciaUsuario(any(CompetenciaDTO), eq(1))
+                .adicionarCompetenciaVaga(any(CompetenciaDTO), eq(1))
+    }
+
+    void "adicionarCompetenciaCandidato() lança CompetenciaNotFoundException quando não encontra a competencia no BD"() {
+        given:
+        when(repository.obterIdDeCompetencia(any(String))).thenThrow(CompetenciaNotFoundException.class)
+
+        when:
+        competenciaService.adicionarCompetenciaCandidato(new Competencia('jeva', 1, Afinidade.ALTA), 1)
+
+        then:
+        thrown(CompetenciaNotFoundException)
+    }
+
+    void "adicionarCompetenciaCandidato() invoca adicionarCompetenciaDeUsuario uma vez"() {
+        given:
+        when(repository.obterIdDeCompetencia(any(String))).thenReturn(1)
+        Competencia competencia = new Competencia('Java', 1, Afinidade.ALTA)
+
+        when:
+        competenciaService.adicionarCompetenciaCandidato(competencia, 1)
+
+        then:
+        verify(repository, times(1))
+                .adicionarCompetenciaCandidato(any(CompetenciaDTO), eq(1))
     }
 
     void "listarCompetencias retorna lista de competencias"() {
@@ -112,13 +174,31 @@ class CompetenciaServiceTest extends Specification {
 
     void "deletarCompetencia lança CompetenciaNotFound quando não encontra competencia"() {
         given:
-        when(repository.deleteCompetencia(1)).thenThrow(CompetenciaNotFoundException.class)
+        when(repository.deletarCompetencia(1)).thenThrow(CompetenciaNotFoundException.class)
 
         when:
         competenciaService.deletarCompetencia(1)
 
         then:
         thrown(CompetenciaNotFoundException)
+    }
+
+    void "deletarCompetenciasDeCandidato invoca repository.deletarCompetenciasCandidato uma vez"() {
+        when:
+        competenciaService.deletarCompetenciasDeCandidato(1)
+
+        then:
+        verify(repository, times(1))
+                .deletarCompetenciasCandidato(1)
+    }
+
+    void "deletarCompetenciasDeVaga invoca repository.deletarComptenciasVaga uma vez"() {
+        when:
+        competenciaService.deletarCompetenciasDeVaga(1)
+
+        then:
+        verify(repository, times(1))
+                .deletarCompetenciasVaga(1)
     }
 
 }

@@ -103,7 +103,7 @@ class CandidatoView {
 
         try {
             candidato.competencias.each {competencia ->
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+                competenciaService.obterIdDeCompetencia(competencia.competencia)
             }
 
             Integer id = service.adicionarCandidato(candidato)
@@ -131,7 +131,7 @@ class CandidatoView {
             candidatoAtualizado.id = candidatoId
 
             candidato.competencias.each {competencia ->
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+                competenciaService.obterIdDeCompetencia(competencia.competencia)
             }
 
             candidatoService.updateCandidato(candidatoAtualizado)

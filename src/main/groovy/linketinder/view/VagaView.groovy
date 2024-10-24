@@ -55,7 +55,7 @@ class VagaView {
             Vaga vaga = obterInfosDeVaga(sc, empresa)
 
             vaga.competencias.each {competencia ->
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+                competenciaService.obterIdDeCompetencia(competencia.competencia)
             }
 
             Integer vagaId = vagaService.adicionarVaga(vaga)
@@ -77,7 +77,7 @@ class VagaView {
             vagaAtualizada.id = vaga.id
 
             vaga.competencias.each {competencia ->
-                competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+                competenciaService.obterIdDeCompetencia(competencia.competencia)
             }
 
             vagaService.updateVaga(vagaAtualizada)
@@ -93,7 +93,7 @@ class VagaView {
 
         Integer idDaVaga = InputHelpers.getIntInput(0, 5000, 'Digite o id da vaga', sc)
         try {
-            service.deleteVaga(idDaVaga)
+            service.deletarVaga(idDaVaga)
             println 'Vaga deletada com sucesso'
 
         } catch (VagaNotFoundException e) {

@@ -70,7 +70,13 @@ A configuração padrão é feita conforme imagem abaixo:
 
 Você provavelmente tem configurações diferentes para o seu banco de dados. Modifique o seu usuário, senha e url de conexão conforme necessário
 
-Para iniciar o sistema, execute o método main.
+Para iniciar o sistema, execute o método main ou utilize o comando
+
+```bash
+./gradlew run    #linux
+
+gradlew run      #windows
+```
 
 ## Utilizando o Sistema
 
@@ -97,7 +103,7 @@ Para realizar as operações selecione o número da operação desejada e siga a
 
 O Linketinder está em evolução!
 
-Os dados são persistidos utilizando o sistema de gerenciamento de banco de dados relacional PostgreSQL. <img src="img_1.png" alt="drawing" width="25"/>
+Os dados são persistidos utilizando o sistema de gerenciamento de banco de dados relacional PostgreSQL. <img src="assets/img_1.png" alt="drawing" width="25"/>
 
 Abaixo é possível visualizar a relação entre as tabelas e também as colunas existentes em cada tabela.
 

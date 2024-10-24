@@ -1,6 +1,6 @@
 package linketinder.repository
 
-import linketinder.exceptions.CandidatoNotFoundException
+
 import linketinder.exceptions.EmpresaNotFoundException
 import linketinder.model.dtos.EmpresaDTO
 import spock.lang.Shared
@@ -132,7 +132,7 @@ class EmpresaRepositoryTest extends SetupRepositoryTest {
 
     def "deletarEmpresa lança EmpresaNotFoundException quando invocado com id inexistente"(){
         when:
-        empresaRepository.deleteEmpresaPeloId(1234455)
+        empresaRepository.deletarEmpresaPeloId(1234455)
 
         then:
         thrown(EmpresaNotFoundException)
@@ -143,7 +143,7 @@ class EmpresaRepositoryTest extends SetupRepositoryTest {
             Integer empresaId = sql.firstRow("SELECT id FROM usuarios WHERE email = 'empresa@empresa.com'").id as Integer
 
         when:
-            empresaRepository.deleteEmpresaPeloId(empresaId)
+            empresaRepository.deletarEmpresaPeloId(empresaId)
 
         then:
             null == sql.firstRow("SELECT id FROM usuarios WHERE email = 'empresa@empresa.com'")

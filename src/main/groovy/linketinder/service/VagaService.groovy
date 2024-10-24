@@ -1,5 +1,6 @@
 package linketinder.service
 
+import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
 import linketinder.exceptions.VagaNotFoundException
 import linketinder.model.Competencia
@@ -8,7 +9,6 @@ import linketinder.model.dtos.CompetenciaDTO
 import linketinder.model.dtos.EnderecoDTO
 import linketinder.model.dtos.VagaRequestDTO
 import linketinder.model.dtos.VagaResponseDTO
-import linketinder.model.enums.TabelaCompetencia
 import linketinder.model.mappers.CompetenciaMapper
 import linketinder.model.mappers.EnderecoMapper
 import linketinder.model.mappers.VagaMapper
@@ -31,7 +31,8 @@ class VagaService {
         List<CompetenciaDTO> competenciaDTOList = []
 
         for (competencia in competencias) {
-            Integer competenciaId = competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
+            Integer competenciaId = competenciaService.obterIdDeCompetencia(competencia.competencia)
+
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
             competenciaDTO.id = competenciaId
             competenciaDTOList << competenciaDTO
@@ -40,7 +41,7 @@ class VagaService {
         return competenciaDTOList
     }
 
-    VagaRequestDTO obterVagaRequestDto(Vaga vaga) {
+    VagaRequestDTO construirVagaRequestDto(Vaga vaga) {
         EnderecoDTO enderecoDTO = EnderecoMapper.toDTO(vaga.endereco)
         Integer enderecoId = enderecoService.adicionarEndereco(enderecoDTO)
 
@@ -74,7 +75,7 @@ class VagaService {
             for (vagaDTO in vagasDTOList) {
                 Vaga vaga = VagaMapper.toEntity(vagaDTO)
 
-                List<Competencia> competencias = competenciaService.listarCompetenciasDeUsuarioOuVaga(vagaDTO.id, TabelaCompetencia.COMPETENCIAS_VAGA)
+                List<Competencia> competencias = competenciaService.listarCompetenciasDeVaga(vagaDTO.id)
 
                 vaga.competencias = competencias
                 vagas << vaga
@@ -86,15 +87,25 @@ class VagaService {
         }
     }
 
+    void adicionarCompetenciasDaVaga(List<Competencia> competencias, Integer vagaId) {
+        competencias.each {competencia ->
+            try {
+                competenciaService.adicionarCompetenciaVaga(competencia, vagaId)
+            } catch(CompetenciaNotFoundException e) {
+                println "Não foi possível adicionar a competencia $competencia à vaga."
+                println e.getMessage()
+            }
+        }
+
+    }
+
     Integer adicionarVaga(Vaga vaga) throws RepositoryAccessException {
         try {
-            VagaRequestDTO vagaRequestDTO = obterVagaRequestDto(vaga)
+            VagaRequestDTO vagaRequestDTO = construirVagaRequestDto(vaga)
 
             Integer vagaId = repository.adicionarVaga(vagaRequestDTO)
 
-            vaga.competencias.each {competencia ->
-                competenciaService.adicionarCompetenciaDeEntidade(competencia, vagaId, true)
-            }
+            adicionarCompetenciasDaVaga(vaga.competencias, vagaId)
 
             return vagaId
         } catch (SQLException e) {
@@ -104,25 +115,23 @@ class VagaService {
 
     void updateVaga(Vaga vagaAtualizada) {
         try {
-            competenciaService.deletarCompetenciaEntidade(vagaAtualizada.id, 'competencias_vaga')
+            competenciaService.deletarCompetenciasDeVaga(vagaAtualizada.id)
 
-            VagaRequestDTO vagaRequestDTO = obterVagaRequestDto(vagaAtualizada)
+            VagaRequestDTO vagaRequestDTO = construirVagaRequestDto(vagaAtualizada)
 
             repository.updateVaga(vagaAtualizada.id, vagaRequestDTO)
 
-            vagaAtualizada.competencias.each {competencia ->
-                competenciaService.adicionarCompetenciaDeEntidade(competencia, vagaAtualizada.id, true)
-            }
+            adicionarCompetenciasDaVaga(vagaAtualizada.competencias, vagaAtualizada.id)
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }
 
     }
 
-    void deleteVaga(Integer vagaId) throws RepositoryAccessException, VagaNotFoundException{
+    void deletarVaga(Integer vagaId) throws RepositoryAccessException, VagaNotFoundException{
         try {
             repository.obterVagaPeloId(vagaId)
-            repository.deleteVaga(vagaId)
+            repository.deletarVaga(vagaId)
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         } catch (VagaNotFoundException e) {

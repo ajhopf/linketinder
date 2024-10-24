@@ -7,5 +7,5 @@ interface EmpresaDAO {
     Integer adicionarEmpresa(EmpresaDTO empresa)
     EmpresaDTO obterEmpresaPeloId(Integer id)
     void updateEmpresa(EmpresaDTO empresaDTO)
-    void deleteEmpresaPeloId(Integer id)
+    void deletarEmpresaPeloId(Integer id)
 }

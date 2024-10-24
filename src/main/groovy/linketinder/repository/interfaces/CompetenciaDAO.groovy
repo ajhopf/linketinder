@@ -4,13 +4,20 @@ import linketinder.model.dtos.CompetenciaDTO
 
 interface CompetenciaDAO {
     List<CompetenciaDTO> listarCompetencias()
-    List<CompetenciaDTO> listarCompetenciasDeCandidatoOuVaga(Integer usuarioId, String nomeTabela)
+    List<CompetenciaDTO> listarCompetenciasDeCandidato(Integer candidatoId)
+    List<CompetenciaDTO> listarCompetenciasDeVaga(Integer vagaId)
+
     Integer adicionarCompetencia(String competencia)
-    void adicionarCompetenciaUsuario(CompetenciaDTO competenciaDTO, Integer usuarioId)
-    void adicionarCompetenciasVaga(CompetenciaDTO competenciaDTO, Integer vagaId)
+    void adicionarCompetenciaCandidato(CompetenciaDTO competenciaDTO, Integer usuarioId)
+    void adicionarCompetenciaVaga(CompetenciaDTO competenciaDTO, Integer vagaId)
+
     Integer obterIdDeCompetencia(String competenciaString)
     CompetenciaDTO obterCompetenciaPeloId(Integer id)
+
     void updateCompetencia(Integer competenciaId, CompetenciaDTO competencia)
-    void deleteCompetencia(Integer id)
-    void deleteCompetenciasEntidade(Integer vagaId, String tabela)
+
+    void deletarCompetencia(Integer id)
+
+    void deletarCompetenciasCandidato(Integer candidatoId)
+    void deletarCompetenciasVaga(Integer vagaId)
 }

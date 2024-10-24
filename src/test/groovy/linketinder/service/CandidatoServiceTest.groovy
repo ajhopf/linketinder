@@ -41,7 +41,7 @@ class CandidatoServiceTest extends Specification {
         when:
         when(repository.listarCandidatos()).thenReturn(candidatoDTOS)
         when(enderecoService.obterEnderecoDoUsuario(any(Integer))).thenReturn(new Endereco())
-        when(competenciaService.listarCompetenciasDeUsuarioOuVaga(any(Integer))).thenReturn(competencias)
+        when(competenciaService.listarCompetenciasDeCandidato(1)).thenReturn(competencias)
         List<Candidato> listaResultado = candidatoService.listarCandidatos()
 
         then:
@@ -60,34 +60,57 @@ class CandidatoServiceTest extends Specification {
     }
 
 
-    void "adicionarCandidato() lança CompetenciaNotFoundException quando candidato tem competencia invalida"() {
+    def "adicionarCompetenciasDoCandidato adiciona competencias ao candidato com sucesso"() {
+        given:
+            List<Competencia> competencias = [
+                    new Competencia("Java", 10, Afinidade.MUITO_ALTA),
+                    new Competencia("Groovy", 10, Afinidade.MUITO_ALTA)]
+            Integer candidatoId = 1
+
+        when: "adicionarCompetenciasDoCandidato é chamado"
+            candidatoService.adicionarCompetenciasDoCandidato(competencias, candidatoId)
+
+        then: "o serviço de competencia deve ser chamado para cada competencia"
+            verify(competenciaService, times(1))
+                    .adicionarCompetenciaCandidato(competencias[0], 1)
+            verify(competenciaService, times(1))
+                    .adicionarCompetenciaCandidato(competencias[1], 1)
+    }
+
+    def "adicionarCompetenciasDoCandidato deve tratar CompetenciaNotFoundException ao adicionar competencias"() {
+        given:
+            List<Competencia> competencias = [ new Competencia("Groovy", 1, Afinidade.ALTA) ]
+            Integer candidatoId = 1
+
+            when(competenciaService.adicionarCompetenciaCandidato(competencias[0], candidatoId)).thenThrow(CompetenciaNotFoundException.class)
+
+        when:
+            candidatoService.adicionarCompetenciasDoCandidato(competencias, candidatoId)
+
+        then: "o serviço de competencia deve ser chamado para cada competencia"
+            verify(competenciaService, times(1))
+                    .adicionarCompetenciaCandidato(competencias[0], 1)
+
+            noExceptionThrown()
+    }
+
+    void "adicionarCandidato() cria novo candidato com suas competencias e endereco"() {
         given:
             Candidato candidato = new Candidato()
-            candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
-            when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenThrow(CompetenciaNotFoundException.class)
+            Endereco endereco = new Endereco()
+            candidato.endereco = endereco
+            Competencia competencia = new Competencia('Java', 1, Afinidade.ALTA)
+            candidato.competencias = [competencia]
+            when(competenciaService.obterIdDeCompetencia(any(String))).thenReturn(1)
+
+            when(repository.adicionarCandidato(any(CandidatoDTO))).thenReturn(1)
 
         when:
             candidatoService.adicionarCandidato(candidato)
 
         then:
-            thrown(CompetenciaNotFoundException)
-    }
-
-    void "adicionarCandidato() cria novo candidato com suas competencias e endereco"() {
-        given:
-        Candidato candidato = new Candidato()
-        candidato.endereco = new Endereco()
-        candidato.competencias = [new Competencia('Java', 1, Afinidade.ALTA)]
-       when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenReturn(1)
-
-        when(repository.adicionarCandidato(any(CandidatoDTO))).thenReturn(1)
-
-        when:
-        candidatoService.adicionarCandidato(candidato)
-
-        then:
-        verify(competenciaService, times(1)).adicionarCompetenciaDeEntidade(any(Competencia), eq(1))
-        verify(enderecoService, times(1)).adicionarEnderecoParaUsuario(any(Endereco), eq(1))
+            verify(competenciaService, times(1)).adicionarCompetenciaCandidato(competencia, 1)
+            verify(enderecoService, times(1)).adicionarEnderecoParaUsuario(endereco, 1)
     }
 
     void "obterCandidatoPeloId lança CandidatoNotFoundException quando não é encontrado um candidato"() {
@@ -112,25 +135,13 @@ class CandidatoServiceTest extends Specification {
 
     void "deletarCandidatoPeloId lança CandidatoNotFoundException quando não é encontrado um candidato"() {
         given:
-        when(repository.obterCandidatoPeloId(1)).thenThrow(CandidatoNotFoundException.class)
+        when(repository.deletarCandidatoPeloId(1)).thenThrow(CandidatoNotFoundException.class)
 
         when:
         candidatoService.deletarCandidatoPeloId(1)
 
         then:
         thrown(CandidatoNotFoundException)
-    }
-
-    void "updateCandidato lança CompetenciaNotFoundException quando tenta inserir candidato com competencia invalida"(){
-        given:
-        when(competenciaService.verificarSeCompetenciaExiste(any(String))).thenThrow(CompetenciaNotFoundException.class)
-        Competencia competencia = new Competencia('Java', 1, Afinidade.ALTA)
-
-        when:
-        candidatoService.updateCandidato(new Candidato(competencias: [competencia]))
-
-        then:
-        thrown(CompetenciaNotFoundException)
     }
 
     void "updateCandidato lança CandidatoNotFoundException quando tenta atualizar candidato com id invalido"(){
@@ -143,8 +154,6 @@ class CandidatoServiceTest extends Specification {
         then:
         thrown(CandidatoNotFoundException)
     }
-
-
 
 
 }
