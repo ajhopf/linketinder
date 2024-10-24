@@ -93,7 +93,7 @@ class VagaView {
 
         Integer idDaVaga = InputHelpers.getIntInput(0, 5000, 'Digite o id da vaga', sc)
         try {
-            service.deleteVaga(idDaVaga)
+            service.deletarVaga(idDaVaga)
             println 'Vaga deletada com sucesso'
 
         } catch (VagaNotFoundException e) {

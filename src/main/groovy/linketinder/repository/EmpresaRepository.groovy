@@ -109,7 +109,7 @@ class EmpresaRepository implements EmpresaDAO {
     }
 
     @Override
-    void deleteEmpresaPeloId(Integer id) {
+    void deletarEmpresaPeloId(Integer id) {
         def statement = """
             DELETE FROM usuarios e
             WHERE id = $id

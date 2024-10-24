@@ -3,7 +3,6 @@ package linketinder.repository
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.model.dtos.CompetenciaDTO
 import linketinder.model.enums.Afinidade
-import linketinder.model.enums.TabelaCompetencia
 import spock.lang.Shared
 
 import java.sql.SQLException
@@ -240,20 +239,20 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
             thrown(CompetenciaNotFoundException)
     }
 
-    def "deleteCompetencia lança CompetenciaNotFoundException quando competencia é inexistente"() {
+    def 'deletarCompetencia lança CompetenciaNotFoundException quando competencia é inexistente'() {
         when:
-            competenciaRepository.deleteCompetencia(3342333)
+            competenciaRepository.deletarCompetencia(3342333)
 
         then:
             thrown(CompetenciaNotFoundException)
     }
 
-    def "deleteCompetencia deleta competencia"() {
+    def 'deletarCompetencia deleta competencia'() {
         given:
             Integer competenciaId = sql.firstRow("SELECT id FROM competencias WHERE competencia = 'Groovy'").id as Integer
 
         when:
-            competenciaRepository.deleteCompetencia(competenciaId)
+            competenciaRepository.deletarCompetencia(competenciaId)
 
         then:
             null == sql.firstRow("SELECT id FROM competencias WHERE competencia = 'Groovy'")

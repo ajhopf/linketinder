@@ -69,7 +69,7 @@ class EmpresaServiceTest extends Specification {
 
     void "deleteEmpresa() lança EmpresaNotFoundException quando empresa não é encontrada"() {
         given:
-        when(repository.deleteEmpresaPeloId(any(Integer))).thenThrow(EmpresaNotFoundException.class)
+        when(repository.deletarEmpresaPeloId(any(Integer))).thenThrow(EmpresaNotFoundException.class)
 
         when:
         empresaService.deleteEmpresa(1)

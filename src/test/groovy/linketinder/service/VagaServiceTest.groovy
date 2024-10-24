@@ -62,7 +62,7 @@ class VagaServiceTest extends Specification {
         given:
             when(repository.obterVagaPeloId(1)).thenThrow(VagaNotFoundException.class)
         when:
-            vagaService.deleteVaga(1)
+            vagaService.deletarVaga(1)
         then:
             thrown(VagaNotFoundException)
     }

@@ -111,7 +111,7 @@ class CompetenciaService {
 
     void deletarCompetencia(Integer id) throws RepositoryAccessException, CompetenciaNotFoundException{
         try {
-            repository.deleteCompetencia(id)
+            repository.deletarCompetencia(id)
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         } catch (CompetenciaNotFoundException e) {

@@ -16,7 +16,7 @@ interface CompetenciaDAO {
 
     void updateCompetencia(Integer competenciaId, CompetenciaDTO competencia)
 
-    void deleteCompetencia(Integer id)
+    void deletarCompetencia(Integer id)
 
     void deletarCompetenciasCandidato(Integer candidatoId)
     void deletarCompetenciasVaga(Integer vagaId)

@@ -166,7 +166,7 @@ class CompetenciaRepository implements CompetenciaDAO {
     }
 
     @Override
-    void deleteCompetencia(Integer id) {
+    void deletarCompetencia(Integer id) {
         def statement = """
             DELETE FROM competencias c
             WHERE c.id = $id

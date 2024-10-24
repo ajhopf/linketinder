@@ -37,7 +37,6 @@ class CandidatoService {
     }
 
 
-
     List<Candidato> listarCandidatos() throws SQLException {
         List<Candidato> candidatos = []
 
@@ -94,7 +93,7 @@ class CandidatoService {
             competenciaService.deletarCompetenciasDeCandidato(candidatoDTO.id)
             adicionarCompetenciasDoCandidato(candidato.competencias, candidatoDTO.id)
 
-            enderecoService.adicionarEnderecoParaUsuario(candidato.endereco, candidatoDTO.id, true)
+            enderecoService.updateEnderecoDoUsuario(candidato.endereco, candidatoDTO.id)
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }

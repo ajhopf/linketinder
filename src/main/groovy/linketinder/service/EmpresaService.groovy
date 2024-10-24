@@ -78,7 +78,7 @@ class EmpresaService {
 
     void deleteEmpresa(Integer id) throws RepositoryAccessException, EmpresaNotFoundException {
         try {
-            repository.deleteEmpresaPeloId(id)
+            repository.deletarEmpresaPeloId(id)
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }

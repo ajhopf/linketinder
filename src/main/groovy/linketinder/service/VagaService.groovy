@@ -128,10 +128,10 @@ class VagaService {
 
     }
 
-    void deleteVaga(Integer vagaId) throws RepositoryAccessException, VagaNotFoundException{
+    void deletarVaga(Integer vagaId) throws RepositoryAccessException, VagaNotFoundException{
         try {
             repository.obterVagaPeloId(vagaId)
-            repository.deleteVaga(vagaId)
+            repository.deletarVaga(vagaId)
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         } catch (VagaNotFoundException e) {

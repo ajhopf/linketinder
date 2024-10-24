@@ -174,7 +174,7 @@ class CompetenciaServiceTest extends Specification {
 
     void "deletarCompetencia lança CompetenciaNotFound quando não encontra competencia"() {
         given:
-        when(repository.deleteCompetencia(1)).thenThrow(CompetenciaNotFoundException.class)
+        when(repository.deletarCompetencia(1)).thenThrow(CompetenciaNotFoundException.class)
 
         when:
         competenciaService.deletarCompetencia(1)

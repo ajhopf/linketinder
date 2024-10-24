@@ -8,5 +8,5 @@ interface VagaDAO {
     Integer adicionarVaga(VagaRequestDTO vaga)
     VagaResponseDTO obterVagaPeloId(Integer vagaId)
     void updateVaga(Integer vagaId, VagaRequestDTO vaga)
-    void deleteVaga(Integer id)
+    void deletarVaga(Integer id)
 }
