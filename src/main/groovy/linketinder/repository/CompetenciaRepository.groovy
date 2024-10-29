@@ -7,12 +7,20 @@ import linketinder.model.enums.Afinidade
 import linketinder.repository.interfaces.CompetenciaDAO
 import groovy.sql.Sql
 
-
 class CompetenciaRepository implements CompetenciaDAO {
+    private static CompetenciaRepository instance = null
     private Sql sql = null
 
-    CompetenciaRepository(Sql sql) {
+    private CompetenciaRepository(Sql sql) {
         this.sql = sql
+    }
+
+    static synchronized CompetenciaRepository getInstance(Sql sql) {
+        if (instance == null) {
+            return new CompetenciaRepository(sql)
+        }
+
+        return instance
     }
 
     private List<CompetenciaDTO> listarCompetenciasDeEntidade(String statement) {
@@ -60,7 +68,7 @@ class CompetenciaRepository implements CompetenciaDAO {
 
     @Override
     List<CompetenciaDTO> listarCompetencias() {
-        def statement = """
+        String statement = """
                 SELECT *
                 FROM competencias c
             """
@@ -80,7 +88,7 @@ class CompetenciaRepository implements CompetenciaDAO {
 
     @Override
     CompetenciaDTO obterCompetenciaPeloId(Integer id) {
-        def statement = """
+        String statement = """
                 SELECT *
                 FROM competencias c
                 WHERE c.id = ?
@@ -101,7 +109,7 @@ class CompetenciaRepository implements CompetenciaDAO {
 
     @Override
     Integer adicionarCompetencia(String competencia) {
-        def inserirCompetencia = """
+        GString inserirCompetencia = """
             INSERT INTO competencias (competencia)
             VALUES ($competencia)
         """
@@ -113,35 +121,35 @@ class CompetenciaRepository implements CompetenciaDAO {
 
     @Override
     void adicionarCompetenciaCandidato(CompetenciaDTO competenciaDTO, Integer candidatoId)  {
-        def inserirCompetencia = """
+        String inserirCompetencia = """
             INSERT INTO competencias_candidato (usuario_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
         """
 
-        def competenciaParams = [candidatoId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
+        List<Number> competenciaParams = [candidatoId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
 
         sql.executeInsert(inserirCompetencia, competenciaParams)
     }
 
     @Override
     void adicionarCompetenciaVaga(CompetenciaDTO competenciaDTO, Integer vagaId)  {
-        def inserirCompetencia = """
+        String inserirCompetencia = """
             INSERT INTO competencias_vaga (vaga_id, competencia_id, anos_experiencia, afinidade)
             VALUES (?, ?, ?, ?)
         """
 
-        def competenciaParams = [vagaId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
+        List<Number> competenciaParams = [vagaId, competenciaDTO.id, competenciaDTO.anosExperiencia, competenciaDTO.afinidade.getAfinidade()]
 
         sql.executeInsert(inserirCompetencia, competenciaParams)
     }
 
     @Override
     Integer obterIdDeCompetencia(String competenciaString) {
-        def statement = """
+        GString statement = """
             SELECT id FROM competencias c WHERE c.competencia LIKE $competenciaString
         """
 
-        def row = sql.firstRow(statement)
+        GroovyRowResult row = sql.firstRow(statement)
 
         if (row == null) {
             throw new CompetenciaNotFoundException("Não foi possível encontrar a competência ${competenciaString}")
@@ -152,13 +160,13 @@ class CompetenciaRepository implements CompetenciaDAO {
 
     @Override
     void updateCompetencia(Integer competenciaId, CompetenciaDTO competencia) {
-        def statement = """
+        GString statement = """
             UPDATE competencias c
             SET competencia = $competencia.competencia
             WHERE c.id = $competenciaId
         """
 
-        def result = sql.executeUpdate(statement)
+        int result = sql.executeUpdate(statement)
 
         if (result == 0 ) {
             throw new CompetenciaNotFoundException('Não foi possível atualizar a competencia')
@@ -167,7 +175,7 @@ class CompetenciaRepository implements CompetenciaDAO {
 
     @Override
     void deletarCompetencia(Integer id) {
-        def statement = """
+        GString statement = """
             DELETE FROM competencias c
             WHERE c.id = $id
         """

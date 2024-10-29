@@ -14,7 +14,7 @@ class CandidatoRepositoryTest extends SetupRepositoryTest {
     CandidatoRepository candidatoRepository
 
     def setupSpec() {
-        candidatoRepository = new CandidatoRepository(sql)
+        candidatoRepository = CandidatoRepository.getInstance(sql)
     }
 
     def setup() {

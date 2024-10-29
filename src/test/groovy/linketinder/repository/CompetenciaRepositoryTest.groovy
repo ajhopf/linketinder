@@ -13,7 +13,7 @@ class CompetenciaRepositoryTest extends SetupRepositoryTest {
     CompetenciaRepository competenciaRepository
 
     def setupSpec() {
-        competenciaRepository = new CompetenciaRepository(sql)
+        competenciaRepository = CompetenciaRepository.getInstance(sql)
     }
 
     def setup() {

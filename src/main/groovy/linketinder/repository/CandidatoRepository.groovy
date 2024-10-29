@@ -8,10 +8,18 @@ import groovy.sql.Sql
 
 
 class CandidatoRepository implements CandidatoDAO {
+    private static CandidatoRepository instance = null
     private Sql sql = null
 
-    CandidatoRepository(Sql sql) {
+    private CandidatoRepository(Sql sql) {
         this.sql = sql
+    }
+
+    static synchronized CandidatoRepository getInstance(Sql sql) {
+        if (instance == null) {
+            instance = new CandidatoRepository(sql)
+        }
+        return instance
     }
 
     private static CandidatoDTO rowToDto(GroovyResultSet row) {
@@ -31,9 +39,10 @@ class CandidatoRepository implements CandidatoDAO {
 
     @Override
     CandidatoDTO obterCandidatoPeloId(Integer id) {
-        def stmt = "SELECT * FROM candidatos c INNER JOIN usuarios u ON c.usuario_id = u.id WHERE u.id = $id"
+        GString stmt = "SELECT * FROM candidatos c INNER JOIN usuarios u ON c.usuario_id = u.id WHERE u.id = $id"
 
         CandidatoDTO candidatoDTO = null
+
         this.sql.eachRow(stmt) { row ->
            candidatoDTO = rowToDto(row)
         }
@@ -47,7 +56,7 @@ class CandidatoRepository implements CandidatoDAO {
 
     @Override
     List<CandidatoDTO> listarCandidatos() {
-        def stmt = 'SELECT * FROM candidatos c INNER JOIN usuarios u ON c.usuario_id = u.id'
+        String stmt = 'SELECT * FROM candidatos c INNER JOIN usuarios u ON c.usuario_id = u.id'
 
         List<CandidatoDTO> candidatoDTOList = []
 
@@ -64,22 +73,22 @@ class CandidatoRepository implements CandidatoDAO {
     Integer adicionarCandidato(CandidatoDTO candidato) {
         Integer novoUsuarioId = null
 
-        def insereEmUsuarios = """
+        String insereEmUsuarios = """
             INSERT INTO usuarios (tipo, nome, email, senha, descricao)
             VALUES (CAST(? AS tipo_usuario), ?, ?, ?, ?)
         """
 
-        def insereEmCandidatos = """
+        String insereEmCandidatos = """
             INSERT INTO candidatos (usuario_id, sobrenome, data_nascimento, cpf, telefone)
             VALUES (?, ?, CAST(? AS DATE), ?, ?)
         """
 
-        def usuarioParams = ['candidato', candidato.nome, candidato.email, candidato.senha, candidato.descricao]
+        List<String> usuarioParams = ['candidato', candidato.nome, candidato.email, candidato.senha, candidato.descricao]
 
         sql.withTransaction {
             def keys = sql.executeInsert(insereEmUsuarios, usuarioParams)
             novoUsuarioId = keys[0][0] as Integer
-            def candidatoParams = [novoUsuarioId, candidato.sobrenome, candidato.dataNascimento, candidato.cpf, candidato.telefone]
+            List candidatoParams = [novoUsuarioId, candidato.sobrenome, candidato.dataNascimento, candidato.cpf, candidato.telefone]
             sql.executeInsert(insereEmCandidatos, candidatoParams)
         }
 
@@ -88,20 +97,20 @@ class CandidatoRepository implements CandidatoDAO {
 
     @Override
     void updateCandidato(CandidatoDTO candidatoDTO) {
-        def updateUsuarioStatement = """
+        GString updateUsuarioStatement = """
             UPDATE usuarios u
             SET nome = $candidatoDTO.nome, email = $candidatoDTO.email, senha = $candidatoDTO.senha, descricao = $candidatoDTO.descricao
             WHERE u.id = $candidatoDTO.id
         """
 
-        def updateCandidatoStatement = """
+        GString updateCandidatoStatement = """
             UPDATE candidatos c
             SET cpf = $candidatoDTO.cpf, sobrenome = $candidatoDTO.sobrenome, data_nascimento = $candidatoDTO.dataNascimento, telefone = $candidatoDTO.telefone
             WHERE c.usuario_id = $candidatoDTO.id
         """
 
         sql.withTransaction {
-            def row = sql.executeUpdate(updateUsuarioStatement)
+            int row = sql.executeUpdate(updateUsuarioStatement)
 
             if (row == 0) {
                 throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $candidatoDTO.id")
@@ -113,13 +122,11 @@ class CandidatoRepository implements CandidatoDAO {
 
     @Override
     void deletarCandidatoPeloId(Integer id) {
-
-        println id
-        def deletarUsuario = """
+        GString deletarUsuario = """
             DELETE FROM usuarios WHERE id = $id
         """
 
-        def row = sql.executeUpdate(deletarUsuario)
+        int row = sql.executeUpdate(deletarUsuario)
 
         if (row == 0) {
             throw new CandidatoNotFoundException("Não foi possível localizar o candidato com id $id")

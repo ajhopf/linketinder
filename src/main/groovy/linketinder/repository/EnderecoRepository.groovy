@@ -6,10 +6,18 @@ import linketinder.repository.interfaces.EnderecoDAO
 import groovy.sql.Sql
 
 class EnderecoRepository implements EnderecoDAO{
+    private static EnderecoRepository instance = null
     private Sql sql = null
 
-    EnderecoRepository(Sql sql) {
+    private EnderecoRepository(Sql sql) {
         this.sql = sql
+    }
+
+    static synchronized EnderecoRepository getInstance(Sql sql) {
+        if (instance == null) {
+            instance = new EnderecoRepository(sql)
+        }
+        return instance
     }
 
     private static EnderecoDTO rowToEnderecoDTO(GroovyRowResult row) {
@@ -28,26 +36,26 @@ class EnderecoRepository implements EnderecoDAO{
     }
 
     EnderecoDTO obterEnderecoPeloId(Integer id) {
-        def stmt = """
+        GString stmt = """
             SELECT e.cep, e.pais, e.estado, e.cidade
             FROM enderecos e             
             WHERE e.id =  $id
         """
-        def row = sql.firstRow(stmt)
+        GroovyRowResult row = sql.firstRow(stmt)
 
         return rowToEnderecoDTO(row)
     }
 
     @Override
     EnderecoDTO obterEnderecoDoUsuarioPeloId(Integer usuarioId) {
-        def endereco = """
+        GString endereco = """
                 SELECT e.cep, e.pais, e.estado, e.cidade, eu.usuario_id
                 FROM enderecos e INNER JOIN enderecos_usuario eu
                 ON e.id = eu.endereco_id
                 WHERE eu.usuario_id =  $usuarioId
             """
 
-        def row = sql.firstRow(endereco)
+        GroovyRowResult row = sql.firstRow(endereco)
 
         if (row == null) {
             return new EnderecoDTO()
@@ -63,13 +71,13 @@ class EnderecoRepository implements EnderecoDAO{
 
     @Override
     Integer obterIdDeEnderecoPeloCep(String cep) {
-        def enderecoQuery = """
+        GString enderecoQuery = """
             SELECT id 
             FROM enderecos e
             WHERE e.cep LIKE $cep
         """
 
-        def row = sql.firstRow(enderecoQuery)
+        GroovyRowResult row = sql.firstRow(enderecoQuery)
 
         if (row == null) {
             return -1
@@ -80,12 +88,12 @@ class EnderecoRepository implements EnderecoDAO{
 
     @Override
     Integer adicionarNovoEndereco(EnderecoDTO enderecoDTO) {
-        def inserirNovoEndereco = """
+        String inserirNovoEndereco = """
             INSERT INTO enderecos(cep, cidade, estado, pais)
             VALUES (?, ?, ?, ?)
         """
 
-        def enderecoParams = [enderecoDTO.cep, enderecoDTO.cidade, enderecoDTO.estado, enderecoDTO.pais]
+        List<String> enderecoParams = [enderecoDTO.cep, enderecoDTO.cidade, enderecoDTO.estado, enderecoDTO.pais]
 
         def keys = sql.executeInsert(inserirNovoEndereco, enderecoParams)
 
@@ -96,7 +104,7 @@ class EnderecoRepository implements EnderecoDAO{
 
     @Override
     void adicionarEnderecoParaUsuario(Integer usuarioId, Integer enderecoId) {
-        def inserirNovoEnderecoParaUsuario = """
+        GString inserirNovoEnderecoParaUsuario = """
             INSERT INTO enderecos_usuario (usuario_id, endereco_id)
             VALUES ($usuarioId, $enderecoId)
         """
@@ -106,7 +114,7 @@ class EnderecoRepository implements EnderecoDAO{
 
     @Override
     void updateEnderecoUsuario(Integer usuarioId, Integer enderecoId) {
-        def updateEndereco = """
+        GString updateEndereco = """
             UPDATE enderecos_usuario
             SET  endereco_id = $enderecoId
             WHERE usuario_id = $usuarioId

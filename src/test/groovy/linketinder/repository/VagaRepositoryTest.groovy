@@ -12,7 +12,7 @@ class VagaRepositoryTest extends SetupRepositoryTest {
     VagaRepository vagaRepository
 
     def setupSpec() {
-        vagaRepository = new VagaRepository(sql)
+        vagaRepository = VagaRepository.getInstance(sql)
     }
 
     def setup() {
