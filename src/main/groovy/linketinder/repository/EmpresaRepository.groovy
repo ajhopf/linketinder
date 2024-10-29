@@ -7,10 +7,18 @@ import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
 class EmpresaRepository implements EmpresaDAO {
+    private static EmpresaRepository instance
     private Sql sql = null
 
-    EmpresaRepository(Sql sql) {
+    private EmpresaRepository(Sql sql) {
         this.sql = sql
+    }
+
+    static synchronized EmpresaRepository getInstance(Sql sql) {
+        if (instance == null) {
+            instance = new EmpresaRepository(sql)
+        }
+        return instance
     }
 
     static EmpresaDTO rowToDto(GroovyResultSet row) {
@@ -27,7 +35,7 @@ class EmpresaRepository implements EmpresaDAO {
 
     @Override
     List<EmpresaDTO> listarEmpresas() {
-        def stmt = 'SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id'
+        String stmt = 'SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id'
 
         List<EmpresaDTO> empresaDTOSList = []
 
@@ -42,7 +50,7 @@ class EmpresaRepository implements EmpresaDAO {
 
     @Override
     EmpresaDTO obterEmpresaPeloId(Integer id) {
-        def stmt = "SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id WHERE u.id = $id"
+        GString stmt = "SELECT * FROM empresas e INNER JOIN usuarios u ON e.usuario_id = u.id WHERE u.id = $id"
 
         EmpresaDTO empresaDTO = null
 
@@ -61,17 +69,17 @@ class EmpresaRepository implements EmpresaDAO {
     Integer adicionarEmpresa(EmpresaDTO empresa) {
         Integer novaEmpresaId = null
 
-        def insereEmUsuarios = """
+        String insereEmUsuarios = """
             INSERT INTO usuarios (tipo, nome, email, senha, descricao)
             VALUES (CAST(? AS tipo_usuario), ?, ?, ?, ?)
         """
 
-        def insereEmEmpresas = """
+        String insereEmEmpresas = """
             INSERT INTO empresas (usuario_id, cnpj)
             VALUES (?, ?)
         """
 
-        def usuarioParams = ['empresa', empresa.nome, empresa.email, empresa.senha, empresa.descricao]
+        List<String> usuarioParams = ['empresa', empresa.nome, empresa.email, empresa.senha, empresa.descricao]
 
         sql.withTransaction {
             def keys = sql.executeInsert(insereEmUsuarios, usuarioParams)
@@ -85,20 +93,20 @@ class EmpresaRepository implements EmpresaDAO {
 
     @Override
     void updateEmpresa(EmpresaDTO empresaDTO) {
-        def updateUsuarioStatement = """
+        GString updateUsuarioStatement = """
             UPDATE usuarios u
             SET nome = $empresaDTO.nome, email = $empresaDTO.email, senha = $empresaDTO.senha, descricao = $empresaDTO.descricao
             WHERE u.id = $empresaDTO.id
         """
 
-        def updateEmpresaStatement = """
+        GString updateEmpresaStatement = """
             UPDATE empresas e
             SET cnpj = $empresaDTO.cnpj
             WHERE e.usuario_id = $empresaDTO.id
         """
 
         sql.withTransaction {
-            def row = sql.executeUpdate(updateUsuarioStatement)
+            int row = sql.executeUpdate(updateUsuarioStatement)
 
             if (row == 0) {
                 throw new EmpresaNotFoundException("Não foi possível localizar a empresa com id $empresaDTO.id")
@@ -110,7 +118,7 @@ class EmpresaRepository implements EmpresaDAO {
 
     @Override
     void deletarEmpresaPeloId(Integer id) {
-        def statement = """
+        GString statement = """
             DELETE FROM usuarios e
             WHERE id = $id
         """

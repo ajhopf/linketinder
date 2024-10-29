@@ -14,7 +14,7 @@ class EmpresaRepositoryTest extends SetupRepositoryTest {
     EmpresaRepository empresaRepository
 
     def setupSpec() {
-        empresaRepository = new EmpresaRepository(sql)
+        empresaRepository = EmpresaRepository.getInstance(sql)
     }
 
     def setup() {

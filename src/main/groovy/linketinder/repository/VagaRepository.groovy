@@ -8,10 +8,18 @@ import groovy.sql.GroovyResultSet
 import groovy.sql.Sql
 
 class VagaRepository implements VagaDAO {
-    Sql sql
+    private static VagaRepository instance = null
+    private Sql sql
 
-    VagaRepository(Sql sql) {
+    private VagaRepository(Sql sql) {
         this.sql = sql
+    }
+
+    static synchronized VagaRepository getInstance(Sql sql) {
+        if (instance == null) {
+            instance = new VagaRepository(sql)
+        }
+        return instance
     }
 
     static VagaResponseDTO rowToDto(GroovyResultSet row) {
@@ -28,7 +36,7 @@ class VagaRepository implements VagaDAO {
 
     @Override
     List<VagaResponseDTO> listarVagas() {
-        def stmt = """
+        String stmt = """
             SELECT v.id, v.nome, v.descricao, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado
             FROM vagas v
             INNER JOIN usuarios u ON u.id = v.empresa_id
@@ -48,7 +56,7 @@ class VagaRepository implements VagaDAO {
 
     @Override
     VagaResponseDTO obterVagaPeloId(Integer vagaId) {
-        def stmt = """
+        GString stmt = """
             SELECT v.id, v.nome, v.descricao, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado
             FROM vagas v
             INNER JOIN usuarios u ON u.id = v.empresa_id
@@ -71,12 +79,12 @@ class VagaRepository implements VagaDAO {
 
     @Override
     Integer adicionarVaga(VagaRequestDTO vaga) {
-        def stmt = """
+        String stmt = """
             INSERT INTO vagas (nome, descricao, empresa_id, endereco_id)
             VALUES (?, ?, ?, ?)
         """
 
-        def vagaParams = [vaga.nome, vaga.descricao, vaga.empresaId, vaga.enderecoId]
+        List<Object> vagaParams = [vaga.nome, vaga.descricao, vaga.empresaId, vaga.enderecoId]
 
         def keys = sql.executeInsert(stmt, vagaParams)
         return  keys[0][0] as Integer
@@ -85,13 +93,13 @@ class VagaRepository implements VagaDAO {
 
     @Override
     void updateVaga(Integer vagaId, VagaRequestDTO vaga) {
-        def stmt = """
+        String stmt = """
             UPDATE vagas
             SET nome = ?, descricao = ?, endereco_id = ?
             WHERE id = ?
         """
 
-        def row = sql.executeUpdate(stmt, [vaga.nome, vaga.descricao, vaga.enderecoId, vagaId])
+        int row = sql.executeUpdate(stmt, [vaga.nome, vaga.descricao, vaga.enderecoId, vagaId])
 
         if (row == 0) {
             throw new VagaNotFoundException("Não foi possível localizar a vaga com id $vaga.id")
@@ -100,7 +108,7 @@ class VagaRepository implements VagaDAO {
 
     @Override
     void deletarVaga(Integer id) {
-        def stmt = """
+        GString stmt = """
             DELETE FROM vagas
             WHERE id = $id
         """

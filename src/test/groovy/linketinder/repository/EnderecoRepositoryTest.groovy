@@ -11,7 +11,7 @@ class EnderecoRepositoryTest extends SetupRepositoryTest {
     EnderecoRepository enderecoRepository
 
     def setupSpec() {
-        enderecoRepository = new EnderecoRepository(sql)
+        enderecoRepository = EnderecoRepository.getInstance(sql)
     }
 
     def setup() {

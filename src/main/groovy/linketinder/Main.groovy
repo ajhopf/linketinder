@@ -10,19 +10,33 @@ import linketinder.service.CompetenciaService
 import linketinder.service.EmpresaService
 import linketinder.service.EnderecoService
 import linketinder.service.VagaService
+import linketinder.util.PostgreSqlConnection
 import linketinder.util.SqlFactory
 import linketinder.view.MenuInicial
 import groovy.sql.Sql
 
-static void main(String[] args) {
-    try {
-        Sql sql = SqlFactory.newInstance()
+class Main {
+    static void main(String[] args) {
+        try {
+            Map services = getServices()
 
-        EmpresaRepository empresaRepository = new EmpresaRepository(sql)
-        CandidatoRepository candidatoRepository = new CandidatoRepository(sql)
-        EnderecoRepository enderecoRepository = new EnderecoRepository(sql)
-        CompetenciaRepository competenciaRepository = new CompetenciaRepository(sql)
-        VagaRepository vagaRepository = new VagaRepository(sql)
+            MenuInicial.iniciar(services.empresaService, services.candidatoService, services.competenciaService, services.vagaService)
+        } catch (Exception e) {
+            println e.getStackTrace()
+            println e
+        }
+    }
+
+    static Map getServices() {
+        PostgreSqlConnection postgreSqlConnection = new PostgreSqlConnection()
+
+        Sql sql = SqlFactory.newInstance(postgreSqlConnection)
+
+        EmpresaRepository empresaRepository = EmpresaRepository.getInstance(sql)
+        CandidatoRepository candidatoRepository = CandidatoRepository.getInstance(sql)
+        EnderecoRepository enderecoRepository = EnderecoRepository.getInstance(sql)
+        CompetenciaRepository competenciaRepository = CompetenciaRepository.getInstance(sql)
+        VagaRepository vagaRepository = VagaRepository.getInstance(sql)
 
         EnderecoService enderecoService = new EnderecoService(enderecoRepository)
         CompetenciaService competenciaService = new CompetenciaService(competenciaRepository)
@@ -30,10 +44,15 @@ static void main(String[] args) {
         CandidatoService candidatoService = new CandidatoService(candidatoRepository, enderecoService, competenciaService)
         VagaService vagaService = new VagaService(vagaRepository, competenciaService, enderecoService)
 
-        MenuInicial.iniciar(empresaService, candidatoService, competenciaService, vagaService)
-    } catch (Exception e) {
-        println e.getStackTrace()
-        println e
+        return [
+                enderecoService: enderecoService,
+                competenciaService: competenciaService,
+                empresaService: empresaService,
+                candidatoService: candidatoService,
+                vagaService: vagaService
+        ]
     }
 
 }
+
+
