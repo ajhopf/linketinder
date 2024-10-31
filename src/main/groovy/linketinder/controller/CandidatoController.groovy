@@ -16,7 +16,7 @@ class CandidatoController {
         this.competenciaController = competenciaController
     }
 
-    private verificarSeCompetenciasExistem(List<Competencia> competencias) throws CompetenciaNotFoundException {
+    void verificarSeCompetenciasExistem(List<Competencia> competencias) throws CompetenciaNotFoundException {
         competencias.each { competencia ->
             competenciaController.obterIdDeCompetencia(competencia.competencia)
         }

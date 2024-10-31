@@ -3,6 +3,7 @@ package linketinder.controller
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
 import linketinder.exceptions.VagaNotFoundException
+import linketinder.model.Competencia
 import linketinder.model.Vaga
 import linketinder.service.VagaService
 
@@ -15,6 +16,12 @@ class VagaController {
         this.competenciaController = competenciaController
     }
 
+    void verificarSeCompetenciasExistem(List<Competencia> competencias) throws CompetenciaNotFoundException {
+        competencias.each { competencia ->
+            competenciaController.obterIdDeCompetencia(competencia.competencia)
+        }
+    }
+
     List<Vaga> listarVagas() throws RepositoryAccessException {
         return vagaService.listarVagas()
     }
@@ -24,17 +31,13 @@ class VagaController {
     }
 
     Integer adicionarVaga(Vaga vaga) throws RepositoryAccessException, CompetenciaNotFoundException {
-        vaga.competencias.each {competencia ->
-            competenciaController.obterIdDeCompetencia(competencia.competencia)
-        }
+        this.verificarSeCompetenciasExistem(vaga.competencias)
 
         vagaService.adicionarVaga(vaga)
     }
 
     void editarVaga(Vaga vagaAtualizada) throws VagaNotFoundException, RepositoryAccessException, CompetenciaNotFoundException {
-        vagaAtualizada.competencias.each {competencia ->
-            competenciaController.obterIdDeCompetencia(competencia.competencia)
-        }
+        this.verificarSeCompetenciasExistem(vagaAtualizada.competencias)
         this.obterVagaPeloId(vagaAtualizada.id)
 
         vagaService.updateVaga(vagaAtualizada)
