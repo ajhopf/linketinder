@@ -1,4 +1,4 @@
-package linketinder.util
+package linketinder.util.sql
 
 interface ISqlConfig {
     String getUrl()

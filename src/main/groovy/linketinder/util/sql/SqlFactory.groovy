@@ -1,4 +1,4 @@
-package linketinder.util
+package linketinder.util.sql
 
 import groovy.sql.Sql
 import groovy.transform.CompileStatic

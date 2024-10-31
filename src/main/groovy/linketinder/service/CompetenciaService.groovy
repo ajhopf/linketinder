@@ -18,14 +18,12 @@ class CompetenciaService {
     }
 
 
-    Competencia obterCompetenciaPeloId(Integer id) {
+    Competencia obterCompetenciaPeloId(Integer id) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {
             CompetenciaDTO competenciaDTO = repository.obterCompetenciaPeloId(id)
             return CompetenciaMapper.toEntity(competenciaDTO)
         } catch (SQLException e){
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
-        } catch (CompetenciaNotFoundException e) {
-            throw e
         }
     }
 
@@ -50,15 +48,15 @@ class CompetenciaService {
     }
 
     List<Competencia> listarCompetencias() throws RepositoryAccessException {
-        return listarCompetenciasHelper { -> repository.listarCompetencias() }
+        return this.listarCompetenciasHelper { -> repository.listarCompetencias() }
     }
 
     List<Competencia> listarCompetenciasDeCandidato(Integer usuarioId) throws RepositoryAccessException {
-        return listarCompetenciasHelper { -> repository.listarCompetenciasDeCandidato(usuarioId) }
+        return this.listarCompetenciasHelper { -> repository.listarCompetenciasDeCandidato(usuarioId) }
     }
 
     List<Competencia> listarCompetenciasDeVaga(Integer vagaId) throws RepositoryAccessException {
-        return listarCompetenciasHelper() { -> repository.listarCompetenciasDeVaga(vagaId) }
+        return this.listarCompetenciasHelper() { -> repository.listarCompetenciasDeVaga(vagaId) }
     }
 
 
@@ -96,11 +94,11 @@ class CompetenciaService {
         }
     }
 
-    void updateCompetencia(Integer id, Competencia competenciaAtualizada) throws RepositoryAccessException, CompetenciaNotFoundException {
+    void editarCompetencia(Competencia competenciaAtualizada) throws RepositoryAccessException, CompetenciaNotFoundException {
         try {
             CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competenciaAtualizada)
 
-            repository.updateCompetencia(id, competenciaDTO)
+            repository.updateCompetencia(competenciaAtualizada.id, competenciaDTO)
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         } catch (CompetenciaNotFoundException e) {

@@ -1,22 +1,24 @@
 package linketinder.view
 
+import linketinder.controller.EmpresaController
+import linketinder.controller.VagaController
+
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.EmpresaNotFoundException
 import linketinder.exceptions.VagaNotFoundException
+
 import linketinder.model.Competencia
 import linketinder.model.Empresa
 import linketinder.model.Endereco
 import linketinder.model.Vaga
-import linketinder.service.CompetenciaService
-import linketinder.service.EmpresaService
-import linketinder.service.VagaService
-import linketinder.util.InputHelpers
+
+import linketinder.util.ViewHelpers
 
 class VagaView {
-    static void listarVagas(VagaService vagaService) {
+    static void listarVagas(VagaController vagaController) {
         println "Vagas"
 
-        List<Vaga> vagas = vagaService.listarVagas()
+        List<Vaga> vagas = vagaController.listarVagas()
 
         for (vaga in vagas) {
             println """
@@ -32,10 +34,10 @@ class VagaView {
     }
 
     static Vaga obterInfosDeVaga (Scanner sc, Empresa empresa = new Empresa()) {
-        String tituloVaga = InputHelpers.obterString('Digite o titulo da vaga', sc)
-        String descricaoVaga = InputHelpers.obterString('Digite a descricao da vaga', sc)
-        Endereco enderecoVaga = InputHelpers.obterEndereco(sc, true)
-        List<Competencia> competencias = InputHelpers.obterCompetencias(sc)
+        String tituloVaga = ViewHelpers.obterString('Digite o titulo da vaga', sc)
+        String descricaoVaga = ViewHelpers.obterString('Digite a descricao da vaga', sc)
+        Endereco enderecoVaga = ViewHelpers.obterEndereco(sc, true)
+        List<Competencia> competencias = ViewHelpers.obterCompetencias(sc)
 
         Vaga vaga = new Vaga(nome: tituloVaga, descricao: descricaoVaga, endereco: enderecoVaga, empresa: empresa, competencias: competencias)
 
@@ -43,44 +45,38 @@ class VagaView {
     }
 
 
-    static void adicionarVaga(VagaService vagaService, EmpresaService empresaService, CompetenciaService competenciaService, Scanner sc) {
+    static void adicionarVaga(VagaController vagaController, EmpresaController empresaController, Scanner sc) {
         println "Adicionar Vaga"
 
         try {
-            Integer empresaId = InputHelpers.getIntInput(0, 1000, "Digite o id da empresa para adicionar uma vaga", sc)
-            Empresa empresa = empresaService.obterEmpresaPeloId(empresaId)
+            Integer empresaId = ViewHelpers.getIntInput(0, 1000, "Digite o id da empresa para adicionar uma vaga", sc)
+            Empresa empresa = empresaController.obterEmpresaPeloId(empresaId)
 
             println "Empresa Selecionada: $empresa.nome"
 
             Vaga vaga = obterInfosDeVaga(sc, empresa)
 
-            vaga.competencias.each {competencia ->
-                competenciaService.obterIdDeCompetencia(competencia.competencia)
-            }
-
-            Integer vagaId = vagaService.adicionarVaga(vaga)
+            Integer vagaId = vagaController.adicionarVaga(vaga)
 
             println "Vaga adicionada com sucesso. Id: $vagaId"
         } catch (EmpresaNotFoundException e) {
+            println e.getMessage()
+        } catch (CompetenciaNotFoundException e) {
             println e.getMessage()
         }
 
     }
 
-    static void editarVaga(VagaService vagaService, CompetenciaService competenciaService, Scanner sc) {
+    static void editarVaga(VagaController vagaController, Scanner sc) {
         println "Editar Vaga"
         try {
-            Integer vagaId = InputHelpers.getIntInput(0, 1000, "Digite o id da vaga para editar", sc)
-            Vaga vaga = vagaService.obterVagaPeloId(vagaId)
+            Integer vagaId = ViewHelpers.getIntInput(0, 1000, "Digite o id da vaga para editar", sc)
+            Vaga vaga = vagaController.obterVagaPeloId(vagaId)
 
             Vaga vagaAtualizada = obterInfosDeVaga(sc)
             vagaAtualizada.id = vaga.id
 
-            vaga.competencias.each {competencia ->
-                competenciaService.obterIdDeCompetencia(competencia.competencia)
-            }
-
-            vagaService.updateVaga(vagaAtualizada)
+            vagaController.editarVaga(vagaAtualizada)
 
             println "Vaga atualizada com sucesso"
         } catch (CompetenciaNotFoundException e) {
@@ -88,12 +84,12 @@ class VagaView {
         }
     }
 
-    static void deletarVaga(VagaService service, Scanner sc) {
+    static void deletarVaga(VagaController vagaController, Scanner sc) {
         println "Deletar Vaga"
 
-        Integer idDaVaga = InputHelpers.getIntInput(0, 5000, 'Digite o id da vaga', sc)
+        Integer idDaVaga = ViewHelpers.getIntInput(0, 5000, 'Digite o id da vaga', sc)
         try {
-            service.deletarVaga(idDaVaga)
+            vagaController.deletarVaga(idDaVaga)
             println 'Vaga deletada com sucesso'
 
         } catch (VagaNotFoundException e) {
