@@ -56,12 +56,12 @@ class EmpresaServiceTest extends Specification {
         verify(enderecoService, times(1)).adicionarEnderecoParaUsuario(any(Endereco), eq(1))
     }
 
-    void "updateEmpresa() lanca EmpresaNotFoundException quando empresa não é encontrada"() {
+    void 'editarEmpresa() lanca EmpresaNotFoundException quando empresa não é encontrada'() {
         given:
         when(repository.updateEmpresa(any(EmpresaDTO))).thenThrow(EmpresaNotFoundException.class)
 
         when:
-        empresaService.updateEmpresa(new Empresa())
+        empresaService.editarEmpresa(new Empresa())
 
         then:
         thrown(EmpresaNotFoundException)

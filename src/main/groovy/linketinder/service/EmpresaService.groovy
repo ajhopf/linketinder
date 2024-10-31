@@ -50,7 +50,7 @@ class EmpresaService {
 
     }
 
-    Integer adicionarEmpresa(Empresa empresa) {
+    Integer adicionarEmpresa(Empresa empresa) throws RepositoryAccessException {
         try {
             EmpresaDTO empresaDTO = EmpresaMapper.toDTO(empresa)
 
@@ -65,7 +65,7 @@ class EmpresaService {
     }
 
 
-    void updateEmpresa(Empresa empresa) throws SQLException, EmpresaNotFoundException {
+    void editarEmpresa(Empresa empresa) throws RepositoryAccessException, EmpresaNotFoundException {
         try {
             EmpresaDTO empresaDTO = EmpresaMapper.toDTO(empresa)
 

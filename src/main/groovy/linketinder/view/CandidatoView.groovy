@@ -1,13 +1,14 @@
 package linketinder.view
 
 import linketinder.controller.CandidatoController
-import linketinder.controller.CompetenciaController
+
 import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.exceptions.CompetenciaNotFoundException
+
 import linketinder.model.Candidato
 import linketinder.model.Competencia
 import linketinder.model.Endereco
-import linketinder.service.CandidatoService
+
 import linketinder.util.ViewHelpers
 
 import java.text.ParseException

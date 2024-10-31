@@ -1,6 +1,8 @@
 package linketinder.util
 
 import groovy.sql.Sql
+import linketinder.util.sql.PostgreSqlConnection
+import linketinder.util.sql.SqlFactory
 import spock.lang.Specification
 
 class SqlFactoryTest extends Specification {

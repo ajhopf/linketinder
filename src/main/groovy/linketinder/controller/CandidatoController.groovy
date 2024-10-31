@@ -4,6 +4,7 @@ import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
 import linketinder.model.Candidato
+import linketinder.model.Competencia
 import linketinder.service.CandidatoService
 
 class CandidatoController {
@@ -13,6 +14,12 @@ class CandidatoController {
     CandidatoController(CandidatoService candidatoService, CompetenciaController competenciaController) {
         this.candidatoService = candidatoService
         this.competenciaController = competenciaController
+    }
+
+    private verificarSeCompetenciasExistem(List<Competencia> competencias) throws CompetenciaNotFoundException {
+        competencias.each { competencia ->
+            competenciaController.obterIdDeCompetencia(competencia.competencia)
+        }
     }
 
 
@@ -27,19 +34,14 @@ class CandidatoController {
 
 
     Integer adicionarCandidato(Candidato candidato) throws CompetenciaNotFoundException, RepositoryAccessException {
-        candidato.competencias.each { competencia ->
-            competenciaController.obterIdDeCompetencia(competencia.competencia)
-        }
+        this.verificarSeCompetenciasExistem(candidato.competencias)
 
         return candidatoService.adicionarCandidato(candidato)
     }
 
 
-    void editarCandidato(Candidato candidatoAtualizado) throws CompetenciaNotFoundException, RepositoryAccessException {
-        candidatoAtualizado.competencias.each { competencia ->
-            competenciaController.obterIdDeCompetencia(competencia.competencia)
-        }
-
+    void editarCandidato(Candidato candidatoAtualizado) throws CandidatoNotFoundException, CompetenciaNotFoundException, RepositoryAccessException {
+        this.verificarSeCompetenciasExistem(candidatoAtualizado.competencias)
         this.obterCandidatoPeloId(candidatoAtualizado.id)
 
         candidatoService.updateCandidato(candidatoAtualizado)

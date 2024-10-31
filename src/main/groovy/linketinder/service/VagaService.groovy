@@ -54,13 +54,11 @@ class VagaService {
         return vagaRequestDTO
     }
 
-    Vaga obterVagaPeloId (Integer vagaId) {
+    Vaga obterVagaPeloId (Integer vagaId) throws VagaNotFoundException, RepositoryAccessException {
         try {
             VagaResponseDTO vagaResponseDTO = repository.obterVagaPeloId(vagaId)
 
             return VagaMapper.toEntity(vagaResponseDTO)
-        } catch (VagaNotFoundException e) {
-            throw e
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }
@@ -113,7 +111,7 @@ class VagaService {
         }
     }
 
-    void updateVaga(Vaga vagaAtualizada) {
+    void updateVaga(Vaga vagaAtualizada) throws RepositoryAccessException {
         try {
             competenciaService.deletarCompetenciasDeVaga(vagaAtualizada.id)
 
