@@ -30,7 +30,7 @@ class MyUtilTest {
             Scanner sc = new Scanner(System.in);
 
             //act
-            int result = InputHelpers.getIntInput(1, 10, "Digite um número:", sc);
+            int result = ViewHelpers.getIntInput(1, 10, "Digite um número:", sc);
 
             //assert
             assertEquals(5, result);
@@ -46,7 +46,7 @@ class MyUtilTest {
             System.setOut(new PrintStream(outputStreamCaptor));
 
             //act
-            InputHelpers.getIntInput(1, 3, "Digite um número:", sc);
+            ViewHelpers.getIntInput(1, 3, "Digite um número:", sc);
 
             //assert
             assertEquals("Digite um número:\nEscolha um número entre 1 e 3", outputStreamCaptor.toString().trim());
@@ -62,7 +62,7 @@ class MyUtilTest {
             System.setOut(new PrintStream(outputStreamCaptor));
 
             //act
-            InputHelpers.getIntInput(1, 3, "Digite um número:", sc);
+            ViewHelpers.getIntInput(1, 3, "Digite um número:", sc);
 
             //assert
             assertEquals("Digite um número:\nVocê deve escolher utilizando um número de 1 a 3", outputStreamCaptor.toString().trim());
@@ -80,7 +80,7 @@ class MyUtilTest {
             Scanner sc = new Scanner(System.in);
 
             //act
-            String result = InputHelpers.obterString("title", sc);
+            String result = ViewHelpers.obterString("title", sc);
 
             //assert
             assertEquals(mensagem, result);

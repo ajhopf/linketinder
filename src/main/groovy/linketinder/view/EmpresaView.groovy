@@ -6,7 +6,7 @@ import linketinder.exceptions.RepositoryAccessException
 import linketinder.model.Empresa
 import linketinder.model.Endereco
 import linketinder.service.EmpresaService
-import linketinder.util.InputHelpers
+import linketinder.util.ViewHelpers
 
 class EmpresaView {
     static String obterCnpj(Scanner sc) {
@@ -15,7 +15,7 @@ class EmpresaView {
         boolean cnpjInvalido = true
 
         while(cnpjInvalido) {
-            cnpj = InputHelpers.obterString("Digite o cnpj no formato 00.000.000/0000-00", sc)
+            cnpj = ViewHelpers.obterString("Digite o cnpj no formato 00.000.000/0000-00", sc)
             if (cnpj ==~ /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/) {
                 cnpjInvalido = false
             } else {
@@ -27,9 +27,9 @@ class EmpresaView {
     }
 
     static Empresa obterInformacoes(sc) {
-        Map infosBasicas = InputHelpers.obterInfosBasicas(sc)
+        Map infosBasicas = ViewHelpers.obterInfosBasicas(sc)
         String cnpj = obterCnpj(sc)
-        Endereco endereco = InputHelpers.obterEndereco(sc)
+        Endereco endereco = ViewHelpers.obterEndereco(sc)
 
         Empresa empresa = new Empresa(
                 nome: infosBasicas.nome,
@@ -46,7 +46,7 @@ class EmpresaView {
     static void adicionarEmpresa(EmpresaService service, Scanner sc) {
         try {
             println "Criar nova Empresa"
-            InputHelpers.printInfosIniciais()
+            ViewHelpers.printInfosIniciais()
 
             Empresa empresa = obterInformacoes(sc)
 
@@ -64,7 +64,7 @@ class EmpresaView {
         println "Editar Empresa"
 
         try {
-            Integer empresaId = InputHelpers.getIntInput(0, 1000, "Digite o id da empresa para editar", sc)
+            Integer empresaId = ViewHelpers.getIntInput(0, 1000, "Digite o id da empresa para editar", sc)
             Empresa empresa = empresaService.obterEmpresaPeloId(empresaId)
 
             println "Empresa Selecionada: $empresa.nome"
@@ -86,7 +86,7 @@ class EmpresaView {
         println "Deletar Competencia"
 
         try {
-            Integer competenciaId = InputHelpers.getIntInput(0, 1000, "Digite o id da empresa para deletar", sc)
+            Integer competenciaId = ViewHelpers.getIntInput(0, 1000, "Digite o id da empresa para deletar", sc)
 
             empresaService.deleteEmpresa(competenciaId)
 

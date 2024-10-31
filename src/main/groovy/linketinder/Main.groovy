@@ -1,5 +1,7 @@
 package linketinder
 
+import linketinder.controller.CandidatoController
+import linketinder.controller.CompetenciaController
 import linketinder.repository.CandidatoRepository
 import linketinder.repository.CompetenciaRepository
 import linketinder.repository.EmpresaRepository
@@ -20,7 +22,11 @@ class Main {
         try {
             Map services = getServices()
 
-            MenuInicial.iniciar(services.empresaService, services.candidatoService, services.competenciaService, services.vagaService)
+            CompetenciaController competenciaController = new CompetenciaController(services.competenciaService)
+
+            CandidatoController candidatoController = new CandidatoController(services.candidatoService, competenciaController)
+
+            MenuInicial.iniciar(candidatoController, services.empresaService, services.candidatoService, services.competenciaService, services.vagaService)
         } catch (Exception e) {
             println e.getStackTrace()
             println e

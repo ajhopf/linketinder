@@ -1,19 +1,21 @@
 package linketinder.view
 
+import linketinder.controller.CandidatoController
+import linketinder.controller.CompetenciaController
 import linketinder.service.CandidatoService
 import linketinder.service.CompetenciaService
 import linketinder.service.EmpresaService
 import linketinder.service.VagaService
-import linketinder.util.InputHelpers
+import linketinder.util.ViewHelpers
 
 class MenuInicial {
-    static void iniciar(EmpresaService empresaService, CandidatoService candidatoService, CompetenciaService competenciaService, VagaService vagaService) {
+    static void iniciar(CandidatoController candidatoController, CompetenciaController competenciaController, EmpresaService empresaService, CompetenciaService competenciaService, VagaService vagaService) {
         Scanner sc = new Scanner(System.in)
 
         while (true) {
             gerarMenuInicial()
             try {
-                int opcaoSelecionada = InputHelpers.getIntInput(0, 16, "Selecione a opção desejada: ", sc)
+                int opcaoSelecionada = ViewHelpers.getIntInput(0, 16, "Selecione a opção desejada: ", sc)
 
                 switch (opcaoSelecionada) {
                     case 0:
@@ -56,16 +58,16 @@ class MenuInicial {
                         VagaView.deletarVaga(vagaService, sc)
                         break
                     case 13:
-                        ListagemView.listarCandidatos(candidatoService)
+                        CandidatoView.listarCandidatos(candidatoController)
                         break
                     case 14:
-                        CandidatoView.adicionarCandidato(candidatoService, competenciaService, sc)
+                        CandidatoView.adicionarCandidato(candidatoController, sc)
                         break
                     case 15:
-                        CandidatoView.editarCandidato(candidatoService, competenciaService, sc)
+                        CandidatoView.editarCandidato(candidatoController, sc)
                         break
                     case 16:
-                        CandidatoView.deletarCandidato(candidatoService, sc)
+                        CandidatoView.deletarCandidato(candidatoController, sc)
                         break
 
                     default: println "Você escolheu a opção " + opcaoSelecionada

@@ -3,13 +3,13 @@ package linketinder.view
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.model.Competencia
 import linketinder.service.CompetenciaService
-import linketinder.util.InputHelpers
+import linketinder.util.ViewHelpers
 
 class CompetenciaView {
     static void adicionarCompetencia(CompetenciaService competenciaService, Scanner sc ) {
         println "Criar nova Competencia"
 
-        String competencia = InputHelpers.obterString('Digite a competência', sc)
+        String competencia = ViewHelpers.obterString('Digite a competência', sc)
 
         Integer competenciaId = competenciaService.adicionarCompetencia(competencia)
 
@@ -33,13 +33,13 @@ class CompetenciaView {
 
         while (idInvalido) {
             try {
-                Integer competenciaId = InputHelpers.getIntInput(0, 1000, "Digite o id da competencia para editar", sc)
+                Integer competenciaId = ViewHelpers.getIntInput(0, 1000, "Digite o id da competencia para editar", sc)
                 Competencia competencia = competenciaService.obterCompetenciaPeloId(competenciaId)
                 idInvalido = false
 
                 println "Competencia Selecionada: $competencia.competencia"
 
-                String competenciaNova = InputHelpers.obterString('Digite o novo nome da competência', sc)
+                String competenciaNova = ViewHelpers.obterString('Digite o novo nome da competência', sc)
                 competencia.competencia = competenciaNova
 
                 competenciaService.updateCompetencia(competenciaId, competencia)
@@ -55,7 +55,7 @@ class CompetenciaView {
         println "Deletar Competencia"
 
         try {
-            Integer competenciaId = InputHelpers.getIntInput(0, 1000, "Digite o id da competencia para deletar", sc)
+            Integer competenciaId = ViewHelpers.getIntInput(0, 1000, "Digite o id da competencia para deletar", sc)
 
             competenciaService.deletarCompetencia(competenciaId)
 

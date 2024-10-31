@@ -14,12 +14,6 @@ class ListagemView {
         empresas.each {empresa -> printInfosDePessoa(empresa)}
     }
 
-    static void listarCandidatos(CandidatoService service) {
-        List<Candidato> candidatos = service.listarCandidatos()
-        println "Candidatos: "
-        candidatos.each {candidato -> printInfosDePessoa(candidato)}
-    }
-
     static <T extends Usuario> void printInfosDePessoa(T pessoa) {
         boolean isEmpresa = pessoa.getClass() == Empresa
         boolean isCandidato = pessoa.getClass() == Candidato
