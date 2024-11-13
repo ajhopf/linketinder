@@ -58,7 +58,7 @@ class CandidatoController extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_CREATED)
             response.getWriter().write("""
             |{
-            |  "message": "usuario criado com sucesso",
+            |  "message": "Candidato criado com sucesso",
             |  "uri": "localhost:8080/linketinder/candidatos/$id
             |}
             """.stripMargin())
@@ -77,7 +77,7 @@ class CandidatoController extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
             response.getWriter().write("""
                 |{        
-                |    "message": "Erro ao cadastrar o usuario",
+                |    "message": "Erro ao cadastrar o candidato",
                 |    "cause": ${e.getMessage()}
                 |}
             """.stripMargin())

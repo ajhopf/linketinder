@@ -26,25 +26,15 @@ class AppInitializer extends HttpServlet {
     @Override
     public void init() {
         println "AppInitializer carregado com sucesso!"
-        PostgreSqlConnection postgreSqlConnection = new PostgreSqlConnection()
-        Sql sql = SqlFactory.newInstance(postgreSqlConnection)
 
-        EmpresaRepository empresaRepository = EmpresaRepository.getInstance(sql)
-        CandidatoRepository candidatoRepository = CandidatoRepository.getInstance(sql)
-        EnderecoRepository enderecoRepository = EnderecoRepository.getInstance(sql)
-        CompetenciaRepository competenciaRepository = CompetenciaRepository.getInstance(sql)
-        VagaRepository vagaRepository = VagaRepository.getInstance(sql)
+        Sql sql = LinketinderConfig.getPostgreConnection()
+        Map services = LinketinderConfig.getServices(sql)
 
-        EnderecoService enderecoService = new EnderecoService(enderecoRepository)
-        CompetenciaService competenciaService = new CompetenciaService(competenciaRepository)
-        EmpresaService empresaService = new EmpresaService(empresaRepository, enderecoService)
-        CandidatoService candidatoService = new CandidatoService(candidatoRepository, enderecoService, competenciaService)
-        VagaService vagaService = new VagaService(vagaRepository, competenciaService, enderecoService)
-
-        CompetenciaController competenciaController = new CompetenciaController(competenciaService)
+        CompetenciaController competenciaController = new CompetenciaController(services.competenciaService)
 
         ServletContext context = getServletContext()
-        context.setAttribute("candidatoService", candidatoService)
+        context.setAttribute("candidatoService", services.candidatoService)
+        context.setAttribute("empresaService", services.empresaService)
         context.setAttribute("competenciaController", competenciaController)
     }
 }
