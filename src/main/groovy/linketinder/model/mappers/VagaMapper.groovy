@@ -25,7 +25,8 @@ class VagaMapper {
                 descricao: vaga.descricao,
                 empresa: vaga.empresa.nome,
                 empresaId: vaga.empresa.id,
-                endereco: vaga.endereco
+                endereco: vaga.endereco,
+                competencias: vaga.competencias
         )
     }
 

@@ -1,5 +1,6 @@
 package linketinder.model.dtos
 
+import linketinder.model.Competencia
 import linketinder.model.Endereco
 
 class VagaControllerResponseDTO {
@@ -9,4 +10,5 @@ class VagaControllerResponseDTO {
     int empresaId
     String empresa
     Endereco endereco
+    List<Competencia> competencias
 }

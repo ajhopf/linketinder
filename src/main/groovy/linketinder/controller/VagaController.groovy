@@ -4,13 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.exceptions.CompetenciaNotFoundException
+import linketinder.exceptions.EmpresaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
 import linketinder.exceptions.VagaNotFoundException
-import linketinder.model.Candidato
 import linketinder.model.Competencia
 import linketinder.model.Vaga
 import linketinder.model.dtos.VagaControllerResponseDTO
 import linketinder.model.mappers.VagaMapper
+import linketinder.service.EmpresaService
 import linketinder.service.VagaService
 import linketinder.util.HttpHelper
 
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse
 @WebServlet("/vagas/*")
 class VagaController extends HttpServlet  {
     private VagaService vagaService
+    private EmpresaService empresaService
     private CompetenciaController competenciaController
 
     VagaController() {}
@@ -36,6 +38,7 @@ class VagaController extends HttpServlet  {
     void init() {
         ServletContext context = getServletContext()
         vagaService = (VagaService) context.getAttribute("vagaService")
+        empresaService = (EmpresaService) context.getAttribute("empresaService")
         competenciaController = (CompetenciaController) context.getAttribute("competenciaController")
     }
 
@@ -57,6 +60,8 @@ class VagaController extends HttpServlet  {
         try {
             Vaga vaga = mapper.readValue(request.getReader(), Vaga.class)
 
+            empresaService.obterEmpresaPeloId(vaga.empresa.id)
+
             Integer id = this.adicionarVaga(vaga)
             response.setStatus(HttpServletResponse.SC_CREATED)
             response.getWriter().write("""
@@ -65,11 +70,14 @@ class VagaController extends HttpServlet  {
             |  "uri": "localhost:8080/linketinder/vagas/$id
             |}
             """.stripMargin())
-        } catch (IOException e) {
-            println e.getMessage()
-            println e.getStackTrace()
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
-            response.getWriter().write("{\"message\": \"Formato JSON inválido\"}")
+        } catch (EmpresaNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Empresa nao encontrada, nao foi possivel cadastrar a vaga",
+                |   "empresasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/empresas" 
+                |}
+            """.stripMargin())
         } catch (CompetenciaNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
             response.getWriter().write("""
@@ -77,7 +85,7 @@ class VagaController extends HttpServlet  {
                 |   "message": "Competencia nao encontrada",
                 |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/competencias" 
                 |}
-            """)
+            """.stripMargin())
         } catch (RepositoryAccessException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
             response.getWriter().write("""
@@ -86,6 +94,11 @@ class VagaController extends HttpServlet  {
                 |    "cause": ${e.getMessage()}
                 |}
             """.stripMargin())
+        } catch (IOException e) {
+            println e.getMessage()
+            println e.getStackTrace()
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("{\"message\": \"Formato JSON inválido\"}")
         }
     }
 
