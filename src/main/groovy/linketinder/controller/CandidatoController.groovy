@@ -1,6 +1,7 @@
 package linketinder.controller
 
-
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
@@ -8,8 +9,6 @@ import linketinder.model.Candidato
 import linketinder.model.Competencia
 import linketinder.service.CandidatoService
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import linketinder.util.HttpHelper
 
 import javax.servlet.ServletContext
@@ -40,12 +39,48 @@ class CandidatoController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         String path = request.getPathInfo()
-        println path
 
         if (path == null || path == "/") {
             this.listarCandidatos(response)
         } else {
             this.obterCandidatoPeloId(path, response)
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        ObjectMapper mapper = new ObjectMapper()
+        mapper.registerModule(new JavaTimeModule())
+        try {
+            Candidato candidato = mapper.readValue(request.getReader(), Candidato.class)
+
+            Integer id = this.adicionarCandidato(candidato)
+            response.setStatus(HttpServletResponse.SC_CREATED)
+            response.getWriter().write("""
+            |{
+            |  "message": "usuario criado com sucesso",
+            |  "uri": "localhost:8080/linketinder/candidatos/$id
+            |}
+            """.stripMargin())
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("{\"message\": \"Formato JSON inválido\"}")
+        } catch (CompetenciaNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Competencia nao encontrada",
+                |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/competencias" 
+                |}
+            """)
+        } catch (RepositoryAccessException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao cadastrar o usuario",
+                |    "cause": ${e.getMessage()}
+                |}
+            """.stripMargin())
         }
     }
 

@@ -28,6 +28,7 @@ class CandidatoRepository implements CandidatoDAO {
         candidatoDTO.id = row.getInt('id')
         candidatoDTO.nome = row.getString('nome')
         candidatoDTO.sobrenome = row.getString('sobrenome')
+//        candidatoDTO.senha = row.getString('senha')
         candidatoDTO.cpf = row.getString('cpf')
         candidatoDTO.dataNascimento = row.getDate('data_nascimento').toLocalDate()
         candidatoDTO.email = row.getString('email')
