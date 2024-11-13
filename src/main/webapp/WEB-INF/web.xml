@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <display-name>Linketinder</display-name>
+
+    <!-- Defina o AppInitializer aqui como um servlet -->
+    <servlet>
+        <servlet-name>AppInitializer</servlet-name>
+        <servlet-class>linketinder.config.AppInitializer</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Mapeie o AppInitializer (não necessariamente precisa de um URL mapping, mas é bom garantir) -->
+    <servlet-mapping>
+        <servlet-name>AppInitializer</servlet-name>
+        <url-pattern>/AppInitializer</url-pattern>
+    </servlet-mapping>
+
+</web-app>

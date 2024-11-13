@@ -1,5 +1,6 @@
 package linketinder.controller
 
+
 import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
@@ -7,13 +8,82 @@ import linketinder.model.Candidato
 import linketinder.model.Competencia
 import linketinder.service.CandidatoService
 
-class CandidatoController {
-    private final CandidatoService candidatoService
-    private final CompetenciaController competenciaController
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import linketinder.util.HttpHelper
+
+import javax.servlet.ServletContext
+import javax.servlet.annotation.WebServlet
+import javax.servlet.http.HttpServlet
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+
+@WebServlet("/candidatos/*")
+class CandidatoController extends HttpServlet {
+    private CandidatoService candidatoService
+    private CompetenciaController competenciaController
+
+    CandidatoController(){}
 
     CandidatoController(CandidatoService candidatoService, CompetenciaController competenciaController) {
         this.candidatoService = candidatoService
         this.competenciaController = competenciaController
+    }
+
+    @Override
+    void init() {
+        ServletContext context = getServletContext()
+        candidatoService = (CandidatoService) context.getAttribute("candidatoService")
+        competenciaController = (CompetenciaController) context.getAttribute("competenciaController")
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        String path = request.getPathInfo()
+        println path
+
+        if (path == null || path == "/") {
+            this.listarCandidatos(response)
+        } else {
+            this.obterCandidatoPeloId(path, response)
+        }
+    }
+
+    void listarCandidatos(HttpServletResponse response) {
+        List<Candidato> candidatos = this.candidatoService.listarCandidatos()
+
+        HttpHelper.writeResponse(
+                response,
+                HttpServletResponse.SC_OK,
+                candidatos
+        )
+    }
+
+    void obterCandidatoPeloId(String pathInfo, HttpServletResponse response) {
+        try {
+            int id = Integer.parseInt(pathInfo.split("/")[1])
+            Candidato candidato = this.candidatoService.obterCandidatoPeloId(id)
+
+            HttpHelper.writeResponse(
+                    response,
+                    HttpServletResponse.SC_OK,
+                    candidato
+            )
+        } catch (NumberFormatException e) {
+            HttpHelper.writeResponse(
+                    response,
+                    HttpServletResponse.SC_BAD_REQUEST,
+                    null,
+                    "Id inválido"
+            )
+        } catch (CandidatoNotFoundException e) {
+            HttpHelper.writeResponse(
+                    response,
+                    HttpServletResponse.SC_NOT_FOUND,
+                    null,
+                    "Candidato não encontrado com o id informado"
+            )
+        }
     }
 
     void verificarSeCompetenciasExistem(List<Competencia> competencias) throws CompetenciaNotFoundException {
