@@ -27,9 +27,13 @@ class VagaRepository implements VagaDAO {
 
         vagaResponseDTO.id = row.getInt('id')
         vagaResponseDTO.nome = row.getString('nome')
+        vagaResponseDTO.pais = row.getString('pais')
+        vagaResponseDTO.cep = row.getString('cep')
         vagaResponseDTO.descricao = row.getString('descricao')
         vagaResponseDTO.cidade = row.getString('cidade')
         vagaResponseDTO.estado = row.getString('estado')
+        vagaResponseDTO.empresaId = row.getString('empresa_id') as int
+        vagaResponseDTO.empresa = row.getString("nome_empresa")
 
         return vagaResponseDTO
     }
@@ -37,7 +41,7 @@ class VagaRepository implements VagaDAO {
     @Override
     List<VagaResponseDTO> listarVagas() {
         String stmt = """
-            SELECT v.id, v.nome, v.descricao, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado
+            SELECT v.id, v.nome, v.descricao, u.id as empresa_id, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado, en.pais, en.cep
             FROM vagas v
             INNER JOIN usuarios u ON u.id = v.empresa_id
             INNER JOIN enderecos en ON v.endereco_id = en.id; 
@@ -57,7 +61,7 @@ class VagaRepository implements VagaDAO {
     @Override
     VagaResponseDTO obterVagaPeloId(Integer vagaId) {
         GString stmt = """
-            SELECT v.id, v.nome, v.descricao, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado
+            SELECT v.id, v.nome, v.descricao, u.id as empresa_id, u.nome as nome_empresa, u.descricao as descricao_empresa, en.cidade, en.estado, en.pais, en.cep
             FROM vagas v
             INNER JOIN usuarios u ON u.id = v.empresa_id
             INNER JOIN enderecos en ON v.endereco_id = en.id

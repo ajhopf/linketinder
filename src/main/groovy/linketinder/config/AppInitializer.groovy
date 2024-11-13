@@ -35,6 +35,7 @@ class AppInitializer extends HttpServlet {
         ServletContext context = getServletContext()
         context.setAttribute("candidatoService", services.candidatoService)
         context.setAttribute("empresaService", services.empresaService)
+        context.setAttribute("vagaService", services.vagaService)
         context.setAttribute("competenciaController", competenciaController)
     }
 }
