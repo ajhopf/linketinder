@@ -7,6 +7,8 @@ import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
 import linketinder.model.Candidato
 import linketinder.model.Competencia
+import linketinder.model.dtos.CandidatoControllerResponseDTO
+import linketinder.model.mappers.CandidatoMapper
 import linketinder.service.CandidatoService
 
 import linketinder.util.HttpHelper
@@ -86,11 +88,12 @@ class CandidatoController extends HttpServlet {
 
     void listarCandidatos(HttpServletResponse response) {
         List<Candidato> candidatos = this.candidatoService.listarCandidatos()
+        List<CandidatoControllerResponseDTO> candidatoControllerResponseDTOS = CandidatoMapper.toControllerResponseDTOList(candidatos)
 
         HttpHelper.writeResponse(
                 response,
                 HttpServletResponse.SC_OK,
-                candidatos
+                candidatoControllerResponseDTOS
         )
     }
 
@@ -99,10 +102,12 @@ class CandidatoController extends HttpServlet {
             int id = Integer.parseInt(pathInfo.split("/")[1])
             Candidato candidato = this.candidatoService.obterCandidatoPeloId(id)
 
+            CandidatoControllerResponseDTO candidatoControllerResponseDTO = CandidatoMapper.toControllerResponseDTO(candidato)
+
             HttpHelper.writeResponse(
                     response,
                     HttpServletResponse.SC_OK,
-                    candidato
+                    candidatoControllerResponseDTO
             )
         } catch (NumberFormatException e) {
             HttpHelper.writeResponse(

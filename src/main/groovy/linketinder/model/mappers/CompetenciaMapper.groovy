@@ -1,6 +1,7 @@
 package linketinder.model.mappers
 
 import linketinder.model.Competencia
+import linketinder.model.dtos.CompetenciaControllerResponseDTO
 import linketinder.model.dtos.CompetenciaDTO
 
 class CompetenciaMapper {
@@ -24,5 +25,22 @@ class CompetenciaMapper {
         }
 
         return competencias
+    }
+
+    static CompetenciaControllerResponseDTO toCompetenciaControllerResponseDTO(Competencia competencia) {
+        return new CompetenciaControllerResponseDTO(
+                id: competencia.id,
+                competencia: competencia.competencia
+        )
+    }
+
+    static List<CompetenciaControllerResponseDTO> toControllerResponseDTOList(List<Competencia> competencias) {
+        List<CompetenciaControllerResponseDTO> controllerResponseDTOList = []
+
+        competencias.each {competencia ->
+            controllerResponseDTOList << toCompetenciaControllerResponseDTO(competencia)
+        }
+
+        return controllerResponseDTOList
     }
 }

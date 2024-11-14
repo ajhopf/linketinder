@@ -7,6 +7,8 @@ import linketinder.exceptions.EmpresaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
 import linketinder.model.Candidato
 import linketinder.model.Empresa
+import linketinder.model.dtos.EmpresaControllerResponseDTO
+import linketinder.model.mappers.EmpresaMapper
 import linketinder.service.EmpresaService
 import linketinder.util.HttpHelper
 
@@ -75,10 +77,12 @@ class EmpresaController extends HttpServlet {
     void listarEmpresas(HttpServletResponse response) {
         List<Empresa> empresas = this.empresaService.listarEmpresas()
 
+        List<EmpresaControllerResponseDTO> empresaControllerResponseDTOS = EmpresaMapper.toControllerResponseDTOList(empresas)
+
         HttpHelper.writeResponse(
                 response,
                 HttpServletResponse.SC_OK,
-                empresas
+                empresaControllerResponseDTOS
         )
     }
 
@@ -87,10 +91,12 @@ class EmpresaController extends HttpServlet {
             int id = Integer.parseInt(pathInfo.split("/")[1])
             Empresa empresa = this.empresaService.obterEmpresaPeloId(id)
 
+            EmpresaControllerResponseDTO empresaControllerResponseDTO = EmpresaMapper.toControllerResponseDTO(empresa)
+
             HttpHelper.writeResponse(
                     response,
                     HttpServletResponse.SC_OK,
-                    empresa
+                    empresaControllerResponseDTO
             )
         } catch (NumberFormatException e) {
             HttpHelper.writeResponse(
