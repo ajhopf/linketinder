@@ -70,7 +70,7 @@ class EmpresaService {
             EmpresaDTO empresaDTO = EmpresaMapper.toDTO(empresa)
 
             repository.updateEmpresa(empresaDTO)
-            enderecoService.adicionarEnderecoParaUsuario(empresa.endereco, empresaDTO.id, true)
+            enderecoService.updateEnderecoDoUsuario(empresa.endereco, empresaDTO.id)
         } catch (SQLException sqlException) {
             throw new RepositoryAccessException(sqlException.getMessage(), sqlException.getCause())
         }

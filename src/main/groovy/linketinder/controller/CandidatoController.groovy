@@ -146,6 +146,8 @@ class CandidatoController extends HttpServlet {
         } else {
             try {
                 int id = Integer.parseInt(path.split("/")[1])
+
+                this.obterCandidatoPeloId(id)
                 this.deletarCandidato(id)
 
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT)

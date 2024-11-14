@@ -2,6 +2,7 @@ package linketinder.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.EmpresaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
@@ -71,6 +72,75 @@ class EmpresaController extends HttpServlet {
                 |    "cause": ${e.getMessage()}
                 |}
             """.stripMargin())
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+        ObjectMapper mapper = new ObjectMapper()
+        mapper.registerModule(new JavaTimeModule())
+        try {
+            Empresa empresaAtualizada = mapper.readValue(request.getReader(), Empresa.class)
+
+            this.editarEmpresa(empresaAtualizada)
+            response.setStatus(HttpServletResponse.SC_CREATED)
+            response.getWriter().write("""
+            |{
+            |  "message": "Empresa atualizada com sucesso",
+            |  "uri": "localhost:8080/linketinder/empresas/$empresaAtualizada.id
+            |}
+            """.stripMargin())
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("{\"message\": \"Formato JSON inválido\"}")
+        }  catch (EmpresaNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Empresa nao encontrada para realizar a atualizacao",
+                |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/empresas" 
+                |}
+            """.stripMargin())
+        } catch (RepositoryAccessException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao editar a empresa"
+                |    "cause": ${e.getMessage()}
+                |}
+            """.stripMargin())
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+        String path = request.getPathInfo()
+
+        if (path == null || path == "/") {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao deletar a empresa, informe o id na requisicao"
+                |}
+            """.stripMargin())
+        } else {
+            try {
+                int id = Integer.parseInt(path.split("/")[1])
+
+                this.obterEmpresaPeloId(id)
+                this.deletarEmpresa(id)
+
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT)
+            } catch (EmpresaNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND)
+                response.getWriter().write("""
+                |{        
+                |    "message": "Nao foi possivel encontrar a empresa com o id informado"
+                |}
+                """.stripMargin())
+            }
+
+
         }
     }
 
