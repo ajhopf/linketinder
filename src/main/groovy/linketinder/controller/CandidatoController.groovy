@@ -53,6 +53,7 @@ class CandidatoController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         ObjectMapper mapper = new ObjectMapper()
         mapper.registerModule(new JavaTimeModule())
+
         try {
             Candidato candidato = mapper.readValue(request.getReader(), Candidato.class)
 
@@ -83,6 +84,81 @@ class CandidatoController extends HttpServlet {
                 |    "cause": ${e.getMessage()}
                 |}
             """.stripMargin())
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+        ObjectMapper mapper = new ObjectMapper()
+        mapper.registerModule(new JavaTimeModule())
+        try {
+            Candidato candidatoAtualizado = mapper.readValue(request.getReader(), Candidato.class)
+
+            this.editarCandidato(candidatoAtualizado)
+            response.setStatus(HttpServletResponse.SC_CREATED)
+            response.getWriter().write("""
+            |{
+            |  "message": "Candidato atualizado com sucesso",
+            |  "uri": "localhost:8080/linketinder/candidatos/$candidatoAtualizado.id
+            |}
+            """.stripMargin())
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("{\"message\": \"Formato JSON inválido\"}")
+        } catch (CompetenciaNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Competencia nao encontrada",
+                |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/competencias" 
+                |}
+            """.stripMargin())
+        } catch (CandidatoNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Candidato nao encontrado para fazer a atualizacao",
+                |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/candidatos" 
+                |}
+            """.stripMargin())
+        } catch (RepositoryAccessException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao editar o candidato"
+                |    "cause": ${e.getMessage()}
+                |}
+            """.stripMargin())
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+        String path = request.getPathInfo()
+
+        if (path == null || path == "/") {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao deletar o candidato, informe o id na requisicao"
+                |}
+            """.stripMargin())
+        } else {
+            try {
+                int id = Integer.parseInt(path.split("/")[1])
+                this.deletarCandidato(id)
+
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT)
+            } catch (CandidatoNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND)
+                response.getWriter().write("""
+                |{        
+                |    "message": "Nao foi possivel encontrar um candidato com o id informado"
+                |}
+                """.stripMargin())
+            }
+
+
         }
     }
 
