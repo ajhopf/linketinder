@@ -102,6 +102,81 @@ class VagaController extends HttpServlet  {
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+        ObjectMapper mapper = new ObjectMapper()
+        mapper.registerModule(new JavaTimeModule())
+        try {
+            Vaga vagaAtualizada = mapper.readValue(request.getReader(), Vaga.class)
+
+            this.editarVaga(vagaAtualizada)
+            response.setStatus(HttpServletResponse.SC_CREATED)
+            response.getWriter().write("""
+            |{
+            |  "message": "Vaga atualizada com sucesso",
+            |  "uri": "localhost:8080/linketinder/vagas/$vagaAtualizada.id
+            |}
+            """.stripMargin())
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("{\"message\": \"Formato JSON inválido\"}")
+        }  catch (CompetenciaNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Competencia nao encontrada",
+                |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/competencias" 
+                |}
+            """.stripMargin())
+        } catch (VagaNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Vaga nao encontrada para realizar a atualizacao",
+                |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/empresas" 
+                |}
+            """.stripMargin())
+        } catch (RepositoryAccessException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao editar a empresa"
+                |    "cause": ${e.getMessage()}
+                |}
+            """.stripMargin())
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+        String path = request.getPathInfo()
+
+        if (path == null || path == "/") {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao deletar a vaga, informe o id na requisicao"
+                |}
+            """.stripMargin())
+        } else {
+            try {
+                int id = Integer.parseInt(path.split("/")[1])
+
+                this.deletarVaga(id)
+
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT)
+            } catch (VagaNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND)
+                response.getWriter().write("""
+                |{        
+                |    "message": "Nao foi possivel encontrar a empresa com o id informado"
+                |}
+                """.stripMargin())
+            }
+        }
+    }
+
+
 
     void listarVagas(HttpServletResponse response) {
         List<Vaga> vagas = this.vagaService.listarVagas()
@@ -134,7 +209,7 @@ class VagaController extends HttpServlet  {
                     null,
                     "Id inválido"
             )
-        } catch (CandidatoNotFoundException e) {
+        } catch (VagaNotFoundException e) {
             HttpHelper.writeResponse(
                     response,
                     HttpServletResponse.SC_NOT_FOUND,
