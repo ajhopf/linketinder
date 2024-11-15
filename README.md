@@ -6,9 +6,12 @@
 
 - [Introdução](#introdução)
 - [Executando o Sistema](#executando-o-sistema)
-- [Utilizando o Sistema](#utilizando-o-sistema)
+- [Utilizando o Sistema via Terminal](#utilizando-o-sistema)
     - [Listando Candidatos e Empresas](#listando-candidatos-e-empresas)
     - [Adicionando Candidtos e Empresas](#adicionando-candidatos-e-empresas)
+- [Utilizando o Sistema via API](#utilizando-o-sistema-via-api)
+  - [Listando Candidatos e Empresas](#listando-candidatos-e-empresas)
+  - [Adicionando Candidtos e Empresas](#adicionando-candidatos-e-empresas)
 - [Database](#database)
   - [Match!!](#match)
 ## Introdução
@@ -98,8 +101,238 @@ mulário para cadastro é simples, sendo necessário apenas digitar a informaç�
 
 Para realizar as operações selecione o número da operação desejada e siga as instruções apresentadas na tela.
 
+## Utilizando o Sistema via API
+
+O linketinder está preparado para receber requisições HTTP. Para possibilitar que o sistema 
+escute e responda chamadas HTTP devemos primeiro ter um Tomcat Servlet inicializado.
+
+Siga os passos abaixo para configurar o seu ambiente:
+
+### Baixe o Tomcat
+
+Acesse o link abaixo para baixar a versão 8 do Tomcat (versão compatível com Java 8)
+
+https://ftp.unicamp.br/pub/apache/tomcat/tomcat-8/v8.5.73/bin/
+
+Faça o download do arquivo apache-tomcat-8.5.73.tar.gz  de acordo com o seu sistema operacional.
+
+```
+apache-tomcat-8.5.73.tar.gz     #linux
+apache-tomcat-8.5.73.zip        #Windows 
+```
+
+Após o download, extraia os arquivos em um local definitivo para o tomcat.
+
+### Adicionando as Variáveis de ambiente
+
+Para possibilitar a execução do servidor, adicione às suas variáveis de ambiente o caminho para
+o diretório onde você armazenou os arquivos com o nome de CATALINA_HOME
+
+Exemplo para um diretório que está no caminho /home/<usuario>/apache-tomcat
+
+Adicione as seguintes linhas no fim do arquivo .bashrc (se você estiver no linux)
+
+```
+export CATALINA_HOME="/home/<usuario>/apache-tomcat/apache-tomcat-8.5.73"
+```
+
+Certifique-se também que você possui a variável de ambiente JAVA_HOME com o caminho para a sua
+instalação do Java 8 definida. Ela será utilizada pelo Tomcat quando inicializar-mos o servidor.
+
+### Configuração dos WebServlets
+
+Você notará que no diretório src/main do presente projeto existem dois packages, o package
+'groovy' que contém o código fonte do sistema e o package webapp.
+
+Dentro do package webapp temos um arquivo de configuração chamado web.xml.
+Neste arquivo definimos a classe AppInitializer como um servlet de configuração. Ele é necessário para possibilitar
+a injeção de dependências dos controllers.
+
+Na classe AppInitializer adicionamos ao ServletContext os services e controllers que são dependências
+para a inicialização dos WebServlets que receberão as chamadas HTTP
+
+AppInitilizer:
+
+![img.png](assets/appinitializer.png)
+
+As classes que receberão as requisições HTTP (os controllers na arquitetura MVC) devem ser anotadas com 
+@WebServlet("/caminhodorecurso") e devem extender a classe HTTPServlet.
+
+Note que no exemplo abaixo o caminho possui um wildcard (o * no fim do caminho).
+Isso permite que todas as requisições que comecem com /candidatos sejam processadas por este componente.
+Além disso, é necessário que a classe possua um construtor sem parâmetros.
+
+Para fazer a injeção das dependências fazemos o override do método init, herdado do HTTPServlet, e dentro deste método
+acessamos o contexto que definimos na classe AppInitilizer.
+
+![img.png](assets/controller.png)
+
+### Iniciando o Tomcat
+
+Para fazer com que o servidor escute as chamadas que definimos devemos então:
+
+1. Fazer o build da aplicação
+
+Utilize o comando:
+
+```
+./gradlew clean build
+```
+
+Como o arquivo build.gradle possui o plugin 'war' o processo de build irá gerar um arquivo .war no seguinte diretório:
+
+/build/libs/<projeto>.war
+
+![img_1.png](assets/gradlebuild.png)
+
+Copie este arquivo para o diretório webapps que existe dentro do diretório raíz da sua instalação do tomcat
+
+![img.png](assets/tomcat.png)
+
+Por fim, inicialize o servidor em um terminal com o comando
+
+```angular2html
+$CATALINA_HOME/bin/startup.sh
+```
+
+Você notará que dentro da pasta webapps agora foi criada uma nova pasta com o nome do seu projeto.
+
+Para finalizar a execução do servidor utilize o comando:
+
+```angular2html
+$CATALINA_HOME/bin/shutdown.sh
+```
+
+O seu projeto está pronto para receber requisições HTTP!
+
+## API
+
+O Linketinder possui os endpoint para os recursos candidatos, empresas, vagas e competencias
+
+* Listar todos:
+  * GET /recurso
+  ![img.png](assets/candidatos.png)
+* Listar recurso pelo id:
+  * GET /recurso/{id}
+* Adicionar recurso:
+  * POST /recurso
+  * Todos os campos devem ser enviados com valores. Observe na sessão de exemplos abaixo quais dados deverão ser enviados para cada recurso.
+* Editar recurso
+  * PUT /recurso
+  * Os campos são o mesmo da requisição POST com a adição do campo "id"
+* Deletar recurso
+  * DELETE /recurso/{id}
+
+
+Exemplos:
+
+POST /candidatos
+
+* Exemplo de corpo de requisição válido:
+  ```json
+  {
+  "nome": "Vitor",
+  "email": "email@email.com",
+  "descricao": "Desenvolvedor Back-End Sênior.",
+  "senha": 1234556,
+  "endereco": {
+      "pais": "Brasil",
+      "estado": "Santa Catarina",
+      "cep": "88063-074",
+      "cidade": "Florianópolis"
+  },
+  "sobrenome": "Lima",
+  "cpf": "022.567.432-01",
+  "dataNascimento": [
+          1992,
+          3,
+          12
+      ],
+  "telefone": "(48) 99904-3827",
+  "competencias": [
+      {
+          "competencia": "Java",
+          "anosExperiencia": 6.0,
+          "afinidade": "MEDIA"
+      },
+      {
+          "competencia": "MongoDB",
+          "anosExperiencia": 6.0,
+          "afinidade": "MEDIA"
+      }
+  ]
+  }
+  
+PUT /empresas
+
+```json
+{
+    "id": 2,
+    "nome": "Data Masters Ltd. Atualizada2",
+    "email": "info@datamasters.com.br",
+    "descricao": "Experts in data analytics and machine learning.",
+    "senha": 1234566,
+    "endereco": {
+        "pais": "Brasil",
+        "estado": "Santa Catarina",
+        "cep": "88063-074",
+        "cidade": "Florianópolis"
+    },
+    "cnpj": "98.765.432/1098-76"
+}
+```
+
+POST /vagas
+```json
+{
+    "nome": "uma vaga via api",
+    "descricao": "uma vaga de fato muito maneira",
+    "empresa": {
+        "id": 1
+    },
+    "endereco": {
+        "pais": "Brasil",
+        "estado": "Santa Catarina",
+        "cep": "88063-074",
+        "cidade": "Florianópolis"
+    },
+    "competencias": [
+        {
+            "competencia": "Java",
+            "anosExperiencia": 4.0,
+            "afinidade": "MUITO_ALTA"
+        }
+    ]
+}
+```
+
+PUT /competencias
+```json
+{
+    "id": 11,
+    "competencia": "Ionic"
+}
+```
+
+### Resumo dos endpoints
+
+#### Candidatos
+![img.png](assets/candidatos_api.png)
+
+#### Empresas
+
+![img_1.png](assets/empresas_api.png)
+
+#### Vagas
+
+![img_2.png](assets/vagas_api.png)
+
+#### Competencias
+
+![img_3.png](assets/competencias_api.png)
 
 ## PostgreSQL Database
+
 
 O Linketinder está em evolução!
 
@@ -128,7 +361,7 @@ No arquivo sql/matches.sql são criadas duas novas tabelas:
 
 Além disso são inseridos algumas curtidas:
 
-![img_2.png](assets/img_2.png)
+![img_2.png](assets/curtidas_candidato.png)
 
 Note que a vaga com id 1(que é da empresa com id 1) foi curtida pelo candidato de id 8 e o candidato 8 curtiu a empresa 1!
 
@@ -136,7 +369,7 @@ Temos o primeiro match de nosso sistema!
 
 Para visualizá-lo, também no arquivo sql/matches.sql criamos uma VIEW chamada matches.
 
-![img_5.png](assets/img_5.png)
+![img_5.png](assets/view_matches.png)
 
 Esta view cria uma tabela chamada 'vagas_por_empresa' que possibilita a visualização de qual foi a empresa que publicou cada vaga que recebeu uma curtida, presente na tabela curtidas_em_vaga.
 
@@ -144,10 +377,10 @@ Então, unimos esta tabela a com a tabela curtidas_em_candidato e buscamos apena
 
 Basta agora utilizar a view:
 
-![img_3.png](assets/img_3.png)
+![img_3.png](assets/matches.png)
 
 Vamos testar um novo match! 
 
 O candidato id 9 foi curtido pela empresa id 2, agora o candidato id 9 irá curtir a vaga de id 2 (que é da empresa de id 2)
 
-![img_4.png](assets/img_4.png)
+![img_4.png](assets/inser_curtida.png)
