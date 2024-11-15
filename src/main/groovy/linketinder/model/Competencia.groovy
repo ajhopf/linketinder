@@ -7,6 +7,8 @@ class Competencia extends Identificavel{
     Double anosExperiencia
     Afinidade afinidade
 
+    Competencia() {}
+
     Competencia(Integer id, String competencia, Double anosExperiencia, Afinidade afinidade) {
         this.competencia = competencia
         this.anosExperiencia = anosExperiencia

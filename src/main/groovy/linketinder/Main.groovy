@@ -10,12 +10,12 @@ class Main {
         try {
             Map controllers = LinketinderConfig.getBeans()
 
+
             MenuInicial.iniciar(
                     controllers.competenciaController,
                     controllers.empresaController,
                     controllers.vagaController,
                     controllers.candidatoController)
-
         } catch (Exception e) {
             println e.getStackTrace()
             println e

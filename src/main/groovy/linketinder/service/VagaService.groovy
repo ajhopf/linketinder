@@ -58,7 +58,10 @@ class VagaService {
         try {
             VagaResponseDTO vagaResponseDTO = repository.obterVagaPeloId(vagaId)
 
-            return VagaMapper.toEntity(vagaResponseDTO)
+            Vaga vaga = VagaMapper.toEntity(vagaResponseDTO)
+            vaga.competencias = competenciaService.listarCompetenciasDeVaga(vagaId)
+
+            return vaga
         } catch (SQLException e) {
             throw new RepositoryAccessException(e.getMessage(), e.getCause())
         }

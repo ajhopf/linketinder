@@ -1,9 +1,9 @@
 package linketinder.model.mappers
 
-import linketinder.model.Competencia
+import linketinder.model.Empresa
 import linketinder.model.Endereco
 import linketinder.model.Vaga
-import linketinder.model.dtos.CompetenciaDTO
+import linketinder.model.dtos.VagaControllerResponseDTO
 import linketinder.model.dtos.VagaRequestDTO
 import linketinder.model.dtos.VagaResponseDTO
 
@@ -18,6 +18,28 @@ class VagaMapper {
         )
     }
 
+    static VagaControllerResponseDTO toControllerResponseDTO(Vaga vaga) {
+        return new VagaControllerResponseDTO(
+                id: vaga.id,
+                nome: vaga.nome,
+                descricao: vaga.descricao,
+                empresa: vaga.empresa.nome,
+                empresaId: vaga.empresa.id,
+                endereco: vaga.endereco,
+                competencias: vaga.competencias
+        )
+    }
+
+    static List<VagaControllerResponseDTO> toListControllerResponseDto(List<Vaga> vagas) {
+        List<VagaControllerResponseDTO> vagaControllerResponseDTOList = []
+        vagas.each {Vaga vaga ->
+            VagaControllerResponseDTO vagaDto = toControllerResponseDTO(vaga)
+            vagaControllerResponseDTOList << vagaDto
+        }
+
+        return vagaControllerResponseDTOList
+    }
+
     static Vaga toEntity(VagaRequestDTO vagaDTO, Endereco endereco) {
         return new Vaga(
                 id: vagaDTO.id,
@@ -29,6 +51,8 @@ class VagaMapper {
 
     static Vaga toEntity(VagaResponseDTO vagaResponseDTO) {
         Endereco enderecoSimples = new Endereco()
+        enderecoSimples.pais = vagaResponseDTO.pais
+        enderecoSimples.cep = vagaResponseDTO.cep
         enderecoSimples.estado = vagaResponseDTO.estado
         enderecoSimples.cidade = vagaResponseDTO.cidade
 
@@ -37,19 +61,10 @@ class VagaMapper {
                 nome: vagaResponseDTO.nome,
                 descricao: vagaResponseDTO.descricao,
                 endereco: enderecoSimples,
+                empresa: new Empresa(
+                        id: vagaResponseDTO.empresaId,
+                        nome: vagaResponseDTO.empresa
+                )
         )
     }
-
-//    static List<CompetenciaDTO> entityListToDTOList(List<Competencia> competencias) {
-//        List<CompetenciaDTO> competenciaDTOList = []
-//
-//        for (competencia in competencias) {
-//            Integer competenciaId = competenciaService.verificarSeCompetenciaExiste(competencia.competencia)
-//            CompetenciaDTO competenciaDTO = CompetenciaMapper.toDTO(competencia)
-//            competenciaDTO.id = competenciaId
-//            competenciaDTOList << competenciaDTO
-//        }
-//
-//        return competenciaDTOList
-//    }
 }
