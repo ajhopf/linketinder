@@ -2,16 +2,11 @@ package linketinder.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import linketinder.exceptions.CandidatoNotFoundException
 import linketinder.exceptions.CompetenciaNotFoundException
 import linketinder.exceptions.RepositoryAccessException
-import linketinder.model.Candidato
 import linketinder.model.Competencia
-import linketinder.model.dtos.CandidatoControllerResponseDTO
 import linketinder.model.dtos.CompetenciaControllerResponseDTO
-import linketinder.model.mappers.CandidatoMapper
 import linketinder.model.mappers.CompetenciaMapper
-import linketinder.service.CandidatoService
 import linketinder.service.CompetenciaService
 import linketinder.util.HttpHelper
 
@@ -78,6 +73,74 @@ class CompetenciaController extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) {
+        ObjectMapper mapper = new ObjectMapper()
+        mapper.registerModule(new JavaTimeModule())
+        try {
+            Competencia competencia = mapper.readValue(request.getReader(), Competencia.class)
+
+            this.editarCompetencia(competencia)
+
+            response.setStatus(HttpServletResponse.SC_CREATED)
+            response.getWriter().write("""
+            |{
+            |  "message": "Competencia atualizada com sucesso",
+            |  "uri": "localhost:8080/linketinder/competencias/$competencia.id
+            |}
+            """.stripMargin())
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("{\"message\": \"Formato JSON inválido\"}")
+        }  catch (CompetenciaNotFoundException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |   "message": "Competencia nao encontrada para realizar a atualizacao",
+                |   "competenciasHref": "localhost:8080/linketinder-1.0-SNAPSHOT/competencias" 
+                |}
+            """.stripMargin())
+        } catch (RepositoryAccessException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao editar a competencia"
+                |    "cause": ${e.getMessage()}
+                |}
+            """.stripMargin())
+        }
+    }
+
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) {
+        String path = request.getPathInfo()
+
+        if (path == null || path == "/") {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST)
+            response.getWriter().write("""
+                |{        
+                |    "message": "Erro ao deletar a competencia, informe o id na requisicao"
+                |}
+            """.stripMargin())
+        } else {
+            try {
+                int id = Integer.parseInt(path.split("/")[1])
+
+                this.deletarCompetencia(id)
+
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT)
+            } catch (CompetenciaNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND)
+                response.getWriter().write("""
+                |{        
+                |    "message": "Nao foi possivel encontrar uma competencia com o id informado"
+                |}
+                """.stripMargin())
+            }
+        }
+    }
+
     void listarCompetencias(HttpServletResponse response) {
         List<Competencia> competencias = this.competenciaService.listarCompetencias()
 
@@ -91,6 +154,8 @@ class CompetenciaController extends HttpServlet {
                 controllerResponseDTOList
         )
     }
+
+
 
     void obterCompetenciaPeloId(String pathInfo, HttpServletResponse response) {
         try {
